@@ -2,7 +2,7 @@
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
-sudo apt install libcairo2-dev libxt-dev libsdl2-dev
+sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen
 ```
 # Conformance to UK MoD / NATO Defence Standards
 ## DEF STAN 23-009 - Generic Vehicle Architecture (GVA)
