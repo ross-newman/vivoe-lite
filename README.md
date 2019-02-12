@@ -36,6 +36,10 @@ AIM The aim of this NATO standardization agreement (STANAG) is to respond to the
 # Rendering
 The HMI uses Cairo for rendering the GUI components.
 
+![GVA HMI](images/GVA_HMI.png)
+
+**GVA HMI Example layout**
+
 # Links
 * https://www.cairographics.org/
 * https://www.vetronics.org/
