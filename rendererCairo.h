@@ -42,23 +42,24 @@ enum draw_type
   COMMAND_PEN_CURVE,
   COMMAND_PEN_LINE,
   COMMAND_PEN_MOVE,
-  COMMAND_PEN_WIDTH,
+  COMMAND_PEN_RECTANGLE,
+  COMMAND_PEN_THICKNESS,
+  COMMAND_PEN_TRIANGLE,
+  COMMAND_TEXT,
 };
 
 struct command_type
 {
   draw_type command;
   double width;
-  double x1;
-  double y1;
-  double x2;
-  double y2;
+  point_type points[3];
   double radius;
   colour_type colour;  
   int arg1;
   int arg2;
   int arg3;
   int arg4;
+  char text[80];
   bool fill;
 };
 
@@ -88,11 +89,15 @@ public:
   void setColour (int handle, int red, int green, int blue);
   void setColourForground (int handle, int red, int green, int blue);
   void setColourBackground (int handle, int red, int green, int blue);
+  void setLineType (int handle, int type);
+  void setLineThickness (int handle, int thickness);
   int drawLine (int handle, int x1, int y1, int x2, int y2);
-  int drawLineType (int handle, int opt);
-  void drawCircle (int handle, int x, int y, int radius);
-  void fillCircle (int handle, int x, int y, int radius);
+  void drawCircle (int handle, int x, int y, int radius, bool fill);
+  void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill);
+  void drawTriangle (int handle, int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
   int drawColor (int handle, int r, int g, int b);
+  void drawText (int handle, int x, int y, char* text, int size);
+  void drawTextCentre (int handle, int x, char* text, int size);
   int textureRGB (int handle, int x, int y, void *buffer);
   void scale (int handle, float x);
   void present (int handle);
@@ -104,6 +109,9 @@ private:
   double m_scale;
   handle_type m_render_handle[1];
   pthread_t m_event_thread;
+  // Helper Functions
+  double intToFloat(int c) { return (double)1/255 * c; };
+
   // Render List
   command_type m_draw_commands[MAX_COMMANDS];
   int m_draw_tail = 0;

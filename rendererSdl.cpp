@@ -77,6 +77,8 @@ rendererSdl::init (int width, int height)
 {
   m_render_handle[0].size.height = height;
   m_render_handle[0].size.width = width;
+  m_height = height;
+  m_width = width;
   if (SDL_CreateWindowAndRenderer
       (width, height, 0, &m_render_handle[0].window,
        &m_render_handle[0].renderer) == 0)
@@ -169,9 +171,15 @@ rendererSdl::drawColor (int handle, int r, int g, int b)
 }
 
 void
-rendererSdl::drawCircle (int handle, int x, int y, int radius)
+rendererSdl::drawCircle (int handle, int x, int y, int radius, bool fill)
 {
   y = m_render_handle[0].size.height - y;
+
+  if (fill)
+  {
+    fillCircle(handle, x, y, radius);
+    return;
+  }
 
   SDL_Renderer *surface = m_render_handle[handle].renderer;
   // if the first pixel in the screen is represented by (0,0) (which is in sdl)
@@ -250,6 +258,12 @@ rendererSdl::fillCircle (int handle, int x, int y, int radius)
       SDL_RenderDrawLine (surface, x - dx, y - dy + radius, x + dx,
                           y - dy + radius);
     }
+}
+
+void
+rendererSdl::drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill)
+{
+  // TODO : Implement function
 }
 
 void

@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project 
-OBJS = main.cpp rendererSdl.cpp rendererCairo.cpp pngget.cpp debug.cpp
+OBJS = main.cpp rendererSdl.cpp rendererCairo.cpp rendererGva.cpp pngget.cpp debug.cpp
 #CC specifies which compiler we're using 
 CC = g++ 
 #COMPILER_FLAGS specifies the additional compilation options we're using 
@@ -16,3 +16,6 @@ all : $(OBJS)
 indent : $(OBJS)
 	indent -gnu -nut $(OBJS)
 	echo $(OBJS)
+
+doxygen :
+	doxygen ./Doxyfile

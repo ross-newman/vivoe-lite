@@ -5,87 +5,42 @@
 
 using namespace std;
 
-int hndl;
-#if 1
-#include "rendererCairo.h"
-static rendererCairo *render = new rendererCairo;
-#else
-#include "rendererSdl.h"
-static rendererSdl *render = new rendererSdl;
-#endif
-
-void
-eye (int x, int y)
-{
-  render->setColour(hndl, WHITE);
-  render->fillCircle (hndl, x, y, 20);  // eye
-  render->setColour(hndl, BLACK);
-  render->fillCircle (hndl, x, y, 5);   // eye
-  render->setColourForground (hndl, WHITE);
-}
-
-void
-mouth (int x, int y)
-{
-  render->setColour (hndl, WHITE);
-  render->fillCircle (hndl, x, y, 50);  // Mouth
-  render->setColour (hndl, BLACK);
-  render->fillCircle (hndl, x, y + 40, 50);     // Mouth
-  render->setColourForground (hndl, WHITE);
-}
+#include "rendererGva.h"
+static rendererGva *render = new rendererGva;
 
 int
 main (int argc, char *argv[])
 {
+  int hndl;
+  resolution_type view = {640, 480, 24};
   char *lena = 0;
   png *bitmap = new png ();
-  hndl = render->init (1024, 800);
 
-  bitmap->readPngFile ("lenna-lg.png");
+  hndl = render->init (view.width, view.height);
+
+  // Set background green
+  render->setColourForground(hndl, GREEN);
+  render->setColourBackground(hndl, GREEN);
+  render->drawRectangle (hndl, 0, 0, view.width, view.height, true);
+
+#if 1
+  bitmap->readPngFile ("test.png");
+//  bitmap->readPngFile ("lenna-lg.png");
   lena = (char *) bitmap->getRGBBufferPointer ();
-  cout << bitmap->getWidth () << "x" << bitmap->getHeight () << "\n";
-  render->textureRGB (hndl, bitmap->getWidth (), bitmap->getHeight (), lena);
+  render->textureRGB (hndl, 0, 0, lena);
   free (bitmap);
+#endif
 
-  // Man 1 
-  render->drawColor (hndl, WHITE);
-  render->drawLine (hndl, 100, 0, 200, 200);
-  render->drawColor (hndl, RED);
-  render->drawLine (hndl, 200, 200, 300, 0);
-  render->drawColor (hndl, GREEN);
-  render->drawLine (hndl, 200, 200, 200, 400);
-  render->drawColor (hndl, BLUE);
-  render->drawLine (hndl, 200, 400, 100, 200);  // Arm left
-  render->drawLine (hndl, 200, 400, 300, 200);  // Arm Right
-  render->fillCircle (hndl, 100, 200, 10);      // Hand left
-  render->fillCircle (hndl, 300, 200, 10);      // Hand Right
-  mouth (220, 460);
-  render->drawCircle (hndl, 220, 550, 150);     // Head
-  eye (200, 600);
-  eye (300, 600);
-
-
-  render->scale (hndl, 0.5);
-  // Man 2 
-  render->drawLine (hndl, 600, 0, 600, 100);    // Right Leg
-  render->drawLine (hndl, 600, 100, 700, 200);  // Right Leg
-  render->drawLine (hndl, 800, 100, 800, 0);    // Left Leg
-  render->drawLine (hndl, 800, 100, 700, 200);  // Left Leg
-  render->drawLine (hndl, 700, 200, 700, 400);
-  render->drawLine (hndl, 900, 400, 800, 500);
-  render->drawLine (hndl, 800, 500, 900, 400);
-  render->drawLine (hndl, 900, 400, 400, 400);
-  render->fillCircle (hndl, 400, 400, 10);      // Hand left
-  render->fillCircle (hndl, 800, 500, 10);      // Hand Right
-  mouth (700, 500);
-  render->drawCircle (hndl, 700, 550, 150);     // Head
-  render->fillCircle (hndl, 800, 500, 20);      // eye
-  render->fillCircle (hndl, 800, 500, 20);      // eye
-  eye (600, 600);
-  eye (720, 600);
-
-  render->setColour (hndl, RED);
-  render->scale (hndl, 5.0);
-  render->present (hndl);
-  sleep (5);
+  render->drawFunctionKeys(hndl, 1, 0b00000001, 0b00011100);
+  render->drawFunctionKeys(hndl, view.width-100-1, 0b00100000, 0b00001111);
+  render->drawSaKeys(hndl, view.height-11, 0b00001000, 0b00000010);
+  render->drawTable(hndl);
+  render->drawCompass(hndl, 165, 380, 0);
+  
+  render->drawControlKeys(hndl, 0, 0b00000100, 0b00000000);  
+  
+  render->drawColor(hndl, WHITE);
+  render->drawTextCentre(hndl, 200, "VIVOE Lite", 12);
+    
+  sleep (15);
 }

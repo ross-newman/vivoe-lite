@@ -15,8 +15,19 @@ public:
 
 class FunctionKeySimple
 {
-  public:
-    static void draw(rendererGva *r, int hndl, int x, int y, char* text);
+public:
+  void draw(rendererGva *r, int hndl, int x, int y, char* text);
+  int getX() { return m_x; };
+  int getY() { return m_y; };
+private: 
+  int m_x; 
+  int m_y;   
+};
+
+class FunctionKeyToggle : public FunctionKeySimple
+{
+public:
+  void toggle(rendererGva *r, int hndl, char* label1, char* label2);
 };
 
 #endif
