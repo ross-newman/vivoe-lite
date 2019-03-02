@@ -1,6 +1,14 @@
 #include "debug.h"
 #include "rendererGva.h"
 
+rendererGva::rendererGva(int width, int height)
+:
+rendererCairo(width, height)
+{
+  m_height=height;
+  m_width=width;
+}
+
 void
 FunctionKeySimple::draw(rendererGva *r, int hndl, int x, int y, char* text)
 {
@@ -25,11 +33,10 @@ FunctionKeyToggle::toggle(rendererGva *r, int hndl, char* label1, char* label2)
 }
 
 void
-rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide)
+rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide, char labels[6][40])
 {
   int i=0;
-  int offset=50;
-  char labels[6][80] = { "PriSight", "SecSight", "Undefine", "Front left", "Front Right", "IR" };
+  int offset = m_height-100;
 
   setColourForground(hndl, DARK_GREEN2);
   setColourBackground(hndl, DARK_GREEN);
@@ -39,12 +46,14 @@ rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide)
   for (i=0; i<6; i++)
   {    
     setColourBackground(hndl, DARK_GREEN);
-    if (!(1<<i & hide))
+    if (!(1<<(6-i) & hide))
     { 
-      (1<<i & active) ? setColourForground(hndl, YELLOW) : setColourForground(hndl, DARK_GREEN2);
+      (0b100000>>i & active) ? setColourForground(hndl, YELLOW) : setColourForground(hndl, DARK_GREEN2);
       FunctionKeyToggle * key = new FunctionKeyToggle();
-      key->draw (this, hndl, x, (i*65)+offset, labels[i]);
-      if (i==0) key->toggle (this, hndl,  "On", "Off");
+      key->draw (this, hndl, x, offset-(i*65), labels[i]);
+      
+printf(" >> %d %d %d %d\n", offset-(i*65), m_height, i , offset);
+      if (i==5) key->toggle (this, hndl,  "On", "Off");
     }  
   }
 }
@@ -62,7 +71,7 @@ rendererGva::drawSaKeys(int hndl, int y, int active, int hide)
 
   for (i=0; i<8; i++)
   {
-    if (!(1<<i & hide))
+    if (!(0b10000000>>i & hide))
     { 
       (1<<i & active) ? setColourBackground(hndl, YELLOW) : setColourBackground(hndl, DARK_GREEN);
       drawRectangle (hndl, (i*75)+offset, y, (i*75)+60+offset, y+10, true);
@@ -86,12 +95,12 @@ rendererGva::drawControlKeys(int hndl, int y, int active, int hide)
 
   for (i=0; i<8; i++)
   {
-    if (!(1<<i & hide))
+    if (!(0b10000000>>i & hide))
     { 
-      (1<<i & active) ? setColourBackground(hndl, GREY) : setColourBackground(hndl, DARK_GREEN);
-      (1<<i & active) ? setColourForground(hndl, DARK_GREY) : setColourForground(hndl, DARK_GREEN2);
+      (0b10000000>>i & active) ? setColourBackground(hndl, GREY) : setColourBackground(hndl, DARK_GREEN);
+      (0b10000000>>i & active) ? setColourForground(hndl, DARK_GREY) : setColourForground(hndl, DARK_GREEN2);
       drawRectangle (hndl, (i*w)+offset, y, (i*w)+w-5+offset, y+20, true);
-      (1<<i & active) ? drawColor(hndl, BLACK) : drawColor(hndl, WHITE);
+      (0b10000000>>i & active) ? drawColor(hndl, BLACK) : drawColor(hndl, WHITE);
       drawText (hndl, (i*w)+offset+5, y+6, labels[i], 10);
     }
   }

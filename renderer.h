@@ -54,7 +54,7 @@ public:
   virtual void drawCircle (int handle, int x, int y, int radius, bool fill) = 0;
   virtual void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill) = 0;
   virtual int drawColor (int handle, int r, int g, int b) = 0;
-  virtual int textureRGB (int handle, int x, int y, void *buffer) = 0;
+  virtual int textureRGB (int handle, int x, int y, void *buffer, char *file) = 0;
   virtual void scale (int handle, float x) = 0;
   virtual void present (int handle) = 0;
 private:

@@ -6,11 +6,15 @@
 class rendererGva : public rendererCairo
 {
 public:  
-  void drawFunctionKeys(int handle, int x, int active, int hide);
+  rendererGva(int width, int height);
+  void drawFunctionKeys(int handle, int x, int active, int hide, char labels[6][40]);
   void drawSaKeys(int handle, int y, int active, int hide);
   void drawControlKeys(int handle, int y, int active, int hide);
   void drawCompass(int handle, int x, int y, int degrees);
   void drawTable(int handle);
+private:
+  int m_width;
+  int m_height;
 };
 
 class FunctionKeySimple

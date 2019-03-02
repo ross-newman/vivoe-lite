@@ -80,11 +80,10 @@ static void win_handle_events(win_t *win);
 class rendererCairo : public renderer
 {
 public:
-  rendererCairo (void);
+  rendererCairo (int width, int height);
   ~rendererCairo ();
-   
+  int init (int width, int height);   
   // Pure Virtual functions
-  int init (int width, int height);
   void setPixel (int handle, int x, int y);
   void setColour (int handle, int red, int green, int blue);
   void setColourForground (int handle, int red, int green, int blue);
@@ -98,7 +97,7 @@ public:
   int drawColor (int handle, int r, int g, int b);
   void drawText (int handle, int x, int y, char* text, int size);
   void drawTextCentre (int handle, int x, char* text, int size);
-  int textureRGB (int handle, int x, int y, void *buffer);
+  int textureRGB (int handle, int x, int y, void *buffer, char *file);
   void scale (int handle, float x);
   void present (int handle);
   
@@ -106,6 +105,7 @@ public:
   void draw (int handle);
   win_t * getWin() { return &m_render_handle[0].win; }; 
 private:
+  int m_current_handle;
   double m_scale;
   handle_type m_render_handle[1];
   pthread_t m_event_thread;

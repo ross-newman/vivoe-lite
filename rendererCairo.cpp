@@ -172,11 +172,13 @@ void rendererCairo::draw (int handle)
   }
 }
 
-rendererCairo::rendererCairo (void)
+rendererCairo::rendererCairo (int width, int height) 
 {
   m_scale=1.0;
   m_forground_colour = { 255, 255, 255 };
   m_background_colour = { 0, 0, 0 };
+  m_height = height;
+  m_width = width;
 }
 
 rendererCairo::~rendererCairo ()
@@ -355,10 +357,10 @@ rendererCairo::drawTextCentre (int handle, int x, char* text, int size)
 }
 
 int
-rendererCairo::textureRGB (int handle, int x, int y, void *buffer)
+rendererCairo::textureRGB (int handle, int x, int y, void *buffer, char *file)
 {
-  strcpy(m_image_list[m_image_tail].name, "lenna-lg.png");
-  m_image_list[m_image_tail].image = cairo_image_surface_create_from_png("test2.png");
+  strcpy(m_image_list[m_image_tail].name, file);
+  m_image_list[m_image_tail].image = cairo_image_surface_create_from_png(file);
 
   m_draw_commands[m_draw_tail].command = COMMAND_IMAGE_PNG;
   m_draw_commands[m_draw_tail].points[0].x = x; 
