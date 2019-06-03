@@ -8,7 +8,7 @@ COMPILER_FLAGS = -w $(shell pkg-config --libs --cflags cairo)
 #LINKER_FLAGS specifies the libraries we're linking against 
 LINKER_FLAGS = -lSDL2 -lX11 -lpng -pthread 
 #OBJ_NAME specifies the name of our exectuable 
-OBJ_NAME = main 
+OBJ_NAME = hmi_display 
 #This is the target that compiles our executable 
 all : $(OBJS) 
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)

@@ -103,19 +103,40 @@ public:
   
   // Cairo specific functions
   void draw (int handle);
-  win_t * getWin() { return &m_render_handle[0].win; }; 
+  win_t* getWin() { return &m_render_handle[0].win; }
+  Window* getWindow() { return &m_render_handle[0].win.win; }
+  Display* getDisplay() { return m_render_handle[0].win.dpy; }
+#if 1
+  void setHeight(int height) { m_render_handle[0].win.height = height; }
+  void setWidth(int width) { m_render_handle[0].win.width = width; }
+  int getHeight() { return m_render_handle[0].win.height; }
+  int getWidth() { return m_render_handle[0].win.width; }
+#else
+  void setHeight(int height) { m_render_handle[0].win.height = height; cairo_scale(m_render_handle[0].cr, m_render_handle[0].win.height, m_render_handle[0].win.width); }
+  void setWidth(int width) { m_render_handle[0].win.width = width; }
+#endif
 private:
+
   int m_current_handle;
   double m_scale;
   handle_type m_render_handle[1];
-  pthread_t m_event_thread;
-  // Helper Functions
-  double intToFloat(int c) { return (double)1/255 * c; };
+  Window m_root;
 
-  // Render List
+  /*
+   *  Helper Functions
+   */
+  double intToFloat(int c) { return (double)1/255 * c; };
+  void win_init (win_t * win, int width, int height);
+
+  /*
+   * Render List
+   */
   command_type m_draw_commands[MAX_COMMANDS];
   int m_draw_tail = 0;
-  // Image List
+
+  /*
+   *  Image List
+   */
   image_type m_image_list[MAX_IMAGES];
   int m_image_tail = 0;
 };

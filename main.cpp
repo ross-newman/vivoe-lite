@@ -22,13 +22,78 @@ using namespace std;
 int
 main (int argc, char *argv[])
 {
-  resolution_type view = {640, 480, 24};
+  XEvent event;
+  int done = 0;
+  resolution_type view = { 640, 480, 24 };
   int hndl;
-  screenType screen_test = { "Test Screen", TEST_FUNCTION_KEYS_TOP, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
-  screenType screen_sa = { "Situational Awareness", SA_FUNCTION_KEYS_TOP, SA_FUNCTION_KEYS_LEFT, SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
-  screenGva *render = new screenGva(screen_sa, view.width, view.height);
-    
-  sleep (5);
-//  render->update(screen_sa);
-  sleep (5);
+//  screenType screen_test = { "Test Screen", TEST_FUNCTION_KEYS_TOP, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
+  screenType screen_sa =
+    { "Situational Awareness", SA_FUNCTION_KEYS_TOP, SA_FUNCTION_KEYS_LEFT,
+SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
+  screenGva *render = new screenGva (screen_sa, view.width, view.height);
+//  screenGva *render2 = new screenGva(screen_test, 800, 800);
+
+
+  Display *d = render->getDisplay ();
+  Window *w = render->getWindow ();
+
+  /* select kind of events we are interested in */
+  XSelectInput (d, *w, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
+
+  //win->quit_code = XKeysymToKeycode (win->dpy, XStringToKeysym ("Q"));
+
+  render->draw (0);
+
+  while (!done)
+    {
+      XNextEvent (d, &event);
+
+      switch (event.type)
+        {
+        case KeyPress:
+          {
+            printf ("KeyPress: %x\n", event.xkey.keycode);
+
+            /* exit on ESC key press */
+            if (event.xkey.keycode == 0x09)
+              {
+                done = 1;
+                break;
+              }
+          }
+          break;
+        case KeyRelease:
+          {
+            printf ("KeyRelease: %x\n", event.xkey.keycode);
+          }
+          render->draw (0);
+          break;
+        case ConfigureNotify:
+          {
+            XConfigureEvent *cev = &event.xconfigure;
+
+            if (cev->width != render->getWidth () ||
+                cev->height != render->getHeight ())
+              {
+                printf ("WindowResize: %d x %d\n", cev->width, cev->height);
+                render->setWidth (cev->width);
+                render->setHeight (cev->height);
+                render->draw (0);
+              }
+          }
+          break;
+        case Expose:
+          {
+              render->draw (0);
+          }
+          break;
+        }
+
+
+    }
+
+  /*
+   * Clean up render/s
+   */
+  delete (render);
 }

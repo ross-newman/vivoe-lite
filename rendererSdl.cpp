@@ -176,10 +176,10 @@ rendererSdl::drawCircle (int handle, int x, int y, int radius, bool fill)
   y = m_render_handle[0].size.height - y;
 
   if (fill)
-  {
-    fillCircle(handle, x, y, radius);
-    return;
-  }
+    {
+      fillCircle (handle, x, y, radius);
+      return;
+    }
 
   SDL_Renderer *surface = m_render_handle[handle].renderer;
   // if the first pixel in the screen is represented by (0,0) (which is in sdl)
@@ -261,7 +261,8 @@ rendererSdl::fillCircle (int handle, int x, int y, int radius)
 }
 
 void
-rendererSdl::drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill)
+rendererSdl::drawRectangle (int handle, int x1, int y1, int x2, int y2,
+                            bool fill)
 {
   // TODO : Implement function
 }
