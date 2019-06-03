@@ -26,13 +26,13 @@ main (int argc, char *argv[])
   int done = 0;
   resolution_type view = { 640, 480, 24 };
   int hndl;
-//  screenType screen_test = { "Test Screen", TEST_FUNCTION_KEYS_TOP, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
+  functionSelectType top = TEST_FUNCTION_KEYS_TOP;
+  screenType screen_test = { "Test Screen", top, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
   screenType screen_sa =
-    { "Situational Awareness", SA_FUNCTION_KEYS_TOP, SA_FUNCTION_KEYS_LEFT,
-SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
-  screenGva *render = new screenGva (screen_sa, view.width, view.height);
-//  screenGva *render2 = new screenGva(screen_test, 800, 800);
+    { "Situational Awareness", SA_FUNCTION_KEYS_TOP, SA_FUNCTION_KEYS_LEFT, SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS }; 
+  screenType *screen = &screen_test;
 
+  screenGva *render = new screenGva (screen, view.width, view.height);
 
   Display *d = render->getDisplay ();
   Window *w = render->getWindow ();
@@ -40,10 +40,8 @@ SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
   /* select kind of events we are interested in */
   XSelectInput (d, *w, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
 
-  //win->quit_code = XKeysymToKeycode (win->dpy, XStringToKeysym ("Q"));
-
-  render->draw (0);
-
+  render->update(screen);
+  
   while (!done)
     {
       XNextEvent (d, &event);
@@ -52,21 +50,53 @@ SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
         {
         case KeyPress:
           {
-            printf ("KeyPress: %x\n", event.xkey.keycode);
+            printf ("KeyPress: 0x%x ('%c')\n", event.xkey.keycode);
 
-            /* exit on ESC key press */
-            if (event.xkey.keycode == 0x09)
-              {
-                done = 1;
-                break;
+            switch (event.xkey.keycode) {
+				/* exit on ESC key press */
+				case 0x09 : 
+                    done = 1;
+                    break;
+				/* 1 maps to F1 */
+				case 0xa : 
+                    screen->functionTop.active ^= 0x1 << 0;
+                    break;
+				/* 2 maps to F2 */
+				case 0xb : 
+                    screen->functionTop.active ^= 0x1 << 1;
+                    break;
+				/* 3 maps to F3 */
+				case 0xc : 
+                    screen->functionTop.active ^= 0x1 << 2;
+                    break;
+				/* 4 maps to F4 */
+				case 0xd : 
+                    screen->functionTop.active ^= 0x1 << 3;
+                    break;
+				/* 5 maps to F5 */
+				case 0xe : 
+                    screen->functionTop.active ^= 0x1 << 4;
+                    break;
+				/* 6 maps to F6 */
+				case 0xf : 
+                    screen->functionTop.active ^= 0x1 << 5;
+                    break;
+				/* 7 maps to F7 */
+				case 0x10 : 
+                    screen->functionTop.active ^= 0x1 << 6;
+                    break;
+				/* 8 maps to F8 */
+				case 0x11 : 
+                    screen->functionTop.active ^= 0x1 << 7;
+                    break;
               }
           }
           break;
         case KeyRelease:
           {
-            printf ("KeyRelease: %x\n", event.xkey.keycode);
+            printf ("KeyRelease: 0x%x ('%c')\n", event.xkey.keycode);
           }
-          render->draw (0);
+          render->update(screen);
           break;
         case ConfigureNotify:
           {
@@ -78,18 +108,16 @@ SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
                 printf ("WindowResize: %d x %d\n", cev->width, cev->height);
                 render->setWidth (cev->width);
                 render->setHeight (cev->height);
-                render->draw (0);
+                render->update(screen);
               }
           }
           break;
         case Expose:
           {
-              render->draw (0);
+              render->update(screen);
           }
           break;
         }
-
-
     }
 
   /*

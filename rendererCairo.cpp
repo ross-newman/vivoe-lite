@@ -21,6 +21,7 @@ rendererCairo::draw (int handle)
   m_scale = m_render_handle[handle].win.width / (double)640;
 
   cairo_t *cr = m_render_handle[handle].cr;
+//  cairo_translate(cr, 640, 480);  
   //cairo_close_path (cr);
 
   for (count = 0; count < m_draw_tail; count++)
@@ -170,7 +171,6 @@ rendererCairo::draw (int handle)
           break;
         }
     }
-  cairo_scale(cr, m_render_handle[handle].win.width / (double)640, m_render_handle[handle].win.height / (double)480);  
 }
 
 rendererCairo::rendererCairo (int width, int height)

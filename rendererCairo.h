@@ -103,18 +103,16 @@ public:
   
   // Cairo specific functions
   void draw (int handle);
+  void reset () { m_draw_tail = 0; }
   win_t* getWin() { return &m_render_handle[0].win; }
   Window* getWindow() { return &m_render_handle[0].win.win; }
   Display* getDisplay() { return m_render_handle[0].win.dpy; }
-#if 1
-  void setHeight(int height) { m_render_handle[0].win.height = height; }
-  void setWidth(int width) { m_render_handle[0].win.width = width; }
+  void setHeight(int height) { cairo_xlib_surface_set_size(m_render_handle[0].surface, m_render_handle[0].win.width, height); 
+      cairo_scale(m_render_handle[0].cr, 1.0, (double)height / m_render_handle[0].win.height);  m_render_handle[0].win.height = height; }
+  void setWidth(int width) { cairo_xlib_surface_set_size(m_render_handle[0].surface, width, m_render_handle[0].win.height); 
+      cairo_scale(m_render_handle[0].cr, (double)width / m_render_handle[0].win.width, 1.0);  m_render_handle[0].win.width = width; }
   int getHeight() { return m_render_handle[0].win.height; }
   int getWidth() { return m_render_handle[0].win.width; }
-#else
-  void setHeight(int height) { m_render_handle[0].win.height = height; cairo_scale(m_render_handle[0].cr, m_render_handle[0].win.height, m_render_handle[0].win.width); }
-  void setWidth(int width) { m_render_handle[0].win.width = width; }
-#endif
 private:
 
   int m_current_handle;

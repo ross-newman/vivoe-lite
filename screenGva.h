@@ -42,10 +42,10 @@ struct screenType {
 class screenGva : public rendererGva
 {
 public:
-  screenGva(screenType screen, int width, int height);
-  int update(screenType screen);
+  screenGva(screenType *screen, int width, int height);
+  int update(screenType *screen);
 private:
-  screenType m_screen;
+  screenType *m_screen;
   int m_hndl;
   int m_width;
   int m_height;
