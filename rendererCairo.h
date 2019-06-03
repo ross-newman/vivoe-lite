@@ -9,6 +9,8 @@
 
 #define MAX_COMMANDS 1000
 #define MAX_IMAGES 100
+#define DEFAULT_WIDTH 640
+#define DEFAULT_HEIGHT 480
 
 typedef struct win {
     Display *dpy;

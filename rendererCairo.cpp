@@ -18,11 +18,7 @@ rendererCairo::draw (int handle)
 {
   int count = 0;
 
-  m_scale = m_render_handle[handle].win.width / (double)640;
-
   cairo_t *cr = m_render_handle[handle].cr;
-//  cairo_translate(cr, 640, 480);  
-  //cairo_close_path (cr);
 
   for (count = 0; count < m_draw_tail; count++)
     {
@@ -284,10 +280,10 @@ rendererCairo::drawLine (int handle, int x1, int y1, int x2, int y2)
   y1 = m_render_handle[handle].size.height - y1;
   y2 = m_render_handle[handle].size.height - y2;
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_LINE;
-  m_draw_commands[m_draw_tail].points[0].x = x1 * m_scale;
-  m_draw_commands[m_draw_tail].points[0].y = y1 * m_scale;
-  m_draw_commands[m_draw_tail].points[1].x = x2 * m_scale;
-  m_draw_commands[m_draw_tail].points[1].y = y2 * m_scale;
+  m_draw_commands[m_draw_tail].points[0].x = x1;
+  m_draw_commands[m_draw_tail].points[0].y = y1;
+  m_draw_commands[m_draw_tail].points[1].x = x2;
+  m_draw_commands[m_draw_tail].points[1].y = y2;
   m_draw_tail++;
   return 0;
 }

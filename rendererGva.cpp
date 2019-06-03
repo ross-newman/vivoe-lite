@@ -139,7 +139,7 @@ rendererGva::drawTable(int hndl)
 
   for (column=0; column<columns; column++)
   { 
-  	int width = getWidth()-padding*2;
+  	int width = DEFAULT_WIDTH-padding*2;
 	  int tmp = widths[column] * ((double)width/100); 
   
     drawRectangle (hndl, offset, y, offset+tmp, y+20, true);
