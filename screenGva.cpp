@@ -27,20 +27,29 @@ screenGva::update (screenType *screen)
   textureRGB (m_hndl, 0, 0, texture, bitmap);
 #endif
 
+  if (m_screen->functionLeft.visible) {
   drawFunctionKeys (m_hndl, 1, m_screen->functionLeft.active,
                     m_screen->functionLeft.hidden,
                     m_screen->functionLeft.labels);
+  }
+  if (m_screen->functionRight.visible) {
   drawFunctionKeys (m_hndl, m_width - 100 - 1, m_screen->functionRight.active,
                     m_screen->functionRight.hidden,
                     m_screen->functionRight.labels);
+                  }
   drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop.active,
               m_screen->functionTop.hidden);
-  drawTable (m_hndl);
+              
+  drawMode(m_hndl);            
+  if (m_screen->statusBar.visible) {
+    drawTable (m_hndl);
+  }
   drawCompass (m_hndl, 165, 380, 0);
 
-  drawControlKeys (m_hndl, 0, m_screen->control.active,
+  if (m_screen->control.visible) {
+    drawControlKeys (m_hndl, 0, m_screen->control.active,
                    m_screen->control.hidden);
-
+  }
 //  drawColor(m_hndl, WHITE);
 //  drawTextCentre(m_hndl, 200, "VIVOE Lite", 12);
   /*

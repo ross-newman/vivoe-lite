@@ -17,9 +17,12 @@ void
 rendererCairo::draw (int handle)
 {
   int count = 0;
+  cairo_surface_t *surface;
 
   cairo_t *cr = m_render_handle[handle].cr;
 
+  /* Push the render to prevent flicker, flush when done */
+  cairo_push_group(cr);
   for (count = 0; count < m_draw_tail; count++)
     {
       command_type *currentCmd = &m_draw_commands[count];
@@ -154,6 +157,11 @@ rendererCairo::draw (int handle)
           cairo_paint (cr);
 //        cairo_surface_destroy(image);
           break;
+        case COMMAND_TEXT_FONT:
+          cairo_select_font_face(cr, 
+          currentCmd->text,
+          (cairo_font_slant_t)currentCmd->arg1,
+          (cairo_font_weight_t)currentCmd->arg2);
         case COMMAND_TEXT:
           cairo_save (cr);
           cairo_set_font_size (cr, currentCmd->arg1);
@@ -167,6 +175,9 @@ rendererCairo::draw (int handle)
           break;
         }
     }
+    /* Pop the group and flush to display on the screen */
+    cairo_pop_group_to_source(cr);
+    cairo_paint(cr);
 }
 
 rendererCairo::rendererCairo (int width, int height)
@@ -348,10 +359,43 @@ rendererCairo::drawColor (int handle, int r, int g, int b)
   return 0;
 }
 
+void 
+rendererCairo::setTextFont (int handle, int slope, int weight, char* fontName)
+{
+  m_draw_commands[m_draw_tail].command = COMMAND_TEXT_FONT;
+  m_draw_commands[m_draw_tail].arg1 = slope;
+  m_draw_commands[m_draw_tail].arg2 = weight;
+  strcpy (m_draw_commands[m_draw_tail].text, fontName);
+  m_draw_tail++;
+}
+
+int 
+rendererCairo::getTextWidth (int handle, char* str) 
+{ 
+  cairo_t *cr = m_render_handle[handle].cr; 
+  cairo_text_extents_t extents; 
+  
+  cairo_set_font_size(cr, 18);
+  cairo_text_extents (cr, str, &extents); 
+  return extents.width;
+}
+
+int 
+rendererCairo::getTextHeight (int handle, char* str) 
+{ 
+  cairo_t *cr = m_render_handle[handle].cr; 
+  cairo_text_extents_t extents; 
+  
+  cairo_set_font_size(cr, 18);
+  cairo_text_extents (cr, str, &extents); 
+  return extents.height;
+}
+
 void
 rendererCairo::drawText (int handle, int x, int y, char *text, int size)
 {
   y = m_render_handle[handle].size.height - y;
+  
   m_draw_commands[m_draw_tail].command = COMMAND_TEXT;
   m_draw_commands[m_draw_tail].points[0].x = x;
   m_draw_commands[m_draw_tail].points[0].y = y;

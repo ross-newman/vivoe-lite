@@ -5,14 +5,16 @@
 #include<SDL2/SDL.h>
 #define MAX_HANDLES 10
 
+#define AMBER 255, 153, 0
 #define WHITE 255, 255, 255
 #define RED 255, 0, 0
-#define GREY 128, 128, 128
+#define GREY 127, 127, 127
 #define DARK_GREY 64, 64, 64
 #define GREEN 0, 255, 0
 #define DARK_GREEN 0, 128, 0
-#define DARK_GREEN2 0, 64, 0
+#define DARK_GREEN2 0, 75, 0
 #define BLUE 0, 0, 255
+#define DARK_BLUE 51, 102, 153
 #define LIGHT_BLUE 50, 50, 255
 #define BLACK 0, 0, 0
 #define YELLOW 255 , 255, 0

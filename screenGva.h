@@ -15,25 +15,34 @@ enum functions
 };
 
 struct functionSelectType {
+  bool visible;
   int active;
   int hidden;
 };
 
 struct functionKeysType {
+  bool visible;
   int active;
   int hidden;
   char labels[6][40];
 };
 
 struct commonTaskKeysType {
+  bool visible;
   int active;
   int hidden;
   char labels[8][40];
 };
 
+struct statusBarType {
+  bool visible;
+  char labels[6][40];
+};
+
 struct screenType {
   char name[100];
   functionSelectType functionTop;
+  statusBarType statusBar;
   functionKeysType functionLeft;
   functionKeysType functionRight;
   commonTaskKeysType control;

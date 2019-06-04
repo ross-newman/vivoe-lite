@@ -12,6 +12,7 @@ public:
   void drawControlKeys(int handle, int y, int active, int hide);
   void drawCompass(int handle, int x, int y, int degrees);
   void drawTable(int handle);
+  void drawMode(int handle);
 private:
   int m_width;
   int m_height;

@@ -47,6 +47,7 @@ enum draw_type
   COMMAND_PEN_RECTANGLE,
   COMMAND_PEN_THICKNESS,
   COMMAND_PEN_TRIANGLE,
+  COMMAND_TEXT_FONT,
   COMMAND_TEXT,
 };
 
@@ -97,6 +98,9 @@ public:
   void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill);
   void drawTriangle (int handle, int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
   int drawColor (int handle, int r, int g, int b);
+  void setTextFont (int handle, int slope, int weight, char* fontName);
+  int getTextWidth (int handle, char* str);
+  int getTextHeight (int handle, char* str);
   void drawText (int handle, int x, int y, char* text, int size);
   void drawTextCentre (int handle, int x, char* text, int size);
   int textureRGB (int handle, int x, int y, void *buffer, char *file);
