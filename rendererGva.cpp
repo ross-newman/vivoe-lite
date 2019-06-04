@@ -14,7 +14,7 @@ FunctionKeySimple::draw(rendererGva *r, int hndl, int x, int y, char* text)
 {
   r->drawRectangle (hndl, x, y, x+100,  y+50, true);
   r->drawColor(hndl, WHITE);
-  r->drawText (hndl, x+7, y+30, text, 14);
+  r->drawText (hndl, x+4, y+30, text, 14);
   m_x = x;
   m_y = y;
 }

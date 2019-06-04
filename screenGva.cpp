@@ -44,7 +44,9 @@ screenGva::update (screenType *screen)
   if (m_screen->statusBar.visible) {
     drawTable (m_hndl);
   }
-  drawCompass (m_hndl, 165, 380, 0);
+  if (m_screen->compass.visible) {
+    drawCompass (m_hndl, 165, 380, 0);
+  }
 
   if (m_screen->control.visible) {
     drawControlKeys (m_hndl, 0, m_screen->control.active,

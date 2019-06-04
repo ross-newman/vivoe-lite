@@ -39,6 +39,12 @@ struct statusBarType {
   char labels[6][40];
 };
 
+struct compassType {
+  bool visible;
+  int bearing;
+  int bearingSight;
+};
+
 struct screenType {
   char name[100];
   functionSelectType functionTop;
@@ -46,6 +52,7 @@ struct screenType {
   functionKeysType functionLeft;
   functionKeysType functionRight;
   commonTaskKeysType control;
+  compassType compass;
 };
 
 class screenGva : public rendererGva

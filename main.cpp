@@ -16,6 +16,7 @@ using namespace std;
 
 // These labels should not change
 #define COMMON_KEYS { true, 0b00100000, 0b00000000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
+#define COMPASS { true, 0, 0 }
 
 #define TEST_FUNCTION_KEYS_TOP { true, 0b00100000, 0b00001000 }
 #define TEST_STATUS_BAR { true,  "12:30:00, 03/06/2019", "BNGF: 216600, 771200", "W0", "A0", "C0"  }
@@ -38,9 +39,9 @@ main (int argc, char *argv[])
 //  resolution_type view = { 1080, 720, 24 };
   int hndl;
   functionSelectType top = TEST_FUNCTION_KEYS_TOP;
-//  screenType screen_test = { "Test Screen", top, TEST_STATUS_BAR, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS };
+//  screenType screen_test = { "Test Screen", top, TEST_STATUS_BAR, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS };
   screenType screen_sa =
-    { "Situational Awareness", SA_FUNCTION_KEYS_TOP, SA_STATUS_BAR, SA_FUNCTION_KEYS_LEFT, SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS }; 
+    { "Situational Awareness", SA_FUNCTION_KEYS_TOP, SA_STATUS_BAR, SA_FUNCTION_KEYS_LEFT, SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS }; 
   screenType *screen = &screen_sa;
 
   screenGva *render = new screenGva (screen, view.width, view.height);
@@ -99,6 +100,14 @@ main (int argc, char *argv[])
 				/* 8 maps to F8 */
 				case 0x11 : 
                     if (!BIT(0, screen->functionTop.hidden)) screen->functionTop.active = 0x1 << 0;
+                    break;
+				/* l toggle labels */
+				case 0x2e : 
+                    screen->functionLeft.visible = screen->functionLeft.visible ? false : true; 
+                    screen->functionRight.visible = screen->functionRight.visible ? false : true; 
+                    screen->control.visible = screen->control.visible ? false : true; 
+                    screen->statusBar.visible = screen->statusBar.visible ? false : true; 
+                    screen->compass.visible = screen->compass.visible ? false : true; 
                     break;
               }
           }
