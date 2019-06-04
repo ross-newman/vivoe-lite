@@ -5,12 +5,13 @@ This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is cur
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen
 ```
 # Conformance to UK MoD / NATO Defence Standards
-## DEF STAN 23-009 - Generic Vehicle Architecture (GVA)
+The sample HMI provided was created to comply with the design guidline layed out in Defence Standard 23-09 Part 2 Generic Vehicle Architecture (GVA) Human Machine Interface, Issue 3 as shown below.
+## DEF STAN 23-09 - Generic Vehicle Architecture (GVA)
 Defence Standard 23-09 is currently split into the parts below:
 
 *  Part 0 - The GVA Approach
 *  Part 1 - Infrastructure (Data and Power)
-*  Part 2 - Human Machine Interface
+*  **Part 2 - Human Machine Interface**
 *  Part 3 - Health and Usage Monitoring (issued Dec 2015)
 *  Part 4 - Physical Interfaces (withdrawn)
 *  Part 5 - GVA Data Model and Model Driven Architecture[6]
@@ -18,11 +19,14 @@ Defence Standard 23-09 is currently split into the parts below:
 *  Part 7 - Common Services (TBD)
 *  Part 8 - Safety (TBD)
 
-## DEF STAN 00-083 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
-Defence Standard 00-083 is currently split into the parts below
+## DEF STAN 00-83 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
+For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
+for Video Over Ethernet Part 1: Standards and Protocols, Issue 2. Specifically Appendix B2 YCbCr 4:2:2 Encoded Uncompressed Video.
+
+Defence Standard 00-083 is currently split into the parts below.
 
 *  Vetronics Infrastructure for Video Over Ethernet Part: 0 : Guidance 
-*  Vetronics Infrastructure for Video Over Ethernet Part: 1 : Standards and Protocols 
+*  **Vetronics Infrastructure for Video Over Ethernet Part: 1 : Standards and Protocols**
 *  Vetronics Infrastructure for Video Over Ethernet Part: 2 : Extensions for Audio and Acoustic Data 
 
 This standard is also mandated in the NATO version of GVA (NGVA). 
