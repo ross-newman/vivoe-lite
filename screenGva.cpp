@@ -1,4 +1,10 @@
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include "screenGva.h"
+#include "logGva.h"
 
 screenGva::screenGva (screenType *screen, int width, int height):
 rendererGva (width, height)
@@ -8,6 +14,49 @@ rendererGva (width, height)
   m_height = height;
   m_hndl = init (m_width, m_height);
   update (m_screen);
+  logGva::log("GVA screen initalised.", LOG_INFO);
+}
+
+screenGva::~screenGva()
+{
+  m_args->active = false;
+  pthread_join(m_clock_thread, 0);
+  free(m_args);
+  logGva::log("GVA screen finalized.", LOG_INFO);
+  logGva::finish();
+}
+
+void *
+clockUpdate(void* arg)
+{
+  args *a = (args*)arg;
+  time_t t;
+  struct tm *tm;
+
+  while (a->active) {
+    t = time(NULL);
+    tm = localtime(&t);
+    sprintf(a->clockString, "%02d/%02d/%02d %02d:%02d:%02d", tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);
+    a->screen->refresh();
+    usleep(1000000);
+  }
+}
+
+void
+screenGva::startClock(statusBarType *barData)
+{
+  pthread_t m_clock_thread;
+  m_args = (args*)malloc(sizeof(args));
+  m_args->active = true;
+  m_args->clockString = barData->labels[0];
+  m_args->screen = this;
+
+  /* Launch clock thread */
+  if(pthread_create(&m_clock_thread, NULL, clockUpdate, (void*)m_args)) {
+    logGva::log("Error creating thread", LOG_ERROR);
+    return;
+  }
+  logGva::log("Internal clock thread started", LOG_INFO);
 }
 
 int
@@ -15,7 +64,6 @@ screenGva::update (screenType *screen)
 {
   char *texture = 0;
   char *bitmap = "test2.png";
-
   reset();
   
   // Set background green
@@ -37,13 +85,15 @@ screenGva::update (screenType *screen)
                     m_screen->functionRight.hidden,
                     m_screen->functionRight.labels);
                   }
-  drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop.active,
-              m_screen->functionTop.hidden);
+  drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop->active,
+              m_screen->functionTop->hidden);
               
   drawMode(m_hndl);            
-  if (m_screen->statusBar.visible) {
-    drawTable (m_hndl);
+
+  if (m_screen->statusBar->visible) {
+    drawTable (m_hndl, m_screen->statusBar->labels);
   }
+
   if (m_screen->compass.visible) {
     drawCompass (m_hndl, 165, 380, 0);
   }
@@ -52,10 +102,34 @@ screenGva::update (screenType *screen)
     drawControlKeys (m_hndl, 0, m_screen->control.active,
                    m_screen->control.hidden);
   }
-//  drawColor(m_hndl, WHITE);
-//  drawTextCentre(m_hndl, 200, "VIVOE Lite", 12);
+
   /*
    *  Refersh display
    */
   draw(m_hndl);
+  m_last_screen = *screen;
 }
+
+int 
+screenGva::refresh()
+{
+  XClientMessageEvent dummyEvent;
+  update(&m_last_screen);
+
+  /*
+   * Send a dumy event to force screen update 
+   */
+#if 1
+  XLockDisplay(getDisplay()); 
+  memset(&dummyEvent, 0, sizeof(XClientMessageEvent));
+  dummyEvent.type = ClientMessage;
+  dummyEvent.window = *getWindow();
+  dummyEvent.format = 32;
+  XSendEvent(getDisplay(), *getWindow(), 0, 0, (XEvent*)&dummyEvent);
+  XFlush(getDisplay());
+  XUnlockDisplay(getDisplay()); 
+#endif
+  printf("Refresh\n");
+}
+
+

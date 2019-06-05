@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project 
-OBJS = main.cpp rendererSdl.cpp rendererCairo.cpp rendererGva.cpp screenGva.cpp pngget.cpp debug.cpp
+OBJS = main.cpp rendererSdl.cpp rendererCairo.cpp rendererGva.cpp screenGva.cpp pngget.cpp debug.cpp logGva.cpp
 #CC specifies which compiler we're using 
 CC = g++ 
 #COMPILER_FLAGS specifies the additional compilation options we're using 

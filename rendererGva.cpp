@@ -147,7 +147,7 @@ rendererGva::drawMode(int hndl)
 }
 
 void
-rendererGva::drawTable(int hndl)
+rendererGva::drawTable(int hndl, char labels[5][80])
 {
   int y = m_height * 0.92;
   int column=0;
@@ -156,7 +156,7 @@ rendererGva::drawTable(int hndl)
   int columns = 5;
   int widths[5] = { 30, 40, 10, 10, 10 };
 //  char labels[5][80] = { "Long:  Lat:  ", "12:30:00", "A: 0", "E: 0", "C: 0" };
-  char labels[5][80] = { "12:30:00, 03/06/2019", "BNGF: 216600, 771200", "W0", "A0", "C0" };
+//  char labels[5][80] = { "12:30:00, 03/06/2019", "BNGF: 216600, 771200", "W0", "A0", "C0" };
     
   setColourForground(hndl, WHITE);
   setColourBackground(hndl, DARK_GREEN);
