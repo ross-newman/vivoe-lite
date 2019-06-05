@@ -1,4 +1,4 @@
-![VIVOE-LITE](images/Open%20Architectre.png)
+![VIVOE-LITE](images/Vivoe-Lite-Banner.png)
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
