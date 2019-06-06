@@ -12,8 +12,16 @@ sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses
 ```
 # HMI
 The application includes an refferance implementation of the GVA HMI. This is meant as a refferance only and does not implement a lot of the functionality defined in the Land Data Model. Its primerially used to demo various video streaming pipelines for real time video processing.
+
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 **GVA Human Machine Interface**
+To build the HMI clone the code and run make.
+```
+$ git clone https://github.com/ross-newman/vivoe-lite cd 
+$ cd vivoe-lite
+$ make
+$ ./hmi-display
+```
 # Configuration
 GVA parameters and system wide setting are read in from the .xml configuration files. These are listed below:
 ## config.xml
