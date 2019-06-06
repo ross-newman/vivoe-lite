@@ -43,6 +43,7 @@ enum draw_type
   COMMAND_PEN_COLOUR,
   COMMAND_PEN_CURVE,
   COMMAND_PEN_LINE,
+  COMMAND_PEN_DRAW,
   COMMAND_PEN_MOVE,
   COMMAND_PEN_RECTANGLE,
   COMMAND_PEN_THICKNESS,
@@ -80,6 +81,13 @@ static void win_deinit(win_t *win);
 static void win_draw(win_t *win);
 static void win_handle_events(win_t *win);
 
+typedef enum {
+  LINE_SOLID,
+  LINE_DASHED,
+  LINE_DASHED_MEDIUM,
+  LINE_DASHED_LARGE,
+} lineType;
+
 class rendererCairo : public renderer
 {
 public:
@@ -92,7 +100,9 @@ public:
   void setColourForground (int handle, int red, int green, int blue);
   void setColourBackground (int handle, int red, int green, int blue);
   void setLineType (int handle, int type);
-  void setLineThickness (int handle, int thickness);
+  void setLineThickness (int handle, int thickness, lineType fill);
+  int movePen (int handle, int x, int y);
+  int drawPen (int handle, int x, int y, bool close);
   int drawLine (int handle, int x1, int y1, int x2, int y2);
   void drawCircle (int handle, int x, int y, int radius, bool fill);
   void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill);

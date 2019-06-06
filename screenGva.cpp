@@ -64,6 +64,8 @@ screenGva::update (screenType *screen)
 {
   char *texture = 0;
   char *bitmap = "test2.png";
+  
+  /* Reset the drawing context, must be reset before redrawing the screen */ 
   reset();
   
   // Set background green
@@ -74,7 +76,6 @@ screenGva::update (screenType *screen)
 #if 1
   textureRGB (m_hndl, 0, 0, texture, bitmap);
 #endif
-
   if (m_screen->functionLeft.visible) {
   drawFunctionKeys (m_hndl, 1, m_screen->functionLeft.active,
                     m_screen->functionLeft.hidden,
@@ -84,9 +85,11 @@ screenGva::update (screenType *screen)
   drawFunctionKeys (m_hndl, m_width - 100 - 1, m_screen->functionRight.active,
                     m_screen->functionRight.hidden,
                     m_screen->functionRight.labels);
-                  }
+  }
+#if 1
   drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop->active,
               m_screen->functionTop->hidden);
+#endif
               
   drawMode(m_hndl);            
 
@@ -95,7 +98,7 @@ screenGva::update (screenType *screen)
   }
 
   if (m_screen->compass.visible) {
-    drawCompass (m_hndl, 165, 380, 0);
+    drawPPI (m_hndl, 165, 380, 0);
   }
 
   if (m_screen->control.visible) {
@@ -114,22 +117,18 @@ int
 screenGva::refresh()
 {
   XClientMessageEvent dummyEvent;
-  update(&m_last_screen);
 
   /*
    * Send a dumy event to force screen update 
    */
-#if 1
   XLockDisplay(getDisplay()); 
   memset(&dummyEvent, 0, sizeof(XClientMessageEvent));
-  dummyEvent.type = ClientMessage;
+  dummyEvent.type = Expose;
   dummyEvent.window = *getWindow();
   dummyEvent.format = 32;
-  XSendEvent(getDisplay(), *getWindow(), 0, 0, (XEvent*)&dummyEvent);
+  XSendEvent(getDisplay(), *getWindow(), False, StructureNotifyMask, (XEvent *)&dummyEvent);
   XFlush(getDisplay());
   XUnlockDisplay(getDisplay()); 
-#endif
-  printf("Refresh\n");
 }
 
 

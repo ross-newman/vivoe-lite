@@ -1,5 +1,7 @@
 *.png
 *.bak
+*.jpg
+*.txt
 *~
 main
 hmi_display

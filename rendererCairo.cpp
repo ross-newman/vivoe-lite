@@ -18,6 +18,7 @@ rendererCairo::draw (int handle)
 {
   int count = 0;
   cairo_surface_t *surface;
+  double dashed[] = {1.0};
 
   cairo_t *cr = m_render_handle[handle].cr;
 
@@ -66,6 +67,11 @@ rendererCairo::draw (int handle)
           cairo_move_to (cr, currentCmd->points[0].x,
                          currentCmd->points[0].y);
           break;
+        case COMMAND_PEN_DRAW:
+          cairo_line_to (cr, currentCmd->points[0].x,
+                         currentCmd->points[0].y);
+          if (currentCmd->arg1) cairo_stroke (cr);
+          break;
         case COMMAND_PEN_LINE:
           cairo_move_to (cr, currentCmd->points[0].x,
                          currentCmd->points[0].y);
@@ -90,7 +96,7 @@ rendererCairo::draw (int handle)
                              currentCmd->points[0].y -
                              currentCmd->points[1].y);
           cairo_close_path (cr);
-
+#if 1
           if (currentCmd->fill)
             {
               cairo_set_source_rgb (cr, intToFloat (m_background_colour.red),
@@ -106,6 +112,7 @@ rendererCairo::draw (int handle)
             {
               cairo_stroke (cr);
             }
+#endif
           break;
         case COMMAND_PEN_TRIANGLE:
           cairo_new_path (cr);
@@ -146,6 +153,15 @@ rendererCairo::draw (int handle)
           break;
         case COMMAND_PEN_THICKNESS:
           cairo_set_line_width (cr, (cairo_line_join_t) currentCmd->arg1);
+          switch (currentCmd->arg2) {
+          case LINE_DASHED :
+            cairo_set_dash(cr, dashed, 1, 0);
+            break;
+          case LINE_SOLID :
+          default :
+            cairo_set_dash(cr, 0, 0, 0);
+            break;
+          }
           break;
         case COMMAND_LINE_JOIN:
           cairo_set_line_join (cr, (cairo_line_join_t) currentCmd->arg1);
@@ -155,7 +171,7 @@ rendererCairo::draw (int handle)
                                     currentCmd->points[0].x,
                                     currentCmd->points[0].y);
           cairo_paint (cr);
-//        cairo_surface_destroy(image);
+//          cairo_surface_destroy(m_image_list[currentCmd->arg1].image);
           break;
         case COMMAND_TEXT_FONT:
           cairo_select_font_face(cr, 
@@ -278,11 +294,38 @@ rendererCairo::setLineType (int handle, int type)
 }
 
 void
-rendererCairo::setLineThickness (int handle, int thickness)
+rendererCairo::setLineThickness (int handle, int thickness, lineType fill)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_THICKNESS;
   m_draw_commands[m_draw_tail].arg1 = thickness;
+  m_draw_commands[m_draw_tail].arg2 = fill;
   m_draw_tail++;
+}
+
+int 
+rendererCairo::movePen (int handle, int x, int y)
+{
+  y = m_render_handle[handle].size.height - y;
+
+  m_draw_commands[m_draw_tail].command = COMMAND_PEN_MOVE;
+  m_draw_commands[m_draw_tail].points[0].x = x;
+  m_draw_commands[m_draw_tail].points[0].y = y;
+  m_draw_tail++;
+  return 0;
+}
+
+int 
+rendererCairo::drawPen (int handle, int x, int y, bool close)
+{
+  y = m_render_handle[handle].size.height - y;
+
+  m_draw_commands[m_draw_tail].command = COMMAND_PEN_DRAW;
+  m_draw_commands[m_draw_tail].points[0].x = x;
+  m_draw_commands[m_draw_tail].points[0].y = y;
+  m_draw_commands[m_draw_tail].arg1 = close;
+  m_draw_tail++;
+  return 0;
+
 }
 
 int
@@ -293,8 +336,6 @@ rendererCairo::drawLine (int handle, int x1, int y1, int x2, int y2)
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_LINE;
   m_draw_commands[m_draw_tail].points[0].x = x1;
   m_draw_commands[m_draw_tail].points[0].y = y1;
-  m_draw_commands[m_draw_tail].points[1].x = x2;
-  m_draw_commands[m_draw_tail].points[1].y = y2;
   m_draw_tail++;
   return 0;
 }
@@ -414,6 +455,7 @@ int
 rendererCairo::textureRGB (int handle, int x, int y, void *buffer, char *file)
 {
   strcpy (m_image_list[m_image_tail].name, file);
+
   m_image_list[m_image_tail].image =
     cairo_image_surface_create_from_png (file);
 
@@ -457,182 +499,4 @@ rendererCairo::win_init (win_t * win, int width, int height)
                 KeyPressMask | StructureNotifyMask | ExposureMask);
 
   XMapWindow (win->dpy, win->win);
-}
-
-
-
-
-
-
-
-
-
-
-
-static void
-triangle (cairo_t * cr)
-{
-  cairo_move_to (cr, SIZE, 0);
-  cairo_rel_line_to (cr, SIZE, 2 * SIZE);
-  cairo_rel_line_to (cr, -2 * SIZE, 0);
-  cairo_close_path (cr);
-}
-
-static void
-square (cairo_t * cr)
-{
-  cairo_move_to (cr, 0, 0);
-  cairo_rel_line_to (cr, 2 * SIZE, 0);
-  cairo_rel_line_to (cr, 0, 2 * SIZE);
-  cairo_rel_line_to (cr, -2 * SIZE, 0);
-  cairo_close_path (cr);
-}
-
-static void
-bowtie (cairo_t * cr)
-{
-  cairo_move_to (cr, 0, 0);
-  cairo_rel_line_to (cr, 2 * SIZE, 2 * SIZE);
-  cairo_rel_line_to (cr, -2 * SIZE, 0);
-  cairo_rel_line_to (cr, 2 * SIZE, -2 * SIZE);
-  cairo_close_path (cr);
-}
-
-static void
-inf (cairo_t * cr)
-{
-  cairo_move_to (cr, 0, SIZE);
-  cairo_rel_curve_to (cr, 0, SIZE, SIZE, SIZE, 2 * SIZE, 0);
-  cairo_rel_curve_to (cr, SIZE, -SIZE, 2 * SIZE, -SIZE, 2 * SIZE, 0);
-  cairo_rel_curve_to (cr, 0, SIZE, -SIZE, SIZE, -2 * SIZE, 0);
-  cairo_rel_curve_to (cr, -SIZE, -SIZE, -2 * SIZE, -SIZE, -2 * SIZE, 0);
-  cairo_close_path (cr);
-}
-
-static void
-draw_shapes (cairo_t * cr, int x, int y, int fill)
-{
-  cairo_save (cr);
-
-  cairo_new_path (cr);
-  cairo_translate (cr, x + SIZE, y + SIZE);
-  bowtie (cr);
-  if (fill)
-    cairo_fill (cr);
-  else
-    cairo_stroke (cr);
-
-  cairo_new_path (cr);
-  cairo_translate (cr, 4 * SIZE, 0);
-  square (cr);
-  if (fill)
-    cairo_fill (cr);
-  else
-    cairo_stroke (cr);
-
-  cairo_new_path (cr);
-  cairo_translate (cr, 4 * SIZE, 0);
-  triangle (cr);
-  if (fill)
-    cairo_fill (cr);
-  else
-    cairo_stroke (cr);
-
-  cairo_new_path (cr);
-  cairo_translate (cr, 4 * SIZE, 0);
-  inf (cr);
-  if (fill)
-    cairo_fill (cr);
-  else
-    cairo_stroke (cr);
-
-  cairo_restore (cr);
-}
-
-static void
-fill_shapes (cairo_t * cr, int x, int y)
-{
-  draw_shapes (cr, x, y, 1);
-}
-
-static void
-stroke_shapes (cairo_t * cr, int x, int y)
-{
-  draw_shapes (cr, x, y, 0);
-}
-
-static void
-win_draw (win_t * win)
-{
-  cout << "Line: " << __LINE__ << "\n";
-#define NUM_DASH 2
-  static double dash[NUM_DASH] = { SIZE / 4.0, SIZE / 4.0 };
-  cairo_surface_t *surface;
-  cairo_t *cr;
-  Visual *visual = DefaultVisual (win->dpy, DefaultScreen (win->dpy));
-
-  XClearWindow (win->dpy, win->win);
-
-  surface = cairo_xlib_surface_create (win->dpy, win->win, visual,
-                                       win->width, win->height);
-  cr = cairo_create (surface);
-
-  cairo_set_source_rgb (cr, 1, 1, 1);
-
-  cairo_save (cr);
-  cairo_set_font_size (cr, 20);
-  cairo_move_to (cr, 10, 10);
-  cairo_rotate (cr, M_PI / 2);
-  cairo_show_text (cr, "Hello World.");
-  cairo_restore (cr);
-
-
-  /* This is handy for examining problems more closely */
-  /*    cairo_scale(cr, 4, 4);  */
-
-  cairo_set_line_width (cr, SIZE / 8);
-
-  cairo_set_tolerance (cr, .1);
-
-  cairo_set_line_join (cr, CAIRO_LINE_JOIN_ROUND);
-  cairo_set_dash (cr, dash, NUM_DASH, 0);
-  stroke_shapes (cr, 0, 0);
-
-  cairo_translate (cr, 0, 4 * SIZE);
-
-  cairo_set_dash (cr, NULL, 0, 0);
-  stroke_shapes (cr, 0, 0);
-
-  cairo_translate (cr, 0, 4 * SIZE);
-
-  cairo_set_line_join (cr, CAIRO_LINE_JOIN_BEVEL);
-  stroke_shapes (cr, 0, 0);
-
-  cairo_translate (cr, 0, 4 * SIZE);
-
-  cairo_set_line_join (cr, CAIRO_LINE_JOIN_MITER);
-  stroke_shapes (cr, 0, 0);
-
-  cairo_translate (cr, 0, 4 * SIZE);
-
-  fill_shapes (cr, 0, 0);
-
-  cairo_translate (cr, 0, 4 * SIZE);
-
-  cairo_set_line_join (cr, CAIRO_LINE_JOIN_BEVEL);
-  fill_shapes (cr, 0, 0);
-  cairo_set_source_rgb (cr, 1, 0, 0);
-  stroke_shapes (cr, 0, 0);
-/*
-    draw_broken_shapes(cr);
-*/
-  if (cairo_status (cr))
-    {
-      printf ("Cairo is unhappy: %s\n",
-              cairo_status_to_string (cairo_status (cr)));
-      exit (0);
-    }
-
-  cairo_destroy (cr);
-  cairo_surface_destroy (surface);
 }

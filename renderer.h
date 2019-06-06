@@ -14,6 +14,7 @@
 #define DARK_GREEN 0, 128, 0
 #define DARK_GREEN2 0, 75, 0
 #define BLUE 0, 0, 255
+#define CYAN 0, 255, 255
 #define DARK_BLUE 51, 102, 153
 #define LIGHT_BLUE 50, 50, 255
 #define BLACK 0, 0, 0

@@ -23,7 +23,7 @@ using namespace std;
 #define TEST_FUNCTION_KEYS_LEFT { true, 0b000001, 0b011100 , { "F1", "F2", "F3", "F4", "F5", "F6" } }
 #define TEST_FUNCTION_KEYS_RIGHT { true, 0b100000, 0b001111, { "F7", "F8", "F9", "F10", "F11", "F12" } }
 
-#define SA_FUNCTION_KEYS_LEFT { true, 0b100000, 0b010000 , { "PriSight", LABEL_NULL, "Quad", "Front left", "Left", "Rear Left" } }
+#define SA_FUNCTION_KEYS_LEFT { true, 0b100000, 0b001000 , { "WpnSight", "Quad", LABEL_NULL, "Front left", "Left", "Rear Left" } }
 #define SA_FUNCTION_KEYS_RIGHT { true, 0b000100, 0b111000, { LABEL_NULL, LABEL_NULL, LABEL_NULL, "Front right", "Right", "Rear right" } }
 
 #define BIT(b,x) (x & 0x1 << b)
@@ -45,28 +45,29 @@ main (int argc, char *argv[])
   screenType screen_sa =
     { "Situational Awareness", &top, &status, SA_FUNCTION_KEYS_LEFT, SA_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS }; 
   screenType *screen = &screen_sa;
-
   screenGva *render = new screenGva (screen, view.width, view.height);
 
-  Display *d = render->getDisplay ();
-  Window *w = render->getWindow ();
+  cout << "hmi_display (v%d.%d.%d) author ross@rossnewman.com...\n";
 
   if (XInitThreads() == 0) {
 	  printf("Error setting XInitThreads\n");
 	  return -1;
   }
 
+  Display *d = render->getDisplay ();
+  Window *w = render->getWindow ();
+
   /* select kind of events we are interested in */
   XSelectInput (d, *w, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
   
-  render->startClock(&status);
   render->update(screen);
+  render->startClock(&status);
   
   while (!done)
     {
       XLockDisplay(d); 
       XNextEvent (d, &event);
-      while(XCheckMaskEvent(d, -1, &event)) {}
+//      while(XCheckMaskEvent(d, -1, &event)) {}
       switch (event.type)
         {
         case KeyPress:
@@ -152,8 +153,7 @@ main (int argc, char *argv[])
     }
 
   /*
-   * Clean up render/s
+   * Clean up code goes here
    */
-  delete (render);
-  sleep(1);
+  cout << "Exiting hmi_display...\n";
 }

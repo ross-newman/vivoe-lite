@@ -1,3 +1,4 @@
+#include <math.h>       /* sqrt */
 #include "debug.h"
 #include "rendererGva.h"
 
@@ -41,7 +42,7 @@ rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide, char labels
   setColourForground(hndl, DARK_GREEN2);
   setColourBackground(hndl, DARK_GREEN);
   setLineType (hndl, CAIRO_LINE_JOIN_ROUND);
-  setLineThickness(hndl, 2);
+  setLineThickness(hndl, 2, LINE_SOLID);
   setTextFont(hndl, (int)CAIRO_FONT_SLANT_NORMAL, (int)CAIRO_FONT_WEIGHT_NORMAL, "Courier");
 
   for (i=0; i<6; i++)
@@ -69,7 +70,7 @@ rendererGva::drawSaKeys(int hndl, int y, int active, int hide)
   setColourForground(hndl, DARK_GREEN2);
   setColourBackground(hndl, DARK_GREEN);
   setLineType (hndl, CAIRO_LINE_JOIN_ROUND);
-  setLineThickness(hndl, 2);
+  setLineThickness(hndl, 2, LINE_SOLID);
 
   for (i=0; i<8; i++)
   {
@@ -93,7 +94,7 @@ rendererGva::drawControlKeys(int hndl, int y, int active, int hide)
   setColourForground(hndl, DARK_GREEN2);
   setColourBackground(hndl, DARK_GREEN);
   setLineType (hndl, CAIRO_LINE_JOIN_ROUND);
-  setLineThickness(hndl, 2);
+  setLineThickness(hndl, 2, LINE_SOLID);
   setTextFont(hndl, (int)CAIRO_FONT_SLANT_NORMAL, (int)CAIRO_FONT_WEIGHT_BOLD, "Courier");
 
   for (i=0; i<8; i++)
@@ -109,23 +110,81 @@ rendererGva::drawControlKeys(int hndl, int y, int active, int hide)
   }
 }
 
+#define PLOT_CIRCLE_X(x, radius, degree) x + (radius) * cos(((M_PI * 2) / 360) * degree)
+#define PLOT_CIRCLE_Y(y, radius, degree) y - (radius) * sin(((M_PI * 2) / 360) * degree)
 void
-rendererGva::drawCompass(int hndl, int x, int y, int degrees)
+rendererGva::drawPPI(int hndl, int x, int y, int degrees)
 {
+  int radius = 50;
+  int angle=36;
+  int sightAzimuth=45;
+  float d=0;
+  
   // Compass
   setColourBackground(hndl, BLACK);
   setColourForground(hndl, WHITE);
-  setLineThickness(hndl, 1);
-  drawCircle (hndl, x, y, 50, true);      // Compass
-  drawCircle (hndl, x, y, 3, true);      // Compass
-  
-  // Heading
-  setColourBackground(hndl, LIGHT_BLUE);
+  setLineThickness(hndl, 1, LINE_SOLID);
+  drawCircle (hndl, x, y, radius, true);      // Compass
+  drawCircle (hndl, x, y, 8, true);      // Compass
+    
+  // Vehicle outline
   setColourForground(hndl, WHITE);
-  drawTriangle (hndl, x-3, y, x+3, y, x, y+40, true);
-
+  setColourBackground(hndl, WHITE);
+  setLineThickness(hndl, 2, LINE_SOLID);
+  movePen(hndl, x-15, y-20); 
+  drawPen(hndl, x+15, y-20, false); 
+  drawPen(hndl, x+15, y+20, false); 
+  drawPen(hndl, x+5, y+20, false); 
+  drawPen(hndl, x+5, y+15, false); 
+  drawPen(hndl, x-5, y+15, false); 
+  drawPen(hndl, x-5, y+20, false); 
+  drawPen(hndl, x-15, y+20, false); 
+  drawPen(hndl, x-15, y-20, true);
+  
+  // Compass Markings
   setTextFont(hndl, (int)CAIRO_FONT_SLANT_NORMAL, (int)CAIRO_FONT_WEIGHT_BOLD, "Courier");
+  drawText(hndl, x-3, y+40, "N", 9);
+  drawText(hndl, x-3, y-44, "S", 9);
+  drawText(hndl, x-44, y-4, "W", 9);
+  drawText(hndl, x+40, y-4, "E", 9);
 
+  setLineThickness(hndl, 1, LINE_SOLID);
+  float step = (M_PI * 2) / 32; 
+  int p = 20;
+  int c = 0;
+  for (d=0;d<=(M_PI * 2);d+=step) {
+    p = c++ % 4 ? 17 : 13;
+    movePen(hndl, x + (radius-21) * cos(d), y - (radius-21) * sin(d)); 
+    drawPen(hndl, x + (radius-p) * cos(d), y - (radius-p) * sin(d), true); 
+  }
+
+  // Sight 
+  setLineThickness(hndl, 2, LINE_SOLID);
+  setColourBackground(hndl, WHITE);
+  setColourForground(hndl, WHITE);
+  {
+    int x2, y2;
+    x2 = PLOT_CIRCLE_X(x, radius-10, sightAzimuth);
+    y2 = PLOT_CIRCLE_Y(y, radius-10, sightAzimuth);
+    movePen(hndl, x, y); 
+    drawPen(hndl, x2, y2, true); 
+    setLineThickness(hndl, 1, LINE_DASHED);
+    x2 = PLOT_CIRCLE_X(x, radius-10, (sightAzimuth-(angle/2)));
+    y2 = PLOT_CIRCLE_Y(y, radius-10, (sightAzimuth-(angle/2)));
+    movePen(hndl, x, y); 
+    drawPen(hndl, x2, y2, true); 
+    setLineThickness(hndl, 1, LINE_DASHED);
+    x2 = PLOT_CIRCLE_X(x, radius-10, (sightAzimuth+(angle/2)));
+    y2 = PLOT_CIRCLE_Y(y, radius-10, (sightAzimuth+(angle/2)));
+    movePen(hndl, x, y); 
+    drawPen(hndl, x2, y2, true); 
+  }
+
+  // Heading 
+  setLineThickness(hndl, 1, LINE_SOLID);
+  setColourBackground(hndl, CYAN);
+  setColourForground(hndl, CYAN);
+  drawRectangle (hndl, x-1, y+8, x+1, y+35, true);
 }
 
 void
@@ -135,7 +194,7 @@ rendererGva::drawMode(int hndl)
   int y=m_height * 0.1;
   setColourForground(hndl, WHITE);
   setColourBackground(hndl, DARK_BLUE);
-  setLineThickness(hndl, 2);
+  setLineThickness(hndl, 2, LINE_SOLID);
 
   setTextFont(hndl, (int)CAIRO_FONT_SLANT_NORMAL, (int)CAIRO_FONT_WEIGHT_NORMAL, "Courier");
 
@@ -155,12 +214,10 @@ rendererGva::drawTable(int hndl, char labels[5][80])
   int offset = padding;
   int columns = 5;
   int widths[5] = { 30, 40, 10, 10, 10 };
-//  char labels[5][80] = { "Long:  Lat:  ", "12:30:00", "A: 0", "E: 0", "C: 0" };
-//  char labels[5][80] = { "12:30:00, 03/06/2019", "BNGF: 216600, 771200", "W0", "A0", "C0" };
     
   setColourForground(hndl, WHITE);
   setColourBackground(hndl, DARK_GREEN);
-  setLineThickness(hndl, 2);
+  setLineThickness(hndl, 2, LINE_SOLID);
   setTextFont(hndl, (int)CAIRO_FONT_SLANT_NORMAL, (int)CAIRO_FONT_WEIGHT_NORMAL, "Courier");
 
   for (column=0; column<columns; column++)
