@@ -48,7 +48,7 @@ rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide, char labels
   for (i=0; i<6; i++)
   {    
     setColourBackground(hndl, DARK_GREEN);
-    if (!(1<<(5-i) & hide))
+    if ((1<<(5-i) & hide))
     { 
       (1<<(5-i) & active) ? setColourForground(hndl, YELLOW) : setColourForground(hndl, DARK_GREEN2);
       FunctionKeyToggle * key = new FunctionKeyToggle();

@@ -51,8 +51,14 @@ struct compassType {
   int bearingSight;
 };
 
+struct canvasType {
+  bool visible;
+  char filename[256];
+};
+
 struct screenType {
   char name[100];
+  canvasType canvas;
   functionSelectType *functionTop;
   statusBarType *statusBar;
   functionKeysType functionLeft;

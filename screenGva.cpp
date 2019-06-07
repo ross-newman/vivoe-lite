@@ -63,7 +63,6 @@ int
 screenGva::update (screenType *screen)
 {
   char *texture = 0;
-  char *bitmap = "test2.png";
   
   /* Reset the drawing context, must be reset before redrawing the screen */ 
   reset();
@@ -74,7 +73,9 @@ screenGva::update (screenType *screen)
   drawRectangle (m_hndl, 0, 0, m_width, m_height, true);
 
 #if 1
-  textureRGB (m_hndl, 0, 0, texture, bitmap);
+  if (m_screen->canvas.visible) {
+    textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
+  }
 #endif
   if (m_screen->functionLeft.visible) {
   drawFunctionKeys (m_hndl, 1, m_screen->functionLeft.active,
