@@ -1,7 +1,7 @@
 dist: xenial
 sudo: true
 language: cpp
-before_install: sudo apt install sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev
+before_install: sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev
 compiler:
   - gcc
 script:
