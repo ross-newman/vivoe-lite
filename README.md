@@ -1,7 +1,7 @@
 ![VIVOE-LITE](images/Vivoe-Lite-Banner.png)
-![Version](https://img.shields.io/badge/version-0.0.1-green.svg)
-![Status](https://img.shields.io/badge/status-Unstable-orange.svg)
-[![License](https://img.shields.io/badge/licence-MIT-green.svg)](https://opensource.org/licenses/MIT)
+![Version](https://img.shields.io/badge/version-0.0.1-brightgreen.svg)
+![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
+[![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Issues](https://img.shields.io/github/issues/ross-newman/vivoe-lite.svg)](https://github.com/ross-newman/vivoe-lite/issues)
 [![Forks](https://img.shields.io/github/forks/ross-newman/vivoe-lite.svg)](https://github.com/ross-newman/vivoe-lite/network/members)
 [![Stars](https://img.shields.io/github/stars/ross-newman/vivoe-lite.svg)](https://github.com/ross-newman/vivoe-lite/stargazers)
@@ -9,6 +9,18 @@
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev
+```
+# HMI
+The application includes an refferance implementation of the GVA HMI. This is meant as a refferance only and does not implement a lot of the functionality defined in the Land Data Model. Its primerially used to demo various video streaming pipelines for real time video processing.
+
+![GVA HMI](images/GVA-HMI-Cairo.png)
+**GVA Human Machine Interface**
+To build the HMI clone the code and run make.
+```
+$ git clone https://github.com/ross-newman/vivoe-lite cd 
+$ cd vivoe-lite
+$ make
+$ ./hmi-display
 ```
 # Configuration
 GVA parameters and system wide setting are read in from the .xml configuration files. These are listed below:
