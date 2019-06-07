@@ -47,7 +47,7 @@ main (int argc, char *argv[])
   screenType *screen = &screen_sa;
   screenGva *render = new screenGva (screen, view.width, view.height);
 
-  cout << "hmi_display (v%d.%d.%d) author ross@rossnewman.com...\n";
+  cout << "hmi_display (v" << MAJOR << "." << MINOR << "." << PATCH << ") author ross@rossnewman.com...";
 
   if (XInitThreads() == 0) {
 	  printf("Error setting XInitThreads\n");

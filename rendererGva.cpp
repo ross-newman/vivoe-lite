@@ -143,9 +143,9 @@ rendererGva::drawPPI(int hndl, int x, int y, int degrees)
   
   // Compass Markings
   setTextFont(hndl, (int)CAIRO_FONT_SLANT_NORMAL, (int)CAIRO_FONT_WEIGHT_BOLD, "Courier");
-  drawText(hndl, x-3, y+40, "N", 9);
-  drawText(hndl, x-3, y-44, "S", 9);
-  drawText(hndl, x-44, y-4, "W", 9);
+  drawText(hndl, x-3, y+39, "N", 9);
+  drawText(hndl, x-3, y-46, "S", 9);
+  drawText(hndl, x-46, y-4, "W", 9);
   drawText(hndl, x+40, y-4, "E", 9);
 
   setLineThickness(hndl, 1, LINE_SOLID);
