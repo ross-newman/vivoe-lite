@@ -1,3 +1,0 @@
-[submodule "rtp-payloader"]
-	path = rtp-payloader
-	url = http://github.com/ross-newman/rtp-payloader
