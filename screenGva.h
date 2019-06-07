@@ -30,6 +30,8 @@ struct functionKeysType {
   bool visible;
   int active;
   int hidden;
+  int toggleActive;
+  int toggleOn;
   char labels[6][40];
 };
 

@@ -7,7 +7,7 @@ class rendererGva : public rendererCairo
 {
 public:  
   rendererGva(int width, int height);
-  void drawFunctionKeys(int handle, int x, int active, int hide, char labels[6][40]);
+  void drawFunctionKeys(int handle, int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
   void drawSaKeys(int handle, int y, int active, int hide);
   void drawControlKeys(int handle, int y, int active, int hide);
   void drawPPI(int handle, int x, int y, int degrees);

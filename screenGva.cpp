@@ -80,11 +80,15 @@ screenGva::update (screenType *screen)
   if (m_screen->functionLeft.visible) {
   drawFunctionKeys (m_hndl, 1, m_screen->functionLeft.active,
                     m_screen->functionLeft.hidden,
+                    m_screen->functionLeft.toggleActive,
+                    m_screen->functionLeft.toggleOn,
                     m_screen->functionLeft.labels);
   }
   if (m_screen->functionRight.visible) {
   drawFunctionKeys (m_hndl, m_width - 100 - 1, m_screen->functionRight.active,
                     m_screen->functionRight.hidden,
+                    m_screen->functionRight.toggleActive,
+                    m_screen->functionRight.toggleOn,
                     m_screen->functionRight.labels);
   }
 #if 1

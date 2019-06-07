@@ -13,9 +13,24 @@ rendererCairo(width, height)
 void
 FunctionKeySimple::draw(rendererGva *r, int hndl, int x, int y, char* text)
 {
+  char copy[256];
+  char delim[] = ".";
+  char* ptr = NULL;
+
   r->drawRectangle (hndl, x, y, x+100,  y+50, true);
   r->drawColor(hndl, WHITE);
-  r->drawText (hndl, x+4, y+30, text, 14);
+
+  strncpy(copy, text, 40);
+  ptr = strtok(copy, delim);
+  if (ptr != NULL) {
+    r->drawText (hndl, x+4, y+30, ptr, 14);
+    ptr = strtok(NULL, delim); 
+    if (ptr != NULL) r->drawText (hndl, x+4, y+10, ptr, 14);
+  }
+  else {
+    r->drawText (hndl, x+4, y+30, text, 14);
+  } 
+
   m_x = x;
   m_y = y;
 }
@@ -23,18 +38,20 @@ FunctionKeySimple::draw(rendererGva *r, int hndl, int x, int y, char* text)
 void
 FunctionKeyToggle::toggle(rendererGva *r, int hndl, char* label1, char* label2)
 {
-  r->setColourForground(hndl, DARK_GREEN2);
+  r->setColourForground(hndl, BLACK);
   r->setColourBackground(hndl, YELLOW);
   r->drawRectangle (hndl, getX()+5, getY()+5, getX()+45,  getY()+25, true);
   r->drawColor(hndl, BLACK);
   r->drawText (hndl, getX()+12, getY()+9, label1, 14);
-  r->setColourBackground(hndl, DARK_GREEN);
+  r->setColourBackground(hndl, GREY);
+  r->setColourForground(hndl, DARK_GREY);
   r->drawRectangle (hndl, getX()+50, getY()+5, getX()+95,  getY()+25, true);
+  r->drawColor(hndl, BLACK);
   r->drawText (hndl, getX()+56, getY()+9, label2, 14);
 }
 
 void
-rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide, char labels[6][40])
+rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide, int toggle, int toggleOn, char labels[6][40])
 {
   int i=0;
   int offset = m_height-100;
@@ -53,8 +70,8 @@ rendererGva::drawFunctionKeys(int hndl, int x, int active, int hide, char labels
       (1<<(5-i) & active) ? setColourForground(hndl, YELLOW) : setColourForground(hndl, DARK_GREEN2);
       FunctionKeyToggle * key = new FunctionKeyToggle();
       key->draw (this, hndl, x, offset-(i*65), labels[i]);
-      
-//      if (i==5) key->toggle (this, hndl,  "On", "Off");
+            
+      if ((1<<(5-i) & toggle)) key->toggle (this, hndl,  "On", "Off");
     }  
   }
 }
@@ -153,7 +170,7 @@ rendererGva::drawPPI(int hndl, int x, int y, int degrees)
   int p = 20;
   int c = 0;
   for (d=0;d<=(M_PI * 2);d+=step) {
-    p = c++ % 4 ? 17 : 13;
+    p = c++ % 4 ? 14 : 11;
     movePen(hndl, x + (radius-21) * cos(d), y - (radius-21) * sin(d)); 
     drawPen(hndl, x + (radius-p) * cos(d), y - (radius-p) * sin(d), true); 
   }
