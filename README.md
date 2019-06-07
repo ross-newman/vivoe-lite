@@ -1,6 +1,6 @@
 ![VIVOE-LITE](images/Vivoe-Lite-Banner.png)
 ![Version](https://img.shields.io/badge/version-0.0.1-green.svg)
-![Status](https://img.shields.io/badge/status-Unstable-orange.svg)
+![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
 [![License](https://img.shields.io/badge/licence-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Issues](https://img.shields.io/github/issues/ross-newman/vivoe-lite.svg)](https://github.com/ross-newman/vivoe-lite/issues)
 [![Forks](https://img.shields.io/github/forks/ross-newman/vivoe-lite.svg)](https://github.com/ross-newman/vivoe-lite/network/members)
