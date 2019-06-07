@@ -1,4 +1,5 @@
 dist: xenial
+sudo: true
 language: cpp
 install:  apt install sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev
 compiler:
