@@ -3,7 +3,9 @@
 *.jpg
 *.txt
 *~
-main
+build
 hmi_display
 tmp
 *~
+.makefile.swp
+CMakeFiles
