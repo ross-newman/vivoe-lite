@@ -4,7 +4,6 @@
 *.txt
 *~
 build
-hmi_display
 tmp
 *~
 .makefile.swp
