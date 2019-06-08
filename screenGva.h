@@ -53,6 +53,11 @@ struct compassType {
   int bearingSight;
 };
 
+struct keyboardType {
+  bool visible;
+  keyboardModeType mode;
+};
+
 struct canvasType {
   bool visible;
   char filename[256];
@@ -67,6 +72,7 @@ struct screenType {
   functionKeysType functionRight;
   commonTaskKeysType control;
   compassType compass;
+  keyboardType keyboard;
 };
 
 class screenGva;

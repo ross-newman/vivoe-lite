@@ -9,6 +9,7 @@
 #define WHITE 255, 255, 255
 #define RED 255, 0, 0
 #define GREY 127, 127, 127
+#define MEDIUM_GREY 96, 96, 96
 #define DARK_GREY 64, 64, 64
 #define GREEN 0, 255, 0
 #define DARK_GREEN 0, 128, 0

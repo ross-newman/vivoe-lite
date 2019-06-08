@@ -6,6 +6,8 @@
  */
 #include <iostream>
 #include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include "debug.h"
 #include "pngget.h"
 #include "screenGva.h"
@@ -66,169 +68,217 @@ main (int argc, char *argv[])
   functionSelectType top = COMMON_FUNCTION_KEYS_TOP;
 //  screenType screen_bms = { "Battle Management System", &top, &status, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS };
   canvasType canvas = { true, "test2.png" };
+  keyboardType keyboard = { false, KEYBOARD_UPPER };
   screenType screen_sa =
-    { "Situational Awareness", canvas, &top, &status, SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS }; 
+    { "Situational Awareness", canvas, &top, &status, SYS_FUNCTION_KEYS_LEFT,
+SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
   screenType *screen = &screen_sa;
   screenGva *render = new screenGva (screen, view.width, view.height);
 
-  cout << "hmi_display (v" << MAJOR << "." << MINOR << "." << PATCH << ") author ross@rossnewman.com...\n";
+  cout << "hmi_display (v" << MAJOR << "." << MINOR << "." << PATCH <<
+    ") author ross@rossnewman.com...\n";
 
-  if (XInitThreads() == 0) {
-	  printf("Error setting XInitThreads\n");
-	  return -1;
-  }
+  if (XInitThreads () == 0)
+    {
+      printf ("Error setting XInitThreads\n");
+      return -1;
+    }
 
   Display *d = render->getDisplay ();
   Window *w = render->getWindow ();
 
   /* select kind of events we are interested in */
-  XSelectInput (d, *w, KeyPressMask | KeyReleaseMask | StructureNotifyMask);
-  
-  render->update(screen);
-  render->startClock(&status);
-  
+  XSelectInput (d, *w,
+                KeyPressMask | KeyReleaseMask | SubstructureRedirectMask |
+                StructureNotifyMask);
+
+  render->update (screen);
+  render->startClock (&status);
+
   while (!done)
     {
-      XLockDisplay(d); 
+      XLockDisplay (d);
       XNextEvent (d, &event);
 
       switch (event.type)
         {
         case KeyPress:
           {
-            switch (event.xkey.keycode) {
-				/* exit on ESC key press */
-				case 0x09 : 
-                    done = 1;
-                    break;
-				/* 1 maps to F1 */
-				case 0xa : 
-                    if (!BIT(7, screen->functionTop->hidden)) 
-                    {
-                      functionKeysType left = SA_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = SA_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = true;
-                      screen->canvas.visible = true;
-                      strcpy(screen->canvas.filename, "test2.png");
-                      screen->functionTop->active = 0x1 << 7;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 2 maps to F2 */
-				case 0xb : 
-                    if (!BIT(6, screen->functionTop->hidden)) 
-                    {
-                      functionKeysType left = WPN_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = WPN_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = true;
-                      screen->canvas.visible = true;
-                      strcpy(screen->canvas.filename, "test2.png");
-                      screen->functionTop->active = 0x1 << 6;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 3 maps to F3 */
-				case 0xc : 
-                    if (!BIT(5, screen->functionTop->hidden)) 
-                    {
-                      functionKeysType left = DEF_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = DEF_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = false;
-                      screen->canvas.visible = false;
-                      screen->functionTop->active = 0x1 << 5;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 4 maps to F4 */
-				case 0xd : 
-                    if (!BIT(4, screen->functionTop->hidden))
-                    {
-                      functionKeysType left = SYS_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = SYS_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = true;
-                      screen->canvas.visible = true;
-                      strcpy(screen->canvas.filename, "test2.png");
-                      screen->functionTop->active = 0x1 << 4;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 5 maps to F5 */
-				case 0xe : 
-                    if (!BIT(3, screen->functionTop->hidden)) 
-                    {
-                      functionKeysType left = DRV_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = DRV_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = false;
-                      screen->canvas.visible = false;
-                      screen->functionTop->active = 0x1 << 3;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 6 maps to F6 */
-				case 0xf : 
-                    if (!BIT(2, screen->functionTop->hidden))
-                    {
-                      functionKeysType left = STR_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = STR_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = false;
-                      screen->canvas.visible = false;
-                      screen->functionTop->active = 0x1 << 2;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 7 maps to F7 */
-				case 0x10 : 
-                    if (!BIT(1, screen->functionTop->hidden)) 
-                    {
-                      functionKeysType left = COM_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = COM_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = false;
-                      screen->compass.visible = false;
-                      screen->canvas.visible = false;
-                      screen->functionTop->active = 0x1 << 1;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* 8 maps to F8 */
-				case 0x11 : 
-                    if (!BIT(0, screen->functionTop->hidden)) 
-                    {
-                      functionKeysType left = BMS_FUNCTION_KEYS_LEFT; 
-                      functionKeysType right = BMS_FUNCTION_KEYS_RIGHT;
-                      
-                      screen->compass.visible = false;
-                      screen->canvas.visible = true;
-                      strcpy(screen->canvas.filename, "map.png");
-                      screen->functionTop->active = 0x1 << 0;
-                      screen->functionLeft = left;
-                      screen->functionRight = right;
-                    }
-                    break;
-				/* l toggle labels */
-				case 0x2e : 
-                    screen->functionLeft.visible = screen->functionLeft.visible ? false : true; 
-                    screen->functionRight.visible = screen->functionRight.visible ? false : true; 
-                    screen->control.visible = screen->control.visible ? false : true; 
-                    screen->statusBar->visible = screen->statusBar->visible ? false : true; 
-                    screen->compass.visible = screen->compass.visible ? false : true; 
-                    break;
+            switch (event.xkey.keycode)
+              {
+              case 0x09:
+                /* exit on ESC key press */
+                done = 1;
+                break;
+              case 0xa:
+                /* 1 maps to F1 */
+                if (!BIT (7, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = SA_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = SA_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = true;
+                    screen->canvas.visible = true;
+                    strcpy (screen->canvas.filename, "test2.png");
+                    screen->functionTop->active = 0x1 << 7;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0xb:
+                /* 2 maps to F2 */
+                if (!BIT (6, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = WPN_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = WPN_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = true;
+                    screen->canvas.visible = true;
+                    strcpy (screen->canvas.filename, "test2.png");
+                    screen->functionTop->active = 0x1 << 6;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0xc:
+                /* 3 maps to F3 */
+                if (!BIT (5, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = DEF_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = DEF_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = false;
+                    screen->canvas.visible = false;
+                    screen->functionTop->active = 0x1 << 5;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0xd:
+                /* 4 maps to F4 */
+                if (!BIT (4, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = SYS_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = SYS_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = true;
+                    screen->canvas.visible = true;
+                    strcpy (screen->canvas.filename, "test2.png");
+                    screen->functionTop->active = 0x1 << 4;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0xe:
+                /* 5 maps to F5 */
+                if (!BIT (3, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = DRV_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = DRV_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = false;
+                    screen->canvas.visible = false;
+                    screen->functionTop->active = 0x1 << 3;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0xf:
+                /* 6 maps to F6 */
+                if (!BIT (2, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = STR_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = STR_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = false;
+                    screen->canvas.visible = false;
+                    screen->functionTop->active = 0x1 << 2;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0x10:
+                /* 7 maps to F7 */
+                if (!BIT (1, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = COM_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = COM_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = false;
+                    screen->compass.visible = false;
+                    screen->canvas.visible = false;
+                    screen->functionTop->active = 0x1 << 1;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0x11:
+                /* 8 maps to F8 */
+                if (!BIT (0, screen->functionTop->hidden))
+                  {
+                    functionKeysType left = BMS_FUNCTION_KEYS_LEFT;
+                    functionKeysType right = BMS_FUNCTION_KEYS_RIGHT;
+
+                    screen->compass.visible = false;
+                    screen->canvas.visible = true;
+                    strcpy (screen->canvas.filename, "map.png");
+                    screen->functionTop->active = 0x1 << 0;
+                    screen->functionLeft = left;
+                    screen->functionRight = right;
+                  }
+                break;
+              case 0x2e:
+                /* l toggle labels */
+                screen->functionLeft.visible =
+                  screen->functionLeft.visible ? false : true;
+                screen->functionRight.visible =
+                  screen->functionRight.visible ? false : true;
+                screen->control.visible =
+                  screen->control.visible ? false : true;
+                screen->statusBar->visible =
+                  screen->statusBar->visible ? false : true;
+                screen->compass.visible =
+                  screen->compass.visible ? false : true;
+                break;
+
+              case 0x29:
+                /* f toggle fullscreen TODO: Does not work */
+                {
+                  Atom wm_state = XInternAtom (d, "_NET_WM_STATE", true);
+                  Atom wm_fullscreen =
+                    XInternAtom (d, "_NET_WM_STATE_FULLSCREEN", true);
+
+                  XChangeProperty (d, *w, wm_state, XA_ATOM, 32,
+                                   PropModeReplace,
+                                   (unsigned char *) &wm_fullscreen, 1);
+                }
+                break;
+              case 0x2d:
+                /* k toggle keyboard */
+                {
+                  screen->keyboard.visible =
+                  screen->keyboard.visible ? false : true;
+                }
+                break;
+              case 0x42:
+                /* caps_lock keyboard */
+                {
+                  screen->keyboard.mode = (screen->keyboard.mode == KEYBOARD_UPPER) ?  KEYBOARD_LOWER :  KEYBOARD_UPPER; 
+                }
+                break;
+              case 0x4D:
+                /* num_lock keyboard */
+                {
+                  screen->keyboard.mode = (screen->keyboard.mode == KEYBOARD_NUMBERS) ?  KEYBOARD_UPPER :  KEYBOARD_NUMBERS; 
+                }
+                break;
+              default:
+                printf ("KeyPress not defined 0x%x\n", event.xkey.keycode);
+                break;
+
               }
           }
-          render->update(screen);
+          render->update (screen);
           break;
         case KeyRelease:
           {
@@ -245,17 +295,17 @@ main (int argc, char *argv[])
                 printf ("WindowResize: %d x %d\n", cev->width, cev->height);
                 render->setWidth (cev->width);
                 render->setHeight (cev->height);
-                render->update(screen);
+                render->update (screen);
               }
           }
           break;
         case Expose:
           {
-              render->update(screen);
+            render->update (screen);
           }
           break;
         }
-        XUnlockDisplay(d); 
+      XUnlockDisplay (d);
     }
 
   /*

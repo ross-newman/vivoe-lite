@@ -18,12 +18,12 @@ rendererCairo::draw (int handle)
 {
   int count = 0;
   cairo_surface_t *surface;
-  double dashed[] = {1.0};
+  double dashed[] = { 1.0 };
 
   cairo_t *cr = m_render_handle[handle].cr;
 
   /* Push the render to prevent flicker, flush when done */
-  cairo_push_group(cr);
+  cairo_push_group (cr);
   for (count = 0; count < m_draw_tail; count++)
     {
       command_type *currentCmd = &m_draw_commands[count];
@@ -70,7 +70,8 @@ rendererCairo::draw (int handle)
         case COMMAND_PEN_DRAW:
           cairo_line_to (cr, currentCmd->points[0].x,
                          currentCmd->points[0].y);
-          if (currentCmd->arg1) cairo_stroke (cr);
+          if (currentCmd->arg1)
+            cairo_stroke (cr);
           break;
         case COMMAND_PEN_LINE:
           cairo_move_to (cr, currentCmd->points[0].x,
@@ -114,6 +115,39 @@ rendererCairo::draw (int handle)
             }
 #endif
           break;
+        case COMMAND_PEN_ROUNDED_RECTANGLE:
+          {
+            double width = currentCmd->arg1;
+            double height = currentCmd->arg2;
+            double corner_radius = (double) currentCmd->arg3;   /* and corner curvature radius */
+            double x = currentCmd->points[0].x;
+            double y = currentCmd->points[0].y;
+            double radius = corner_radius;
+            double degrees = M_PI / 180.0;
+
+            cairo_new_sub_path (cr);
+            cairo_arc (cr, x + width - radius, y - radius, radius,
+                       0 * degrees, 90 * degrees);
+            cairo_arc (cr, x + radius, y - radius, radius, 90 * degrees,
+                       180 * degrees);
+            cairo_arc (cr, x + radius, y - height + radius, radius,
+                       180 * degrees, 270 * degrees);
+            cairo_arc (cr, x + width - radius, y - height + radius, radius,
+                       270 * degrees, 0 * degrees);
+            cairo_close_path (cr);
+          }
+          if (currentCmd->fill)
+            {
+              cairo_set_source_rgb (cr, intToFloat (m_background_colour.red),
+                                    intToFloat (m_background_colour.green),
+                                    intToFloat (m_background_colour.blue));
+              cairo_fill_preserve (cr);
+              cairo_set_source_rgb (cr, intToFloat (m_forground_colour.red),
+                                    intToFloat (m_forground_colour.green),
+                                    intToFloat (m_forground_colour.blue));
+              cairo_stroke (cr);
+            }
+          break;
         case COMMAND_PEN_TRIANGLE:
           cairo_new_path (cr);
           cairo_move_to (cr, currentCmd->points[0].x,
@@ -153,15 +187,16 @@ rendererCairo::draw (int handle)
           break;
         case COMMAND_PEN_THICKNESS:
           cairo_set_line_width (cr, (cairo_line_join_t) currentCmd->arg1);
-          switch (currentCmd->arg2) {
-          case LINE_DASHED :
-            cairo_set_dash(cr, dashed, 1, 0);
-            break;
-          case LINE_SOLID :
-          default :
-            cairo_set_dash(cr, 0, 0, 0);
-            break;
-          }
+          switch (currentCmd->arg2)
+            {
+            case LINE_DASHED:
+              cairo_set_dash (cr, dashed, 1, 0);
+              break;
+            case LINE_SOLID:
+            default:
+              cairo_set_dash (cr, 0, 0, 0);
+              break;
+            }
           break;
         case COMMAND_LINE_JOIN:
           cairo_set_line_join (cr, (cairo_line_join_t) currentCmd->arg1);
@@ -174,10 +209,10 @@ rendererCairo::draw (int handle)
 //          cairo_surface_destroy(m_image_list[currentCmd->arg1].image);
           break;
         case COMMAND_TEXT_FONT:
-          cairo_select_font_face(cr, 
-          currentCmd->text,
-          (cairo_font_slant_t)currentCmd->arg1,
-          (cairo_font_weight_t)currentCmd->arg2);
+          cairo_select_font_face (cr,
+                                  currentCmd->text,
+                                  (cairo_font_slant_t) currentCmd->arg1,
+                                  (cairo_font_weight_t) currentCmd->arg2);
         case COMMAND_TEXT:
           cairo_save (cr);
           cairo_set_font_size (cr, currentCmd->arg1);
@@ -191,9 +226,9 @@ rendererCairo::draw (int handle)
           break;
         }
     }
-    /* Pop the group and flush to display on the screen */
-    cairo_pop_group_to_source(cr);
-    cairo_paint(cr);
+  /* Pop the group and flush to display on the screen */
+  cairo_pop_group_to_source (cr);
+  cairo_paint (cr);
 }
 
 rendererCairo::rendererCairo (int width, int height)
@@ -235,9 +270,8 @@ rendererCairo::init (int width, int height)
 
   win_init (&m_render_handle[0].win, width, height);
 
-  Visual *visual =
-    DefaultVisual (m_render_handle[0].win.dpy,
-                   DefaultScreen (m_render_handle[0].win.dpy));
+  Visual *visual = DefaultVisual (m_render_handle[0].win.dpy,
+                                  DefaultScreen (m_render_handle[0].win.dpy));
 
   XClearWindow (m_render_handle[0].win.dpy, m_render_handle[0].win.win);
 
@@ -302,7 +336,7 @@ rendererCairo::setLineThickness (int handle, int thickness, lineType fill)
   m_draw_tail++;
 }
 
-int 
+int
 rendererCairo::movePen (int handle, int x, int y)
 {
   y = m_render_handle[handle].size.height - y;
@@ -314,7 +348,7 @@ rendererCairo::movePen (int handle, int x, int y)
   return 0;
 }
 
-int 
+int
 rendererCairo::drawPen (int handle, int x, int y, bool close)
 {
   y = m_render_handle[handle].size.height - y;
@@ -371,6 +405,22 @@ rendererCairo::drawRectangle (int handle, int x1, int y1, int x2, int y2,
 }
 
 void
+rendererCairo::drawRoundedRectangle (int handle, int x, int y, int width,
+                                     int height, int courner, bool fill)
+{
+  y = m_render_handle[handle].size.height - y;
+
+  m_draw_commands[m_draw_tail].command = COMMAND_PEN_ROUNDED_RECTANGLE;
+  m_draw_commands[m_draw_tail].points[0].x = x;
+  m_draw_commands[m_draw_tail].points[0].y = y;
+  m_draw_commands[m_draw_tail].arg1 = width;
+  m_draw_commands[m_draw_tail].arg2 = height;
+  m_draw_commands[m_draw_tail].arg3 = courner;
+  m_draw_commands[m_draw_tail].fill = fill ? 1 : 0;
+  m_draw_tail++;
+}
+
+void
 rendererCairo::drawTriangle (int handle, int x1, int y1, int x2, int y2,
                              int x3, int y3, bool fill)
 {
@@ -400,8 +450,8 @@ rendererCairo::drawColor (int handle, int r, int g, int b)
   return 0;
 }
 
-void 
-rendererCairo::setTextFont (int handle, int slope, int weight, char* fontName)
+void
+rendererCairo::setTextFont (int handle, int slope, int weight, char *fontName)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_TEXT_FONT;
   m_draw_commands[m_draw_tail].arg1 = slope;
@@ -410,25 +460,25 @@ rendererCairo::setTextFont (int handle, int slope, int weight, char* fontName)
   m_draw_tail++;
 }
 
-int 
-rendererCairo::getTextWidth (int handle, char* str) 
-{ 
-  cairo_t *cr = m_render_handle[handle].cr; 
-  cairo_text_extents_t extents; 
-  
-  cairo_set_font_size(cr, 18);
-  cairo_text_extents (cr, str, &extents); 
+int
+rendererCairo::getTextWidth (int handle, char *str, int fontSize)
+{
+  cairo_t *cr = m_render_handle[handle].cr;
+  cairo_text_extents_t extents;
+
+  cairo_set_font_size (cr, fontSize);
+  cairo_text_extents (cr, str, &extents);
   return extents.width;
 }
 
-int 
-rendererCairo::getTextHeight (int handle, char* str) 
-{ 
-  cairo_t *cr = m_render_handle[handle].cr; 
-  cairo_text_extents_t extents; 
-  
-  cairo_set_font_size(cr, 18);
-  cairo_text_extents (cr, str, &extents); 
+int
+rendererCairo::getTextHeight (int handle, char *str, int fontSize)
+{
+  cairo_t *cr = m_render_handle[handle].cr;
+  cairo_text_extents_t extents;
+
+  cairo_set_font_size (cr, fontSize);
+  cairo_text_extents (cr, str, &extents);
   return extents.height;
 }
 
@@ -436,7 +486,7 @@ void
 rendererCairo::drawText (int handle, int x, int y, char *text, int size)
 {
   y = m_render_handle[handle].size.height - y;
-  
+
   m_draw_commands[m_draw_tail].command = COMMAND_TEXT;
   m_draw_commands[m_draw_tail].points[0].x = x;
   m_draw_commands[m_draw_tail].points[0].y = y;

@@ -46,6 +46,7 @@ enum draw_type
   COMMAND_PEN_DRAW,
   COMMAND_PEN_MOVE,
   COMMAND_PEN_RECTANGLE,
+  COMMAND_PEN_ROUNDED_RECTANGLE,
   COMMAND_PEN_THICKNESS,
   COMMAND_PEN_TRIANGLE,
   COMMAND_TEXT_FONT,
@@ -106,11 +107,12 @@ public:
   int drawLine (int handle, int x1, int y1, int x2, int y2);
   void drawCircle (int handle, int x, int y, int radius, bool fill);
   void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill);
+  void drawRoundedRectangle (int handle, int x1, int y1, int x2, int y2, int courner, bool fill);
   void drawTriangle (int handle, int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
   int drawColor (int handle, int r, int g, int b);
   void setTextFont (int handle, int slope, int weight, char* fontName);
-  int getTextWidth (int handle, char* str);
-  int getTextHeight (int handle, char* str);
+  int getTextWidth (int handle, char* str, int fontSize);
+  int getTextHeight (int handle, char* str, int fontSize);
   void drawText (int handle, int x, int y, char* text, int size);
   void drawTextCentre (int handle, int x, char* text, int size);
   int textureRGB (int handle, int x, int y, void *buffer, char *file);

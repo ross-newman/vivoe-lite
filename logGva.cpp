@@ -5,40 +5,42 @@
 #include "logGva.h"
 
 void
-logGva::log(char* message, int type)
+logGva::log (char *message, int type)
 {
-	struct sysinfo info;
-	char msgType[4] = "???";
+  struct sysinfo info;
+  char msgType[4] = "???";
 
-	sysinfo(&info);
-	switch(type) {
-		case LOG_DEBUG :
-			strcpy(msgType, "DBG");
-			break;
-		case LOG_INFO:
-			strcpy(msgType, "INF");
-			break;
-		case LOG_WARNING:
-			strcpy(msgType, "WAR");
-			break;
-		case LOG_ERROR:
-			strcpy(msgType, "ERR");
-			break;
-	}
+  sysinfo (&info);
+  switch (type)
+    {
+    case LOG_DEBUG:
+      strcpy (msgType, "DBG");
+      break;
+    case LOG_INFO:
+      strcpy (msgType, "INF");
+      break;
+    case LOG_WARNING:
+      strcpy (msgType, "WAR");
+      break;
+    case LOG_ERROR:
+      strcpy (msgType, "ERR");
+      break;
+    }
 
 #if !DEBUG
-	/** Discard debug message if DEBUG not enabled */
-	if (type == LOG_DEBUG) return;
-#endif	
-	if (!m_errorfd)
-	{
-		m_errorfd=fopen("log.txt", "w");
-	}
-	fprintf(m_errorfd, "[%ld] *%s* %s\n", info.uptime, msgType, message);
+        /** Discard debug message if DEBUG not enabled */
+  if (type == LOG_DEBUG)
+    return;
+#endif
+  if (!m_errorfd)
+    {
+      m_errorfd = fopen ("log.txt", "w");
+    }
+  fprintf (m_errorfd, "[%ld] *%s* %s\n", info.uptime, msgType, message);
 }
 
 void
-logGva::finish()
+logGva::finish ()
 {
-  fclose(m_errorfd);
+  fclose (m_errorfd);
 }
