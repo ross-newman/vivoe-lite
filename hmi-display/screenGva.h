@@ -8,7 +8,7 @@
 #define MINOR 0
 #define PATCH 2
 
-enum functions 
+enum gvaFunctionEnum 
 {
   SA,
   WPN,
@@ -61,10 +61,12 @@ struct keyboardType {
 struct canvasType {
   bool visible;
   char filename[256];
+  char* buffer;
 };
 
 struct screenType {
   char name[100];
+  gvaFunctionEnum currentFunction;
   canvasType canvas;
   functionSelectType *functionTop;
   statusBarType *statusBar;

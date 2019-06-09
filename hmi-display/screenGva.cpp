@@ -79,7 +79,11 @@ screenGva::update (screenType * screen)
 #if 1
   if (m_screen->canvas.visible)
     {
-      textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
+      if (m_screen->canvas.buffer) {
+        textureRGB (m_hndl, 0, 0, m_screen->canvas.buffer);
+      } else {
+        textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
+      }
     }
 #endif
   if (m_screen->functionLeft.visible)
@@ -140,11 +144,12 @@ screenGva::refresh ()
   /*
    * Send a dumy event to force screen update 
    */
-  XLockDisplay (getDisplay ());
   memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
   dummyEvent.type = Expose;
   dummyEvent.window = *getWindow ();
   dummyEvent.format = 32;
+
+  XLockDisplay (getDisplay ());
   XSendEvent (getDisplay (), *getWindow (), False, StructureNotifyMask,
               (XEvent *) & dummyEvent);
   XFlush (getDisplay ());

@@ -15,6 +15,8 @@ TEXT="$3"
 FRAMERATE=$4
 DISPLAY_X=$5
 LOCATION=$6
+GST_FLAGS=-v
+PORT=5004
 
 case "$LOCATION" in
   1)
@@ -38,31 +40,36 @@ esac
 echo "Launching \"$FILE\" on $IPADDR with camera=$CAMERA, text=\"$TEXT\", framerate=$FRAMERATE, location=$LOCATION"
 
 if [ $DISPLAY_X -eq 0 ]; then
-  gst-launch-0.10 filesrc location=$FILE  \
+  gst-launch-1.0 $GST_FLAGS filesrc location=$FILE  \
   ! pngdec \
-  ! ffmpegcolorspace \
-  ! video/x-raw-yuv, format=\(fourcc\)UYVY  \
+  ! videoconvert \
+  ! video/x-raw, format=UYVY  \
   ! imagefreeze \
-  ! video/x-raw-yuv, framerate=$FRAMERATE/1 \
+  ! video/x-raw, framerate=$FRAMERATE/1 \
   ! timeoverlay $ALIGN \
   ! textoverlay text="$TEXT" shaded-background=true ypad=50 font-desc="Sans 24" \
   ! rtpvrawpay mtu=660 \
-  ! multiudpsink clients=$IPADDR:5004 sync=true &> /dev/null &
+  ! multiudpsink clients=$IPADDR:$PORT sync=true &
+#  ! multiudpsink clients=$IPADDR:5004 sync=true &> /dev/null &
 else
-  gst-launch-0.10 filesrc location=$FILE  \
+  gst-launch-1.0 $GST_FLAGS filesrc location=$FILE  \
   ! pngdec \
-  ! ffmpegcolorspace \
-  ! video/x-raw-yuv, format=\(fourcc\)UYVY  \
+  ! videoconvert \
+  ! video/x-raw, format=UYVY \
   ! imagefreeze \
-  ! video/x-raw-yuv, framerate=$FRAMERATE/1 \
+  ! video/x-raw, framerate=$FRAMERATE/1 \
   ! timeoverlay $ALIGN \
-  ! textoverlay text="$TEXT" ypad=50 font-desc="Sans" shaded-background=true \
+  ! textoverlay text="${IPADDR}:${PORT}@${FRAMERATE}Htz" ypad=50 font-desc="Sans" shaded-background=true \
+  ! queue\
   ! tee name=t \
-  ! ffmpegcolorspace \
+  ! timeoverlay $ALIGN \
+  ! videoconvert \
+  ! queue\
   ! ximagesink sync=true t. \
   ! queue\
   ! rtpvrawpay mtu=660 \
-  ! multiudpsink clients=$IPADDR:5004 sync=true &> /dev/null &
+  ! multiudpsink clients=$IPADDR:$PORT sync=true &
+#  ! multiudpsink clients=$IPADDR:5004 sync=false &> /dev/null &
 fi 
 
 exit

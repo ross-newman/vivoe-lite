@@ -38,7 +38,7 @@ enum draw_type
   COMMAND_CIRCLE = 0,
   COMMAND_COLOUR_BG,
   COMMAND_COLOUR_FG,
-  COMMAND_IMAGE_PNG,
+  COMMAND_IMAGE_TEXTURE,
   COMMAND_LINE_JOIN,
   COMMAND_PEN_COLOUR,
   COMMAND_PEN_CURVE,
@@ -116,12 +116,13 @@ public:
   void drawText (int handle, int x, int y, char* text, int size);
   void drawTextCentre (int handle, int x, char* text, int size);
   int textureRGB (int handle, int x, int y, void *buffer, char *file);
+  int textureRGB (int handle, int x, int y, void *buffer);
   void scale (int handle, float x);
   void present (int handle);
   
   // Cairo specific functions
   void draw (int handle);
-  void reset () { m_draw_tail = 0; }
+  void reset () { m_draw_tail = 0; m_image_tail = 0;}
   win_t* getWin() { return &m_render_handle[0].win; }
   Window* getWindow() { return &m_render_handle[0].win.win; }
   Display* getDisplay() { return m_render_handle[0].win.dpy; }
@@ -132,7 +133,7 @@ public:
   int getHeight() { return m_render_handle[0].win.height; }
   int getWidth() { return m_render_handle[0].win.width; }
 private:
-
+  unsigned char* m_texture;
   int m_current_handle;
   double m_scale;
   handle_type m_render_handle[1];

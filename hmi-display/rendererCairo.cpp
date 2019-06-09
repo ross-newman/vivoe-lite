@@ -201,7 +201,7 @@ rendererCairo::draw (int handle)
         case COMMAND_LINE_JOIN:
           cairo_set_line_join (cr, (cairo_line_join_t) currentCmd->arg1);
           break;
-        case COMMAND_IMAGE_PNG:
+        case COMMAND_IMAGE_TEXTURE:
           cairo_set_source_surface (cr, m_image_list[currentCmd->arg1].image,
                                     currentCmd->points[0].x,
                                     currentCmd->points[0].y);
@@ -234,18 +234,20 @@ rendererCairo::draw (int handle)
 rendererCairo::rendererCairo (int width, int height)
 {
   m_scale = 1.0;
-  m_forground_colour =
-  {
-  255, 255, 255};
-  m_background_colour =
-  {
-  0, 0, 0};
+  m_forground_colour = { 255, 255, 255};
+  m_background_colour = {0, 0, 0};
   m_height = height;
   m_width = width;
+  m_texture = 0;
+  m_image_tail = 0;
 }
 
 rendererCairo::~rendererCairo ()
 {
+  if (m_texture) {
+    free(m_texture);
+    m_texture = 0;
+  }
   cairo_destroy (m_render_handle[0].cr);
 
   XCloseDisplay (m_render_handle[0].win.dpy);
@@ -257,6 +259,12 @@ rendererCairo::init (int width, int height)
   m_render_handle[0].size.width = width;
   m_render_handle[0].size.height = height;
 
+  if (XInitThreads () == 0)
+    {
+      printf ("Error setting XInitThreads\n");
+      return -1;
+    }
+    
   /* open connection with the server */
   m_render_handle[0].win.dpy = XOpenDisplay (NULL);
   if (m_render_handle[0].win.dpy == NULL)
@@ -509,10 +517,27 @@ rendererCairo::textureRGB (int handle, int x, int y, void *buffer, char *file)
   m_image_list[m_image_tail].image =
     cairo_image_surface_create_from_png (file);
 
-  m_draw_commands[m_draw_tail].command = COMMAND_IMAGE_PNG;
+  m_draw_commands[m_draw_tail].command = COMMAND_IMAGE_TEXTURE;
   m_draw_commands[m_draw_tail].points[0].x = x;
   m_draw_commands[m_draw_tail].points[0].y = y;
-  m_draw_commands[m_draw_tail].arg1 = m_image_tail;
+  m_draw_commands[m_draw_tail].arg1 = m_image_tail++;
+
+  m_draw_tail++;
+
+  return 0;
+}
+
+int
+rendererCairo::textureRGB (int handle, int x, int y, void *buffer)
+{
+  m_image_list[m_image_tail].image =
+    cairo_image_surface_create_for_data ((unsigned char*)buffer, CAIRO_FORMAT_RGB24, m_width, m_height,
+                                     cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, m_width));
+
+  m_draw_commands[m_draw_tail].command = COMMAND_IMAGE_TEXTURE;
+  m_draw_commands[m_draw_tail].points[0].x = x;
+  m_draw_commands[m_draw_tail].points[0].y = y;
+  m_draw_commands[m_draw_tail].arg1 = m_image_tail++;
 
   m_draw_tail++;
 

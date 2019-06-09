@@ -11,14 +11,15 @@
 #include "debug.h"
 #include "pngget.h"
 #include "screenGva.h"
+#include "gvaVideoRtpYuv.h"
 
 using namespace std;
 
 #define LABEL_NULL "Unused!"
 
 // These labels should not change
-#define COMMON_KEYS { true, 0b0010000, 0b00000000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
-#define COMMON_FUNCTION_KEYS_TOP { true, 0b00010000, 0b00001000 }
+#define COMMON_KEYS { true, 0b0001000, 0b00000000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
+#define COMMON_FUNCTION_KEYS_TOP { true, 0b00100000, 0b00000100 }
 #define COMMON_STATUS_BAR { true,  "12:30:00, 03/06/2019", "BNGF: 216600, 771200", "W0", "A0", "C0" }
 #define COMPASS { true, 0, 0 }
 #define CANVAS { true, 0, 0 }
@@ -52,12 +53,14 @@ using namespace std;
 #define BMS_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b000000, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, } }
 
 #define BIT(b,x) (x & 0x1 << b)
+#define SET_CANVAS_PNG(file) strcpy (screen->canvas.filename, file); screen->canvas.buffer = 0;
 
 int
 main (int argc, char *argv[])
 {
   XEvent event;
   int done = 0;
+  char* rtpBuffer;
   /* 4:3 aspect ratio */
   resolution_type view = { 640, 480, 24 };
   /* 16:9 aspect ration */
@@ -66,11 +69,10 @@ main (int argc, char *argv[])
   /* These are comon to all screens */
   statusBarType status = COMMON_STATUS_BAR;
   functionSelectType top = COMMON_FUNCTION_KEYS_TOP;
-//  screenType screen_bms = { "Battle Management System", &top, &status, TEST_FUNCTION_KEYS_LEFT, TEST_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS };
-  canvasType canvas = { true, "test2.png" };
+  canvasType canvas = { true, "test2.png", 0 };
   keyboardType keyboard = { false, KEYBOARD_UPPER };
   screenType screen_sa =
-    { "Situational Awareness", canvas, &top, &status, SYS_FUNCTION_KEYS_LEFT,
+    { "Situational Awareness", SA, canvas, &top, &status, SYS_FUNCTION_KEYS_LEFT,
 SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
   screenType *screen = &screen_sa;
   screenGva *render = new screenGva (screen, view.width, view.height);
@@ -78,20 +80,20 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
   cout << "hmi_display (v" << MAJOR << "." << MINOR << "." << PATCH <<
     ") author ross@rossnewman.com...\n";
 
-  if (XInitThreads () == 0)
-    {
-      printf ("Error setting XInitThreads\n");
-      return -1;
-    }
-
   Display *d = render->getDisplay ();
   Window *w = render->getWindow ();
-
+  
+  /*
+   * Setup video sources (default size will be 640 x 480)
+   */
+  gvaVideoRtpYuv *rtpStream1 = new gvaVideoRtpYuv("127.0.0.1", 5004);
+  cout << "Resolution " << rtpStream1->getHeight() << "x" << rtpStream1->getWidth() << "\n";
+  rtpBuffer = (char*)malloc(rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
+  
   /* select kind of events we are interested in */
   XSelectInput (d, *w,
-                KeyPressMask | KeyReleaseMask | SubstructureRedirectMask |
+                KeyPressMask | KeyReleaseMask |
                 StructureNotifyMask);
-
   render->update (screen);
   render->startClock (&status);
 
@@ -100,6 +102,26 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
       XLockDisplay (d);
       XNextEvent (d, &event);
 
+      /*
+       * Get the live video frame if Driver (DRV)
+       */  
+      if (screen->currentFunction == DRV) {
+        XClientMessageEvent dummyEvent;
+
+        memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
+        dummyEvent.type = Expose;
+        dummyEvent.window = *w;
+        dummyEvent.format = 32;
+
+//        memset(rtpStream1, 0xff, rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
+        rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
+
+//        XLockDisplay (d);
+        XSendEvent (d, *w, False, StructureNotifyMask, (XEvent *) & dummyEvent);
+        XFlush (d);
+//        XUnlockDisplay (d);
+      }
+      
       switch (event.type)
         {
         case KeyPress:
@@ -116,10 +138,11 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = SA_FUNCTION_KEYS_LEFT;
                     functionKeysType right = SA_FUNCTION_KEYS_RIGHT;
-
+                    screen->currentFunction = SA;
+                    
                     screen->compass.visible = true;
                     screen->canvas.visible = true;
-                    strcpy (screen->canvas.filename, "test2.png");
+                    SET_CANVAS_PNG("test2.png");
                     screen->functionTop->active = 0x1 << 7;
                     screen->functionLeft = left;
                     screen->functionRight = right;
@@ -131,10 +154,11 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = WPN_FUNCTION_KEYS_LEFT;
                     functionKeysType right = WPN_FUNCTION_KEYS_RIGHT;
+                    screen->currentFunction = DEF;
 
                     screen->compass.visible = true;
                     screen->canvas.visible = true;
-                    strcpy (screen->canvas.filename, "test2.png");
+                    SET_CANVAS_PNG("test2.png");
                     screen->functionTop->active = 0x1 << 6;
                     screen->functionLeft = left;
                     screen->functionRight = right;
@@ -146,6 +170,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = DEF_FUNCTION_KEYS_LEFT;
                     functionKeysType right = DEF_FUNCTION_KEYS_RIGHT;
+                    screen->currentFunction = SYS;
 
                     screen->compass.visible = false;
                     screen->canvas.visible = false;
@@ -160,10 +185,15 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = SYS_FUNCTION_KEYS_LEFT;
                     functionKeysType right = SYS_FUNCTION_KEYS_RIGHT;
+                    screen->currentFunction = DRV;
 
                     screen->compass.visible = true;
                     screen->canvas.visible = true;
-                    strcpy (screen->canvas.filename, "test2.png");
+                    if (rtpBuffer) {
+                      screen->canvas.buffer = rtpBuffer;
+                    } else {
+                      SET_CANVAS_PNG("test2.png");
+                    }
                     screen->functionTop->active = 0x1 << 4;
                     screen->functionLeft = left;
                     screen->functionRight = right;
@@ -175,6 +205,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = DRV_FUNCTION_KEYS_LEFT;
                     functionKeysType right = DRV_FUNCTION_KEYS_RIGHT;
+                    screen->currentFunction = STR;
 
                     screen->compass.visible = false;
                     screen->canvas.visible = false;
@@ -189,6 +220,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = STR_FUNCTION_KEYS_LEFT;
                     functionKeysType right = STR_FUNCTION_KEYS_RIGHT;
+                    screen->currentFunction = COM;
 
                     screen->compass.visible = false;
                     screen->canvas.visible = false;
@@ -203,6 +235,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
                   {
                     functionKeysType left = COM_FUNCTION_KEYS_LEFT;
                     functionKeysType right = COM_FUNCTION_KEYS_RIGHT;
+                    screen->currentFunction = BMS;
 
                     screen->compass.visible = false;
                     screen->compass.visible = false;
@@ -221,7 +254,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
 
                     screen->compass.visible = false;
                     screen->canvas.visible = true;
-                    strcpy (screen->canvas.filename, "map.png");
+                    SET_CANVAS_PNG("map.png");
                     screen->functionTop->active = 0x1 << 0;
                     screen->functionLeft = left;
                     screen->functionRight = right;
@@ -292,7 +325,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
             if (cev->width != render->getWidth () ||
                 cev->height != render->getHeight ())
               {
-                printf ("WindowResize: %d x %d\n", cev->width, cev->height);
+                printf ("[GVA] WindowResize: %d x %d\n", cev->width, cev->height);
                 render->setWidth (cev->width);
                 render->setHeight (cev->height);
                 render->update (screen);
@@ -305,6 +338,7 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
           }
           break;
         }
+        
       XUnlockDisplay (d);
     }
 
