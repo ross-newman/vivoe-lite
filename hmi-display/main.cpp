@@ -90,7 +90,9 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
   cout << "Resolution " << rtpStream1->getHeight() << "x" << rtpStream1->getWidth() << "\n";
   rtpBuffer = (char*)malloc(rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
   
-  /* select kind of events we are interested in */
+  /* 
+   * select kind of events we are interested in 
+   */
   XSelectInput (d, *w,
                 KeyPressMask | KeyReleaseMask |
                 StructureNotifyMask);
@@ -108,18 +110,17 @@ SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
       if (screen->currentFunction == DRV) {
         XClientMessageEvent dummyEvent;
 
+        XSync (d, true);
+
         memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
         dummyEvent.type = Expose;
         dummyEvent.window = *w;
         dummyEvent.format = 32;
 
-//        memset(rtpStream1, 0xff, rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
         rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
 
-//        XLockDisplay (d);
         XSendEvent (d, *w, False, StructureNotifyMask, (XEvent *) & dummyEvent);
-        XFlush (d);
-//        XUnlockDisplay (d);
+//        XFlush (d);
       }
       
       switch (event.type)

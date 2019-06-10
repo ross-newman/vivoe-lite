@@ -1,7 +1,6 @@
 *.png
 *.bak
 *.jpg
-*.txt
 *~
 build
 tmp
