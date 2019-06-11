@@ -8,101 +8,105 @@
 #define MINOR 0
 #define PATCH 2
 
-enum gvaFunctionEnum 
+namespace gva
 {
-  SA,
-  WPN,
-  DEF,
-  SYS,
-  DRV,
-  STR,
-  COM,
-  BMS
-};
 
-struct functionSelectType {
-  bool visible;
-  int active;
-  int hidden;
-};
+  enum gvaFunctionEnum 
+  {
+    SA,
+    WPN,
+    DEF,
+    SYS,
+    DRV,
+    STR,
+    COM,
+    BMS
+  };
 
-struct functionKeysType {
-  bool visible;
-  int active;
-  int hidden;
-  int toggleActive;
-  int toggleOn;
-  char labels[6][40];
-};
+  struct functionSelectType {
+    bool visible;
+    int active;
+    int hidden;
+  };
 
-struct commonTaskKeysType {
-  bool visible;
-  int active;
-  int hidden;
-  char labels[8][40];
-};
+  struct functionKeysType {
+    bool visible;
+    int active;
+    int hidden;
+    int toggleActive;
+    int toggleOn;
+    char labels[6][40];
+  };
 
-struct statusBarType {
-  bool visible;
-  char labels[5][80];
-};
+  struct commonTaskKeysType {
+    bool visible;
+    int active;
+    int hidden;
+    char labels[8][40];
+  };
 
-struct compassType {
-  bool visible;
-  int bearing;
-  int bearingSight;
-};
+  struct statusBarType {
+    bool visible;
+    char labels[5][80];
+  };
 
-struct keyboardType {
-  bool visible;
-  keyboardModeType mode;
-};
+  struct compassType {
+    bool visible;
+    int bearing;
+    int bearingSight;
+  };
 
-struct canvasType {
-  bool visible;
-  char filename[256];
-  char* buffer;
-};
+  struct keyboardType {
+    bool visible;
+    keyboardModeType mode;
+  };
 
-struct screenType {
-  char name[100];
-  gvaFunctionEnum currentFunction;
-  canvasType canvas;
-  functionSelectType *functionTop;
-  statusBarType *statusBar;
-  functionKeysType functionLeft;
-  functionKeysType functionRight;
-  commonTaskKeysType control;
-  compassType compass;
-  keyboardType keyboard;
-};
+  struct canvasType {
+    bool visible;
+    char filename[256];
+    char* buffer;
+  };
 
-class screenGva;
+  struct screenType {
+    char name[100];
+    gvaFunctionEnum currentFunction;
+    canvasType canvas;
+    functionSelectType *functionTop;
+    statusBarType *statusBar;
+    functionKeysType functionLeft;
+    functionKeysType functionRight;
+    commonTaskKeysType control;
+    compassType compass;
+    keyboardType keyboard;
+  };
 
-/*
- * These are used by the clock thread to update the time and refresh the screen 
- */
-typedef struct arg_struct {
-    char* clockString;
-    screenGva* screen;
-    bool active;
-} args;
+  class screenGva;
 
-class screenGva : public rendererGva
-{
-public:
-  screenGva(screenType *screen, int width, int height);
-  ~screenGva();
-  int update(screenType *screen);
-  int refresh();
-  void startClock(statusBarType *barData);
-private:
-  screenType *m_screen;
-  args *m_args;
-  int m_hndl;
-  int m_width;
-  int m_height;
-  screenType m_last_screen;
-  pthread_t m_clock_thread;
-};
+  /*
+   * These are used by the clock thread to update the time and refresh the screen 
+   */
+  typedef struct arg_struct {
+      char* clockString;
+      screenGva* screen;
+      bool active;
+  } args;
+
+  class screenGva : public rendererGva
+  {
+  public:
+    screenGva(screenType *screen, int width, int height);
+    ~screenGva();
+    int update(screenType *screen);
+    int refresh();
+    void startClock(statusBarType *barData);
+  private:
+    screenType *m_screen;
+    args *m_args;
+    int m_hndl;
+    int m_width;
+    int m_height;
+    screenType m_last_screen;
+    pthread_t m_clock_thread;
+  };
+}
 #endif
