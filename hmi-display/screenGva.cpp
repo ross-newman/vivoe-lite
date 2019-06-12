@@ -89,7 +89,6 @@ namespace gva
                  tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min,
                  tm->tm_sec);
         a->screen->refresh ();
-
         if (*a->gps > 0) {
           i=0;
           tcflush(*a->gps,TCIOFLUSH);
@@ -240,8 +239,10 @@ namespace gva
     dummyEvent.type = Expose;
     dummyEvent.window = *getWindow ();
     dummyEvent.format = 32;
+#if 1
     XSendEvent (getDisplay (), *getWindow (), False, ExposureMask,
                 (XEvent *) & dummyEvent);
     XFlush (getDisplay ());
+#endif
   }
 }

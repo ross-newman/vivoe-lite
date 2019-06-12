@@ -206,7 +206,7 @@ rendererCairo::draw (int handle)
                                     currentCmd->points[0].x,
                                     currentCmd->points[0].y);
           cairo_paint (cr);
-//          cairo_surface_destroy(m_image_list[currentCmd->arg1].image);
+          cairo_surface_destroy(m_image_list[currentCmd->arg1].image);
           break;
         case COMMAND_TEXT_FONT:
           cairo_select_font_face (cr,
