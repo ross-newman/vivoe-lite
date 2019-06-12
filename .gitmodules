@@ -4,3 +4,9 @@
 [submodule "rtp-payloader"]
 	path = rtp-payloader
 	url = http://github.com/ross-newman/rtp-payloader
+[submodule "libosmscout"]
+	path = libosmscout
+	url = https://github.com/Framstag/libosmscout
+[submodule "nmealib"]
+	path = nmealib
+	url = https://github.com/ross-newman/nmealib

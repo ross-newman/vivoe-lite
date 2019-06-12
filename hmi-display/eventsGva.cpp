@@ -18,7 +18,7 @@ eventsGva::eventsGva(Display *display, Window *window) {
 int 
 eventsGva::nextGvaEvent(eventGvaType *event) {
   XEvent e;
-  XLockDisplay (m_display);
+
   XNextEvent (m_display, &e);
   
   event->type = NO_EVENT;
@@ -121,7 +121,6 @@ eventsGva::nextGvaEvent(eventGvaType *event) {
       }
       break;
   }
-  XUnlockDisplay (m_display);
 
 #if 0
   while ( nextGvaEvent(event) == GVA_SUCCESS ) {

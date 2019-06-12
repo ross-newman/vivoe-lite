@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include "rendererGva.h"
 #include "logGva.h"
+#include "nmea/nmea.h"
 
 #define MAJOR 0
 #define MINOR 0
@@ -69,6 +70,7 @@ namespace gva
 
   struct screenType {
     char name[100];
+    char gpsDevice[100];
     gvaFunctionEnum currentFunction;
     canvasType canvas;
     functionSelectType *functionTop;
@@ -87,7 +89,11 @@ namespace gva
    */
   typedef struct arg_struct {
       char* clockString;
+      char* locationString;
       screenGva* screen;
+      int *gps;
+      nmeaINFO *info;
+      nmeaPARSER *parser;
       bool active;
   } args;
 
@@ -100,13 +106,17 @@ namespace gva
     int refresh();
     void startClock(statusBarType *barData);
   private:
+    char *posDegrees(float lon, float lat);
     screenType *m_screen;
     args *m_args;
+    int m_gps;
     int m_hndl;
     int m_width;
     int m_height;
     screenType m_last_screen;
     pthread_t m_clock_thread;
+    nmeaINFO m_info;
+    nmeaPARSER m_parser;
   };
 }
 #endif

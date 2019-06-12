@@ -1,10 +1,26 @@
-#include <string.h>
+#include <GeographicLib/LambertConformalConic.hpp> 
+#include <string>
 #include <time.h>
+#include <termios.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <termios.h>
 #include "screenGva.h"
 #include "logGva.h"
+
+using namespace GeographicLib; 
+
+#define MAX_NMEA 1000
+
+float toDegrees(float lon) {
+  int d = (int)lon/100;
+  float m = lon - d*100;
+  return d+m/(float)60;
+}
 
 namespace gva
 {
@@ -16,7 +32,29 @@ namespace gva
     m_height = height;
     m_hndl = init (m_width, m_height);
     update (m_screen);
-    logGva::log ("GVA screen initalised.", LOG_INFO);
+    char tmp[100];
+    struct termios settings;
+
+    sprintf(tmp, "GVA screen initalised (%dx%d)", m_width, m_height);
+    logGva::log (tmp, LOG_INFO);
+
+    /* Initalise the pasert for NMEA */
+    nmea_zero_INFO(&m_info);
+    nmea_parser_init(&m_parser);
+    
+    /* Open File Descriptor */
+    m_gps = open( screen->gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
+    if (m_gps > 0) {
+      sprintf(tmp, "GPS Opened %s", screen->gpsDevice);
+    } else {
+      sprintf(tmp, "GPS Error Opening device %s", screen->gpsDevice);
+    }
+    logGva::log (tmp, LOG_INFO); 
+    tcgetattr(m_gps, &settings);
+
+    /* Set Baud Rate */
+    cfsetospeed(&settings, B4800); /* baud rate */
+    tcsetattr(m_gps, TCSANOW, &settings); /* apply the settings */
   }
 
   screenGva::~screenGva ()
@@ -24,6 +62,9 @@ namespace gva
     m_args->active = false;
     pthread_join (m_clock_thread, 0);
     free (m_args);
+    nmea_parser_destroy(&m_parser);
+    close(m_gps);
+    if (m_gps) logGva::log ("GPS closed", LOG_INFO);
     logGva::log ("GVA screen finalized.", LOG_INFO);
     logGva::finish ();
   }
@@ -34,16 +75,53 @@ namespace gva
     args *a = (args *) arg;
     time_t t;
     struct tm *tm;
+    char c;
+    char buffer[MAX_NMEA] = {0};
+    char tmp[MAX_NMEA] = {0};
 
     while (a->active)
       {
+        int i,ii = 0;
         t = time (NULL);
         tm = localtime (&t);
         sprintf (a->clockString, "%02d/%02d/%02d %02d:%02d:%02d", tm->tm_mday,
                  tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min,
                  tm->tm_sec);
         a->screen->refresh ();
-        usleep (1000000);
+
+        if (*a->gps > 0) {
+          i=0;
+          tcflush(*a->gps,TCIOFLUSH);
+          read(*a->gps, &buffer[0], 1);
+
+          memset(buffer, 0, MAX_NMEA);
+          while (buffer[0]!='$') read(*a->gps, &buffer[0], 1);
+          while (buffer[i++]!='\n') {
+            ii = read(*a->gps, &c, 1);
+            if (ii==1) {
+               buffer[i]=c;
+  //             printf("0x%02x ", c);
+             }
+            if (i==MAX_NMEA) break;
+          }
+          buffer[i-1]=0;
+          sprintf(tmp, "GPS NMEA %s", buffer);
+          logGva::log (tmp, LOG_INFO);
+
+          sprintf(tmp, "%s\r\n", buffer);
+          a->info->lon = 0;
+          a->info->lat = 0;
+          nmea_parse(a->parser, tmp, (int)strlen(tmp), a->info);
+          if ( a->info->lon && a->info->lat)
+          {
+            a->info->lat = toDegrees(a->info->lat);
+            a->info->lon = toDegrees(a->info->lon);
+
+          sprintf(a->locationString, "Lat:%05.06f Lon:%05.06f [%d,%d]", a->info->lat,
+                  a->info->lon, a->info->sig, a->info->fix);
+          }
+        }
+        usleep (100000);
       }
   }
 
@@ -54,6 +132,10 @@ namespace gva
     m_args = (args *) malloc (sizeof (args));
     m_args->active = true;
     m_args->clockString = barData->labels[0];
+    m_args->locationString = barData->labels[1];
+    m_args->parser = &m_parser;
+    m_args->info = &m_info;
+    m_args->gps = &m_gps;
     m_args->screen = this;
 
     /* Launch clock thread */
@@ -106,10 +188,10 @@ namespace gva
                           m_screen->functionRight.toggleOn,
                           m_screen->functionRight.labels);
       }
-  #if 1
+#if 1
     drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop->active,
                 m_screen->functionTop->hidden);
-  #endif
+#endif
     if (m_screen->keyboard.visible) {
       drawKeyboard (m_hndl, m_screen->keyboard.mode);
     }
@@ -138,6 +220,12 @@ namespace gva
     draw (m_hndl);
     m_last_screen = *screen;
   }
+  
+  char 
+  *posDegrees(float lon, float lat)
+  {
+    
+  }
 
   int
   screenGva::refresh ()
@@ -147,15 +235,12 @@ namespace gva
     /*
      * Send a dummy event to force screen update 
      */
-    XLockDisplay (getDisplay ());
     memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
     dummyEvent.type = Expose;
     dummyEvent.window = *getWindow ();
     dummyEvent.format = 32;
-printf("[GVA] Tick\n");
     XSendEvent (getDisplay (), *getWindow (), False, ExposureMask,
                 (XEvent *) & dummyEvent);
-//    XFlush (getDisplay ());
-    XUnlockDisplay (getDisplay ());
+    XFlush (getDisplay ());
   }
 }

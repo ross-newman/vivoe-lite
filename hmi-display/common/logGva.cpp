@@ -4,6 +4,14 @@
 #include <string.h>
 #include "logGva.h"
 
+using namespace std;
+
+void
+logGva::log (string message, int type)
+{
+  log(message.c_str(), type);
+}
+
 void
 logGva::log (char *message, int type)
 {
@@ -37,6 +45,7 @@ logGva::log (char *message, int type)
       m_errorfd = fopen ("log.txt", "w");
     }
   fprintf (m_errorfd, "[%ld] *%s* %s\n", info.uptime, msgType, message);
+  fflush(m_errorfd);
 }
 
 void
