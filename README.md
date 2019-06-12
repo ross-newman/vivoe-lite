@@ -12,7 +12,7 @@ Now install the submodules **rtp-payloader** and **Fast-RTPS**
 git submodule init
 ```
 # HMI
-The application includes an refferance implementation of the GVA HMI. This is meant as a refferance only and does not implement a lot of the functionality defined in the Land Data Model. Its primerially used to demo various video streaming pipelines for real time video processing.
+The project includes an refferance implementation of the GVA HMI. This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the Land Data Model(LDM). Its primerially used to demonstrate various video streaming pipelines for real time video processing and experiment with HMI options.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
@@ -26,7 +26,7 @@ $ ./hmi-display
 ```
 Automated builds are handled by travis-ci.
 ## GPS source
-There is support for NMEA GPS sources. The only tested devices is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are updeted on the display in the status bar.
+There is support for NMEA (USB) GPS sources. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are updeted on the display in the status bar.
 ```
 newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 00000000  24 47 50 47 47 41 2c 32  32 31 34 32 38 2e 30 30  |$GPGGA,221428.00|
