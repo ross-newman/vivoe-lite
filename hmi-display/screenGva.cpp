@@ -46,10 +46,11 @@ namespace gva
     m_gps = open( screen->gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
     if (m_gps > 0) {
       sprintf(tmp, "GPS Opened %s", screen->gpsDevice);
+      logGva::log (tmp, LOG_INFO); 
     } else {
       sprintf(tmp, "GPS Error Opening device %s", screen->gpsDevice);
+      logGva::log (tmp, LOG_ERROR); 
     }
-    logGva::log (tmp, LOG_INFO); 
     tcgetattr(m_gps, &settings);
 
     /* Set Baud Rate */

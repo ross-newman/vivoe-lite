@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(hmi-display)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
+execute_process(COMMAND git submodule update --init) 
 add_subdirectory(hmi-display)
 add_subdirectory(rtp-payloader)
 add_subdirectory(video)
