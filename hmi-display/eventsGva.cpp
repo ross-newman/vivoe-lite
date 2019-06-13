@@ -85,6 +85,22 @@ eventsGva::nextGvaEvent(eventGvaType *event) {
             /* l show / hide labels */
             event->key = KEY_F19;
             break;
+          case 0x15:
+            /* + keyboard */
+            event->key = KEY_PLUS;
+            break;
+          case 0x14:
+            /* - show / hide labels */
+            event->key = KEY_MINUS;
+            break;
+          case 0x3c:
+            /* > keyboard */
+            event->key = KEY_GREATER;
+            break;
+          case 0x3b:
+            /* < show / hide labels */
+            event->key = KEY_LESS;
+            break;
           default:
             printf ("KeyPress not defined 0x%x\n", e.xkey.keycode);
             break;

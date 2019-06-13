@@ -2,6 +2,11 @@
 #include "debug.h"
 #include "rendererGva.h"
 
+#define PLOT_CIRCLE_X(x, radius, degree) x + (radius) * cos(((M_PI * 2) / 360) * degree)
+#define PLOT_CIRCLE_Y(y, radius, degree) y - (radius) * sin(((M_PI * 2) / 360) * degree)
+#define degreesToRadians(angleDegrees) ((angleDegrees) * M_PI / 180.0)
+#define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
+
 rendererGva::rendererGva (int width, int height):
 rendererCairo (width, height)
 {
@@ -150,16 +155,20 @@ rendererGva::drawControlKeys (int hndl, int y, int active, int hide)
     }
 }
 
-#define PLOT_CIRCLE_X(x, radius, degree) x + (radius) * cos(((M_PI * 2) / 360) * degree)
-#define PLOT_CIRCLE_Y(y, radius, degree) y - (radius) * sin(((M_PI * 2) / 360) * degree)
 void
-rendererGva::drawPPI (int hndl, int x, int y, int degrees)
+rendererGva::drawPPI (int hndl, int x, int y, int degrees, int sightAzimuth)
 {
   int radius = 50;
-  int angle = 36;
-  int sightAzimuth = 45;
-  float d = 0;
+  int angle = 45;
+  float d;
 
+  /* Degrees north */
+  degrees+=270;
+  degrees = (degrees>=360) ? degrees-360: degrees;
+  sightAzimuth+=270;
+  sightAzimuth = (sightAzimuth>=360) ? sightAzimuth-360: sightAzimuth;
+  d=degrees;
+printf("Degrees %d\n", degrees);
   // Compass
   setColourBackground (hndl, BLACK);
   setColourForground (hndl, WHITE);
@@ -184,22 +193,24 @@ rendererGva::drawPPI (int hndl, int x, int y, int degrees)
   // Compass Markings
   setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
                (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
-  drawText (hndl, x - 3, y + 39, "N", 9);
-  drawText (hndl, x - 3, y - 46, "S", 9);
-  drawText (hndl, x - 46, y - 4, "W", 9);
-  drawText (hndl, x + 40, y - 4, "E", 9);
+  d=degreesToRadians(d);
+  int pos = 6;
+  drawText (hndl, x-3 + (radius - pos) * cos (d+(M_PI*2)), y-2 - (radius - pos) * sin (d+(M_PI*2)), "N", 10);
+  drawText (hndl, x-3 + (radius - pos) * cos (d+(M_PI)),   y-2 - (radius - pos) * sin (d+(M_PI)), "S", 10);
+  drawText (hndl, x-3 + (radius - pos) * cos (d+(M_PI/2)), y-2 - (radius - pos) * sin (d+(M_PI/2)), "E", 10);
+  drawText (hndl, x-3 + (radius - pos) * cos (d+(M_PI+M_PI/2)), y-2 - (radius - pos) * sin (d+(M_PI+M_PI/2)), "W", 10);
 
   setLineThickness (hndl, 1, LINE_SOLID);
   float step = (M_PI * 2) / 32;
   int p = 20;
   int c = 0;
-  for (d = 0; d <= (M_PI * 2); d += step)
+  d=degrees;
+  for (d=degreesToRadians(degrees); d <= degreesToRadians(degrees)+(M_PI*2); d += step)
     {
-      p = c++ % 4 ? 14 : 11;
-      movePen (hndl, x + (radius - 21) * cos (d),
-               y - (radius - 21) * sin (d));
-      drawPen (hndl, x + (radius - p) * cos (d), y - (radius - p) * sin (d),
-               true);
+      p = c % 4 ? 14 : 10;
+      c++;
+      movePen (hndl, x + (radius - 21) * cos (d), y - (radius - 21) * sin (d));
+      drawPen (hndl, x + (radius - p)  * cos (d), y - (radius - p)  * sin (d), true);
     }
 
   // Sight 

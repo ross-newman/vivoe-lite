@@ -121,7 +121,7 @@ namespace gva
                   a->info->lon, a->info->sig, a->info->fix);
           }
         }
-        usleep (100000);
+        usleep (1000000);
       }
   }
 
@@ -205,7 +205,7 @@ namespace gva
 
     if (m_screen->compass.visible)
       {
-        drawPPI (m_hndl, 165, 380, 0);
+        drawPPI (m_hndl, 165, 380, screen->compass.bearing, screen->compass.bearingSight);
       }
 
     if (m_screen->control.visible)
@@ -239,10 +239,8 @@ namespace gva
     dummyEvent.type = Expose;
     dummyEvent.window = *getWindow ();
     dummyEvent.format = 32;
-#if 1
     XSendEvent (getDisplay (), *getWindow (), False, ExposureMask,
                 (XEvent *) & dummyEvent);
     XFlush (getDisplay ());
-#endif
   }
 }

@@ -17,7 +17,7 @@ public:
   void drawFunctionKeys(int handle, int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
   void drawSaKeys(int handle, int y, int active, int hide);
   void drawControlKeys(int handle, int y, int active, int hide);
-  void drawPPI(int handle, int x, int y, int degrees);
+  void drawPPI(int handle, int x, int y, int degrees, int sightAzimuth);
   void drawTable(int handle, char labels[5][80]);
   void drawMode(int handle);
   void drawKeyboard(int handle, keyboardModeType mode);

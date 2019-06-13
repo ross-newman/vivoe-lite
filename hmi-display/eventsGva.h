@@ -45,6 +45,10 @@ enum gvaKeyEnum
   /* These are fake keys that only exist in the software (emulated world) */
   KEY_ESC,
   KEY_FULLSCREEN,
+  KEY_PLUS,
+  KEY_MINUS,
+  KEY_GREATER,
+  KEY_LESS,
   KEY_KEYBOARD
 };
 
