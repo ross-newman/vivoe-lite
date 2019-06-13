@@ -17,14 +17,19 @@ The project includes an refferance implementation of the GVA HMI. This is meant 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
 **GVA Human Machine Interface**
-To build the HMI clone the code and run make.
-```
-$ git clone https://github.com/ross-newman/vivoe-lite cd 
-$ cd vivoe-lite
-$ make
-$ ./hmi-display
-```
-Automated builds are handled by travis-ci.
+To build the HMI clone the code and run cmake. Automated builds are handled by travis-ci.
+
+The following keys can be used to interact with the display:
+* \+ Rotate PPI clockwise
+* \- Rotate PPI anti-clockwise
+* \> Rotate Sight anti-clockwise
+* < Rotate Sight anti-clockwise
+* [1-8] Function SA,WPN...
+* ESC Quit
+* K Keyboard
+  * CAPS-LOCK toggle upper case
+  * NUM-LOCK toggle special chars
+
 ## GPS source
 There is support for NMEA (USB) GPS sources. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are updeted on the display in the status bar.
 ```
