@@ -22,7 +22,7 @@ using namespace gva;
 // These labels should not change
 #define COMMON_KEYS { true, 0b0001000, 0b00000000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
 #define COMMON_FUNCTION_KEYS_TOP { true, 0b00100000, 0b00000100 }
-#define COMMON_STATUS_BAR { true,  "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:0", "C:0" }
+#define COMMON_STATUS_BAR { true,  "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W0", "A0", "C0", "O0" }
 #define COMPASS { true, 0, 55 }
 #define CANVAS { true, 0, 0 }
 /*                              Visible    Active    Hidden */
@@ -297,16 +297,16 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_PLUS:
-              screen->compass.bearing+=1;
+              screen->compass.bearing+=2;
               break;
             case KEY_GREATER:
-              screen->compass.bearingSight+=1;
+              screen->compass.bearingSight+=2;
               break;
             case KEY_MINUS: 
-              screen->compass.bearing-=1;
+              screen->compass.bearing-=2;
               break;
             case KEY_LESS:
-              screen->compass.bearingSight-=1;
+              screen->compass.bearingSight-=2;
               break;
             default:
               printf ("[GVA] KeyPress not defined 0x%x\n", event.key);

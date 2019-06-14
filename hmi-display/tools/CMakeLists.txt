@@ -1,0 +1,10 @@
+project(gva-tool)
+cmake_minimum_required(VERSION 2.8)
+
+find_package(LibXml2 REQUIRED)
+include_directories(${LIBXML2_INCLUDE_DIR})
+set(LIBS ${LIBS} ${LIBXML2_LIBRARIES})
+
+add_executable(gva-tool gva-tool.cpp)
+set (CMAKE_CXX_FLAGS "-Wwrite-strings -w")
+target_link_libraries(gva-tool ncurses xml2)

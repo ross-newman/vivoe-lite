@@ -48,7 +48,7 @@ namespace gva
 
   struct statusBarType {
     bool visible;
-    char labels[5][80];
+    char labels[6][80];
   };
 
   struct compassType {

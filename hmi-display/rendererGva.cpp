@@ -168,7 +168,7 @@ rendererGva::drawPPI (int hndl, int x, int y, int degrees, int sightAzimuth)
   sightAzimuth+=270;
   sightAzimuth = (sightAzimuth>=360) ? sightAzimuth-360: sightAzimuth;
   d=degrees;
-printf("Degrees %d\n", degrees);
+
   // Compass
   setColourBackground (hndl, BLACK);
   setColourForground (hndl, WHITE);
@@ -269,8 +269,8 @@ rendererGva::drawTable (int hndl, char labels[5][80])
   int column = 0;
   int padding = m_height * 0.02;
   int offset = padding;
-  int columns = 5;
-  int widths[5] = { 25, 45, 10, 10, 10 };
+  int columns = 6;
+  int widths[6] = { 23, 43, 8, 8, 8, 8 };
 
   setColourForground (hndl, WHITE);
   setColourBackground (hndl, DARK_GREEN);
