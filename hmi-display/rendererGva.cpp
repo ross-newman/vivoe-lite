@@ -270,7 +270,7 @@ rendererGva::drawTable (int hndl, char labels[5][80])
   int padding = m_height * 0.02;
   int offset = padding;
   int columns = 6;
-  int widths[6] = { 23, 43, 8, 8, 8, 8 };
+  int widths[6] = { 23, 43git , 8, 8, 8, 8 };
 
   setColourForground (hndl, WHITE);
   setColourBackground (hndl, DARK_GREEN);
