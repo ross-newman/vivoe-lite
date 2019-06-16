@@ -1,5 +1,5 @@
 ![VIVOE-LITE](images/Vivoe-Lite-Banner.png)
-![Version](https://img.shields.io/badge/version-0.1.5-brightgreen.svg)
+![Version](https://img.shields.io/badge/version-0.1.8-brightgreen.svg)
 ![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 # Dependancies
