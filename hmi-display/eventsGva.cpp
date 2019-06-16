@@ -65,6 +65,10 @@ eventsGva::nextGvaEvent(eventGvaType *event) {
             /* 8 maps to BMS */
             event->key = KEY_BMS;
             break;
+          case 0x26:
+            /* a maps to ALARMS */
+            event->key = KEY_F14;
+            break;
           case 0x29:
             /* f toggle fullscreen TODO: Does not work */
             event->key = KEY_FULLSCREEN;

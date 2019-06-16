@@ -20,6 +20,9 @@
 #define LIGHT_BLUE 50, 50, 255
 #define BLACK 0, 0, 0
 #define YELLOW 255 , 255, 0
+#define ORANGE 255,165,0
+#define NONE -1, -1, -1
+
 
 struct colour_type
 {

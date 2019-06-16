@@ -62,6 +62,10 @@ namespace gva
     keyboardModeType mode;
   };
 
+  struct alarmsType {
+    bool visible;
+  };
+
   struct canvasType {
     bool visible;
     char filename[256];
@@ -80,6 +84,7 @@ namespace gva
     commonTaskKeysType control;
     compassType compass;
     keyboardType keyboard;
+    alarmsType alarms;
   };
 
   class screenGva;

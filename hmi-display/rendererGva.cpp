@@ -7,6 +7,14 @@
 #define degreesToRadians(angleDegrees) ((angleDegrees) * M_PI / 180.0)
 #define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
 
+int 
+gvaRow::addCell(gvaCellType newcell, int width) 
+{
+  m_widths[m_cells] = width;
+  m_cell[m_cells++] = newcell; 
+  return m_cells; 
+};
+
 rendererGva::rendererGva (int width, int height):
 rendererCairo (width, height)
 {
@@ -161,7 +169,8 @@ rendererGva::drawPPI (int hndl, int x, int y, int degrees, int sightAzimuth)
   int radius = 50;
   int angle = 45;
   float d;
-
+  
+  drawColor(hndl, WHITE);
   /* Degrees north */
   degrees+=270;
   degrees = (degrees>=360) ? degrees-360: degrees;
@@ -263,29 +272,31 @@ rendererGva::drawMode (int hndl)
 }
 
 void
-rendererGva::drawTable (int hndl, char labels[5][80])
+rendererGva::drawTable (int hndl, gvaTable *table)
 {
-  int y = m_height * 0.92;
+  int height = 20;
+  int row = 0;
   int column = 0;
-  int padding = m_height * 0.02;
-  int offset = padding;
-  int columns = 6;
-  int widths[6] = { 23, 43git , 8, 8, 8, 8 };
+  int columns;
 
-  setColourForground (hndl, WHITE);
-  setColourBackground (hndl, DARK_GREEN);
-  setLineThickness (hndl, 2, LINE_SOLID);
+  setLineThickness (hndl, table->m_border, LINE_SOLID);
   setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
-               (int) CAIRO_FONT_WEIGHT_NORMAL, "Courier");
+              (int) CAIRO_FONT_WEIGHT_NORMAL, table->m_fontname);
 
-  for (column = 0; column < columns; column++)
-    {
-      int width = m_width - (padding * 2);
-      int tmp = widths[column] * ((double) width / 100);
+  for (row = 0; row< table->m_rows; row++) {
+    int offset = table->m_x;
+    for (column = 0; column < table->m_row[row].m_cells; column++)
+      {
+        int tmp = table->m_row[row].m_widths[column] * ((double)  table->m_width / 100);
+  
+        setColourForground (hndl, table->m_row[row].m_cell[column].foreground.red, table->m_row[row].m_cell[column].foreground.green, table->m_row[row].m_cell[column].foreground.blue);
+        setColourBackground (hndl, table->m_row[row].m_cell[column].background.red, table->m_row[row].m_cell[column].background.green, table->m_row[row].m_cell[column].background.blue);
+        drawRectangle (hndl, offset, table->m_y - (height * row), offset + tmp, table->m_y - (height * row) + height, true);
 
-      drawRectangle (hndl, offset, y, offset + tmp, y + 20, true);
-      drawText (hndl, offset + 4, y + 6, labels[column], 12);
-      offset += tmp;
+        drawColor (hndl, table->m_row[row].m_cell[column].textcolour.red, table->m_row[row].m_cell[column].textcolour.green, table->m_row[row].m_cell[column].textcolour.blue);
+        drawText (hndl, offset + 4, table->m_y - (height * row) + 6, table->m_row[row].m_cell[column].text, 12);
+        offset += tmp;
+      }
     }
 }
 

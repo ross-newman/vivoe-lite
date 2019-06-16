@@ -196,16 +196,123 @@ namespace gva
       drawKeyboard (m_hndl, m_screen->keyboard.mode);
     }
 
+#if 0
     drawMode (m_hndl);
+#endif
 
+    /* Setup and draw the status bar, one row table */
     if (m_screen->statusBar->visible)
       {
-        drawTable (m_hndl, m_screen->statusBar->labels);
+        int i = 0;
+        int widths[6] = { 23, 45, 8, 8, 8, 8 };
+//        gvaTable table(10, 443, 620);
+        gvaTable table(1, 443, 639);
+        gvaRow newrow;
+
+        for (i=0;i<6;i++) {
+          gvaCellType cell = {m_screen->statusBar->labels[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL };
+          newrow.addCell(cell, widths[i]);
+        }
+        table.addRow(newrow);
+        drawTable (m_hndl, &table);
       }
+
+    /* Draw the alarms if any */
+      {
+        gvaTable table(102, 422, 436);
+        gvaRow alarmrow;
+        gvaCellType cell = {"Engine over tempreture", ALIGN_LEFT, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
+        
+        table.m_border = 0;
+        alarmrow.addCell(cell, 100);
+        table.addRow(alarmrow);
+        drawTable (m_hndl, &table);
+      }
+
+    /* Setup and draw the alarms */
+    if (m_screen->alarms.visible)
+      {
+        int i = 0;
+        int widths[6] = { 20, 50, 10, 20 };
+        char row1[4][MAX_TEXT] = { "Time", "Alarm Text", "Cat", "Status"};
+        char row2[4][MAX_TEXT] = { "15/6 15:06", "Low engine oil pressure", "W", "RES"};
+        char row3[4][MAX_TEXT] = { "15/6 15:26", "Engine over tempreture", "W", "UNACK"};
+        char row4[4][MAX_TEXT] = { "15/6 15:29", "Engine over tempreture", "W", "RES"};
+        char row5[4][MAX_TEXT] = { "15/6 14:00", "Gun fault", "C", "RES"};
+        char row6[4][MAX_TEXT] = { "15/6 18:16", "Air con fault", "A", "ACT"};
+        char row7[4][MAX_TEXT] = { "15/6 19:03", "Gun barrel over tempreture", "C", "(OVR)ACT"};
+        char row8[4][MAX_TEXT] = { "15/6 19:04", "LRU fault", "C", "ACT"};
+        gvaTable table(110, 390, 420);
+        gvaRow newrow;
+        gvaRow newrow1;
+        gvaRow newrow2;
+        gvaRow newrow3;
+        gvaRow newrow4;
+        gvaRow newrow5;
+        gvaRow newrow6;
+        gvaRow newrow7;
+        gvaRow newrow8;
+        gvaRow newrow9;
+        
+        table.m_border = 1;
+
+        for (i=0;i<4;i++) {
+          newrow.addCell({row1[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow);
+
+        for (i=0;i<4;i++) {
+          newrow1.addCell({row2[i], ALIGN_LEFT, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow1);
+ 
+        for (i=0;i<4;i++) {
+          newrow2.addCell({row3[i], ALIGN_LEFT, { YELLOW }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow2);
+
+        for (i=0;i<4;i++) {
+          newrow3.addCell({row4[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow3);
+
+        for (i=0;i<4;i++) {
+          newrow4.addCell({row5[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow4);
+
+        for (i=0;i<4;i++) {
+          newrow5.addCell({row6[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow5);
+
+        for (i=0;i<4;i++) {
+          newrow6.addCell({row7[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow6);
+
+        for (i=0;i<4;i++) {
+          newrow7.addCell({row8[i], ALIGN_LEFT, { WHITE }, { GREY }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow7);
+
+        for (i=0;i<4;i++) {
+          newrow8.addCell({row3[i], ALIGN_LEFT, { WHITE }, { ORANGE }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
+        }
+        table.addRow(newrow8);
+
+        newrow9.addCell({"Page 1 of 1", ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
+        table.addRow(newrow9);
+
+
+        drawTable (m_hndl, &table);
+      }
+
+
 
     if (m_screen->compass.visible)
       {
-        drawPPI (m_hndl, 165, 380, screen->compass.bearing, screen->compass.bearingSight);
+        drawPPI (m_hndl, 165, 370, screen->compass.bearing, screen->compass.bearingSight);
       }
 
     if (m_screen->control.visible)

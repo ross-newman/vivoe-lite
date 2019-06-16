@@ -3,12 +3,79 @@
 
 #include "rendererCairo.h"
 
+#define MAX_ROWS 50
+#define MAX_CELLS 10
+#define MAX_TEXT 80
+
 typedef enum
 {
   KEYBOARD_LOWER = 0,
   KEYBOARD_UPPER,
   KEYBOARD_NUMBERS
 } keyboardModeType;
+
+typedef enum
+{
+  ALIGN_LEFT = 0,
+  ALIGN_CENTRE,
+  ALIGN_RIGHT
+} cellAlignType;
+
+typedef enum
+{
+  WEIGHT_NORMAL = 0,
+  WEIGHT_BOLD,
+  WEIGHT_ITALIC
+} weightType;
+
+struct gvaColourType
+{
+  int red;
+  int green;
+  int blue;
+};
+
+class widget {
+public:
+  widget() { };
+  widget(int x, int y, int width) : m_x(x), m_y(y), m_width(width) { };
+  widget(int x, int y) : m_x(x), m_y(y) { };
+  int m_x = 0;
+  int m_y = 0;
+  int m_width = 0;
+};
+
+typedef struct gvaCellType  {
+public :
+  char *text;
+  cellAlignType align;
+  gvaColourType foreground;
+  gvaColourType background;
+  gvaColourType textcolour;
+  weightType weight;  
+} gvaCell;
+
+class gvaRow : public widget {
+public :
+  gvaRow() { };  
+  gvaRow(int x, int y) : widget(x, y) {};  
+  int addCell(gvaCellType newcell, int width);
+  gvaCellType m_cell[MAX_CELLS];
+  int m_widths[MAX_CELLS];
+  int m_cells = 0;
+};
+
+class gvaTable : public widget {
+public :
+  gvaTable(int x, int y, int width) : widget(x, y, width) {};  
+  int addRow(gvaRow newrow) { m_row[m_rows++] = newrow; return m_rows; };
+  void setFontName(char *name) { strcpy(m_fontname, name); };
+  void setFontName(int thickness) { m_border=thickness; };
+  int m_rows = 0;
+  int m_border = 2;
+  gvaRow m_row[MAX_ROWS];
+  char m_fontname[100] = "Courier";
+};
 
 class rendererGva : public rendererCairo
 {
@@ -18,7 +85,7 @@ public:
   void drawSaKeys(int handle, int y, int active, int hide);
   void drawControlKeys(int handle, int y, int active, int hide);
   void drawPPI(int handle, int x, int y, int degrees, int sightAzimuth);
-  void drawTable(int handle, char labels[5][80]);
+  void drawTable(int handle, gvaTable *table);
   void drawMode(int handle);
   void drawKeyboard(int handle, keyboardModeType mode);
 private:

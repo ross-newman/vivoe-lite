@@ -6,3 +6,7 @@ build
 tmp
 *~
 .makefile.swp
+cmake_install*
+Makefile
+CMakeCache*
+CMakeFiles

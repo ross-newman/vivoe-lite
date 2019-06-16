@@ -54,6 +54,9 @@ using namespace gva;
 #define BMS_FUNCTION_KEYS_LEFT   { true, 0b100000, 0b100000, 0b000000, 0b000000, { "Mission", LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL } }
 #define BMS_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b000000, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, } }
 
+#define ALARM_KEYS_LEFT   { true, 0b000000, 0b111100, 0b000000, 0b000000, { "Sort", "Order", "Show.Overridden", "Select.All", LABEL_NULL } }
+#define ALARM_KEYS_RIGHT  { true, 0b000000, 0b111011, 0b000000, 0b000000, { "Override", "Clear", "Add Note", LABEL_NULL, "Page.Up", "Page.Down", } }
+
 #define BIT(b,x) (x & 0x1 << b)
 #define SET_CANVAS_PNG(file) strcpy (screen->canvas.filename, file); screen->canvas.buffer = 0;
 
@@ -74,9 +77,10 @@ main (int argc, char *argv[])
   functionSelectType top = COMMON_FUNCTION_KEYS_TOP;
   canvasType canvas = { true, "test2.png", 0 };
   keyboardType keyboard = { false, KEYBOARD_UPPER };
+  alarmsType alarms = { false };
   screenType screen_sa =
     { "Situational Awareness", "/dev/ttyUSB0", SA, canvas, &top, &status, 
-      SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard };
+      SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard, alarms };
   screenType *screen = &screen_sa;
   screenGva *render = new screenGva (screen, view.width, view.height);
 
@@ -132,6 +136,7 @@ main (int argc, char *argv[])
                   
                   screen->compass.visible = true;
                   screen->canvas.visible = true;
+                  screen->alarms.visible = false;
                   SET_CANVAS_PNG("test2.png");
                   screen->functionTop->active = 0x1 << 7;
                   screen->functionLeft = left;
@@ -148,6 +153,7 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = true;
                   screen->canvas.visible = true;
+                  screen->alarms.visible = false;
                   SET_CANVAS_PNG("test2.png");
                   screen->functionTop->active = 0x1 << 6;
                   screen->functionLeft = left;
@@ -164,6 +170,7 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = false;
                   screen->canvas.visible = false;
+                  screen->alarms.visible = false;
                   screen->functionTop->active = 0x1 << 5;
                   screen->functionLeft = left;
                   screen->functionRight = right;
@@ -179,6 +186,7 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = true;
                   screen->canvas.visible = true;
+                  screen->alarms.visible = false;
                   if (rtpBuffer) {
                     screen->canvas.buffer = rtpBuffer;
                   } else {
@@ -199,6 +207,7 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = false;
                   screen->canvas.visible = false;
+                  screen->alarms.visible = false;
                   screen->functionTop->active = 0x1 << 3;
                   screen->functionLeft = left;
                   screen->functionRight = right;
@@ -214,6 +223,7 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = false;
                   screen->canvas.visible = false;
+                  screen->alarms.visible = false;
                   screen->functionTop->active = 0x1 << 2;
                   screen->functionLeft = left;
                   screen->functionRight = right;
@@ -229,6 +239,7 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = false;
                   screen->compass.visible = false;
+                  screen->alarms.visible = false;
                   screen->canvas.visible = false;
                   screen->functionTop->active = 0x1 << 1;
                   screen->functionLeft = left;
@@ -244,11 +255,26 @@ main (int argc, char *argv[])
 
                   screen->compass.visible = false;
                   screen->canvas.visible = true;
+                  screen->alarms.visible = false;
                   SET_CANVAS_PNG("map.png");
                   screen->functionTop->active = 0x1 << 0;
                   screen->functionLeft = left;
                   screen->functionRight = right;
                 }
+              break;
+            case KEY_F14:
+              /* Alarms */
+              {
+                functionKeysType left = ALARM_KEYS_LEFT;
+                functionKeysType right = ALARM_KEYS_RIGHT;
+
+                screen->compass.visible = false;
+                screen->canvas.visible = false;
+                screen->alarms.visible = true;
+                screen->functionTop->active = 0x1 << 0;
+                screen->functionLeft = left;
+                screen->functionRight = right;
+              }
               break;
             case KEY_F19:
               /* Toggle labels */
