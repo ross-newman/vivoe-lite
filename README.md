@@ -12,7 +12,7 @@ Now install the submodules **rtp-payloader** and **Fast-RTPS**
 git submodule init
 ```
 # HMI
-The project includes an refferance implementation of the GVA HMI. This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the Land Data Model(LDM). Its primerially used to demonstrate various video streaming pipelines for real time video processing and experiment with HMI options.
+The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
@@ -26,12 +26,17 @@ The following keys can be used to interact with the display:
 * < Rotate Sight anti-clockwise
 * [1-8] Function SA,WPN...
 * ESC Quit
+* A Alarms
 * K Keyboard
   * CAPS-LOCK toggle upper case
   * NUM-LOCK toggle special chars
-
+## DDS
+Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates for this.
+* https://github.com/eProsima/Fast-RTPS
+* https://github.com/ADLINK-IST/opensplice
+I will be testing FastRTPS as this is the default choice for [ROS2](https://index.ros.org/doc/ros2/).
 ## GPS source
-There is support for NMEA (USB) GPS sources. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are updeted on the display in the status bar.
+Application supports locally connected NMEA (USB virtual serial) GPS source. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are read, converted and displayed on the display in the status bar if present. This is dont by the same pthread that updated the clock. If no device is present then a dummy location is used which will place you in London at a famous landmark.
 ```
 newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 00000000  24 47 50 47 47 41 2c 32  32 31 34 32 38 2e 30 30  |$GPGGA,221428.00|
@@ -215,3 +220,4 @@ The HMI uses Cairo for rendering the GUI components.
 * https://www.cairographics.org/
 * https://www.vetronics.org/
 * https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture
+* https://index.ros.org/doc/ros2/
