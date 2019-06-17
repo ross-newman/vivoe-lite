@@ -476,7 +476,7 @@ rendererCairo::getTextWidth (int handle, char *str, int fontSize)
 
   cairo_set_font_size (cr, fontSize);
   cairo_text_extents (cr, str, &extents);
-  return extents.width;
+  return extents.x_advance;
 }
 
 int

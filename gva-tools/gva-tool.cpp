@@ -53,7 +53,7 @@ typedef struct nmessages {
 } nmessage;
 
 typedef enum {
-    KEY_SA  = 1,
+    KEY_SA  = 0,
     KEY_WPN,
     KEY_DEF,
     KEY_SYS,
@@ -107,7 +107,7 @@ typedef struct {
 static WINDOW  *root_win;
 static int      fd;
 static int      no_splash = 0;
-static gvaInput gva_keys[MAX_KEYS-1] = {
+static gvaInput gva_keys[MAX_KEYS] = {
     { "SA ", KEY_SA, '1', false },
     { "WPN", KEY_WPN, '2', false },
     { "DEF", KEY_DEF, '3', false },
@@ -233,44 +233,6 @@ xmlReader(const char *content, int length)
     return ret;
 }
 
-void
-winUpdateStates(WINDOW * win, gvaInput * keys)
-{
-    int             c = 0;
-    int             line = 2;
-    int             column = 0;
-    int             column_offset = 10;
-    char            keytext[5] = "F10";
-
-	wattron(win, COLOR_PAIR(1));
-
-    /* Top of screen */
-    for (c = 0; c < 8; c++) {
-		strcpy(keytext, keys[c].name);
-		mvwprintw(win, line, column_offset + column, keytext);
-		column += 7;
-    }
-
-    /* The screen */
-    for (c = 0; c < 12*2; c++) {
-		mvwprintw(win, line+2+c, column_offset-2, "                                                       ");
-		if (c%2) {
-		}
-    }
-
-    /* Botton of screen */
-    column = 0;
-    for (c = 0; c < 8; c++) {
-		strcpy(keytext, keys[12+c].name);
-		mvwprintw(win, line+27, column_offset + column, keytext);
-		column += 7;
-    }
-
-	wattroff(win, COLOR_PAIR(1));
-
-}
-
-
 WINDOW         *
 winCreate(int height, int width, int starty, int startx)
 {
@@ -384,6 +346,132 @@ winMessageBox(nmessage str)
 }
 
 void
+gvaInfo()
+{
+    char            tmp[100];
+    nmessage        m;
+
+    sprintf(tmp, "GVA info:");
+    strcpy(m.line[0], tmp);
+    sprintf(tmp, "    GPS Device : %s", DEFAULT_GPS_DEVICE_NAME);
+    strcpy(m.line[1], tmp);
+    m.lines = 3;
+    winMessageBox(m);
+}
+
+
+void
+winBezelRedraw(WINDOW *win_bezel, gvaInput * keys, int activekey)
+{
+  int             c = 0;
+  int             line = 2;
+  int             column = 0;
+  int             column_offset = 10;
+  char            keytext[10] = "F10";
+
+  wattron(win_bezel, COLOR_PAIR(4));
+
+  /* Top of screen */
+  for (c = KEY_SA; c <= KEY_BLACKOUT; c++) {
+    strcpy(keytext, keys[c].name);
+    (c==activekey) ? wattron(win_bezel, COLOR_PAIR(4)) : wattron(win_bezel, COLOR_PAIR(1));
+    mvwprintw(win_bezel, line, column_offset + column, keytext);
+    column += 7;
+    if (c==KEY_BMS) { column = 0; line +=2; } /* Left of screen */
+    if (c==KEY_F6) { column = 0; line +=2; } /* Right of screen */
+    if (c==KEY_F12) { column = 0; line +=2; } /* Botton of screen */
+    if (c==KEY_F20) { column = 0; line +=2; } /* Botton of screen */
+  }
+	wattroff(win_bezel, COLOR_PAIR(1));
+  mvwprintw(win_bezel, 12, 3, "Press 'ENTER' to send input.");
+  mvwprintw(win_bezel, 13, 3, "Press 'q' to return to the help screen.");
+}
+
+void
+winBezel(gvaInput * keys, int activekey)
+{
+  bool done = false;
+  WINDOW         *win_bezel;
+  int             startx,
+                  starty,
+                  width,
+                  height;
+
+  height = LINES;
+  width = COLS;
+  starty = 0;
+  startx = 0;
+  win_bezel = winCreate(height, width, starty, startx);
+  mvwprintw(win_bezel, 0, 3, "GVA Tool (Bezel)");
+  winBezelRedraw(win_bezel, keys, activekey);
+
+  while (!done) {
+    int c = wgetch(win_bezel);
+
+    switch (c) {
+      case '0':
+          winBezelRedraw(win_bezel, keys, 0);
+          activekey = 0;
+          break;
+      case '1':
+          winBezelRedraw(win_bezel, keys, 1);
+          activekey = 1;
+          break;
+      case '2':
+          winBezelRedraw(win_bezel, keys, 2);
+          activekey = 2;
+          break;
+      case '3':
+          winBezelRedraw(win_bezel, keys, 3);
+          activekey = 3;
+          break;
+      case '4':
+          winBezelRedraw(win_bezel, keys, 4);
+          activekey = 4;
+          break;
+      case '5':
+          winBezelRedraw(win_bezel, keys, 5);
+          activekey = 5;
+          break;
+      case '6':
+          winBezelRedraw(win_bezel, keys, 6);
+          activekey = 6;
+          break;
+      case '7':
+          winBezelRedraw(win_bezel, keys, 7);
+          activekey = 7;
+          break;
+      case '8':
+          winBezelRedraw(win_bezel, keys, 8);
+          activekey = 8;
+          break;
+      case '9':
+          winBezelRedraw(win_bezel, keys, 9);
+          activekey = 9;
+          break;
+      case '>':
+      case KEY_RIGHT:
+          (activekey<KEY_BLACKOUT) ? activekey+=1 : 0;
+          winBezelRedraw(win_bezel, keys, activekey);
+          break;
+      case '<':
+      case KEY_LEFT:
+          (activekey>KEY_SA) ? activekey-=1 : 0;
+          winBezelRedraw(win_bezel, keys, activekey);
+          break;
+      case 'Q':
+      case 'q':
+          done=true;
+          break;
+      default:
+          break;
+      }
+    wrefresh(win_bezel);
+  }
+  winDestroy(win_bezel);
+}
+
+void
 winSplash()
 {
     WINDOW         *splash_win;
@@ -400,12 +488,65 @@ winSplash()
 
     mvwprintw(splash_win, 0, 2, "GVA Tool");
     mvwprintw(splash_win, 2, 2, "Tools for testing GVA using SNMP and DDS");
-    mvwprintw(splash_win, 3, 2, "Includes HIM Inputs, GPS and sensor setup.");
+    mvwprintw(splash_win, 3, 2, "Includes HUMS Inputs, GPS and sensor setup.");
     mvwprintw(splash_win, 5, 2, "Author: ross@rossnewman..com");
     wrefresh(splash_win);       /* Print it on to the real screen */
     wgetch(splash_win);         /* Wait for user input */
 
     winDestroy(splash_win);
+}
+
+void
+winHelp()
+{
+  bool done = false;
+  WINDOW         *help_win;
+  int             startx,
+                  starty,
+                  width,
+                  height;
+  height = LINES;
+  width = COLS;
+  starty = 0;
+  startx = 0;
+  wattron(help_win, COLOR_PAIR(1));
+  help_win = winCreate(height, width, starty, startx);
+  mvwprintw(help_win, 0, 3, "GVA Tool (Help)");
+  wattron(help_win, COLOR_PAIR(3));    
+  mvwprintw(help_win, 3, 5, " _____ _____ _____    _____         _ ");
+  mvwprintw(help_win, 4, 5, "|   __|  |  |  _  |  |_   _|___ ___| |");
+  mvwprintw(help_win, 5, 5, "|  |  |  |  |     |    | | | . | . | |");
+  mvwprintw(help_win, 6, 5, "|_____|\\___/|__|__|    |_| |___|___|_|");
+  wattron(help_win, COLOR_PAIR(1));
+  mvwprintw(help_win, 5, 44, "h - Help");
+  mvwprintw(help_win, 6, 44, "Press 'q' to quit application.");
+  mvwprintw(help_win, 10, 3, "Use these keys to switch to different helper screens:");
+  mvwprintw(help_win, 11, 3, "  b - Bezel key inputs     a - Alarm generator");
+  mvwprintw(help_win, 12, 3, "  g - GPS generation       ");
+
+  while (!done) {
+    int key=0;
+    int c = wgetch(help_win);
+
+    switch (c) {
+    case 'b':
+        winBezel(gva_keys, 0);
+        break;
+    case 'q':
+    case 'Q':
+        done = true;
+        break;
+    case 'i':
+    case 'I':
+        gvaInfo();
+        break;
+    default:
+        break;
+    }
+    redrawwin(help_win);
+    mvwprintw(help_win, 0, 3, "GVA Tool (Help)");
+  }
+  winDestroy(help_win);
 }
 
 void
@@ -440,20 +581,6 @@ gvaLog(char* message, int type)
 	}
 	fprintf(errorfd, "[%ld] *%s* %s\n", info.uptime, msgType, message);
 	fflush(errorfd);
-}
-
-void
-gvaInfo()
-{
-    char            tmp[100];
-    nmessage        m;
-
-    sprintf(tmp, "GVA info:");
-    strcpy(m.line[0], tmp);
-    sprintf(tmp, "\tGPS Device : %s", DEFAULT_GPS_DEVICE_NAME);
-    strcpy(m.line[0], tmp);
-    m.lines = 3;
-    winMessageBox(m);
 }
 
 int
@@ -533,23 +660,24 @@ main(int argc, char **argv)
     if (xmlReader(xmlContent, 6) != 0)
         return -1;
 
-	gvaLog("GVA tool application Started", LOG_INFO);
+	  gvaLog("GVA tool application Started", LOG_INFO);
 
     initscr();                  /* Start curses mode */
-	clear();
+  	clear();
     noecho();
     cbreak();                   /* Line buffering disabled, Pass on everty thing to me */
-//    keypad(stdscr, TRUE);       /* I need that nifty F1 */
+    keypad(stdscr, TRUE);       /* I need that nifty F1 */
 
     if (has_colors() == FALSE) {
         endwin();
         printf("Your terminal does not support color\n");
     } else {
         start_color();
-        init_pair(1, COLOR_BLACK, COLOR_WHITE);
+        init_pair(1, COLOR_WHITE, COLOR_BLACK);
         init_pair(2, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(3, COLOR_RED, COLOR_BLACK);
-        init_pair(4, COLOR_BLACK, COLOR_BLACK);
+        init_pair(3, COLOR_GREEN, COLOR_BLACK);
+        init_pair(4, COLOR_BLACK, COLOR_WHITE);
+        init_pair(5, COLOR_BLACK, COLOR_WHITE);
     }
 
     /*
@@ -557,9 +685,11 @@ main(int argc, char **argv)
      */
     fd = open(xml.device, O_RDWR);
     if (fd < 0) {
+#if 0
         sprintf(m.line[0], "Error opening device %s", xml.device);
         m.lines = 1;
         winMessageBox(m);
+#endif
     }
 
     /*
@@ -572,71 +702,17 @@ main(int argc, char **argv)
     root_win = winCreate(height, width, starty, startx);
     winPrintInMiddle(root_win, "Press 'q' quit, 'i' info, 's' screen");
 
+#if 0
     if (!no_splash) {
         winSplash();
     }
+#endif
 
-    wtimeout(root_win, 1);
+//    wtimeout(root_win, 1);
     noecho();
     cbreak();	//Line buffering disabled. pass on everything
-    
-    /* Get all the mouse events */
-    halfdelay(1);
-    keypad(stdscr, TRUE);
-	mousemask(ALL_MOUSE_EVENTS  | REPORT_MOUSE_POSITION, NULL);
-	
-    while (1) {
-        int c = wgetch(root_win);
-
-        switch (c) {
-        case KEY_MOUSE :
-            if(getmouse(&event) == OK) {
-				/* Do some thing with the event */
-				if(event.bstate & BUTTON1_PRESSED)
-//					mvwprintw(root_win, LINES - 3, 4, "Left Button Pressed...");
-					gvaInfo();
-			}
-			break;
-        case '0':
-            break;
-        case '1':
-            break;
-        case '2':
-            break;
-        case '3':
-            break;
-        case '4':
-            break;
-        case '5':
-            break;
-        case '6':
-            break;
-        case '7':
-            break;
-        case 't':
-        case 'T':
-            break;
-        case 'q':
-        case 'Q':
-            c = 'q';
-            break;
-        case 'i':
-        case 'I':
-            gvaInfo();
-            break;
-        default:
-            break;
-        }
-        if (c == 'q')           /* Quit */
-            break;
-
-        mvwprintw(root_win, LINES - 1, 2, "GVA tool (%s)...", xml.device);
-
-        winUpdateStates(root_win, gva_keys);
-        mvwprintw(root_win, LINES - 1, COLS - 1, "");
-
-        wrefresh(root_win);
-    }
+      
+    winHelp();
 
     gvaLog("GVA finalized.", LOG_INFO);
     close(fd);

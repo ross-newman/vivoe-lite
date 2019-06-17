@@ -287,14 +287,36 @@ rendererGva::drawTable (int hndl, gvaTable *table)
     int offset = table->m_x;
     for (column = 0; column < table->m_row[row].m_cells; column++)
       {
+        int pos = 0;
         int tmp = table->m_row[row].m_widths[column] * ((double)  table->m_width / 100);
+  
+        setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
+                    (int) table->m_row[row].m_cell[column].weight == WEIGHT_BOLD ?
+                    CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL, 
+                    table->m_fontname);
   
         setColourForground (hndl, table->m_row[row].m_cell[column].foreground.red, table->m_row[row].m_cell[column].foreground.green, table->m_row[row].m_cell[column].foreground.blue);
         setColourBackground (hndl, table->m_row[row].m_cell[column].background.red, table->m_row[row].m_cell[column].background.green, table->m_row[row].m_cell[column].background.blue);
         drawRectangle (hndl, offset, table->m_y - (height * row), offset + tmp, table->m_y - (height * row) + height, true);
 
         drawColor (hndl, table->m_row[row].m_cell[column].textcolour.red, table->m_row[row].m_cell[column].textcolour.green, table->m_row[row].m_cell[column].textcolour.blue);
-        drawText (hndl, offset + 4, table->m_y - (height * row) + 6, table->m_row[row].m_cell[column].text, 12);
+        
+        
+        int w = getTextWidth (hndl, table->m_row[row].m_cell[column].text, 12);
+        int h = getTextHeight (hndl, table->m_row[row].m_cell[column].text, 12);
+        switch (table->m_row[row].m_cell[column].align) {
+        case ALIGN_CENTRE:
+          pos = offset + (tmp/2 - w/2);
+          break;
+        case ALIGN_RIGHT:
+          pos = offset + (tmp - w);
+          break;
+        case ALIGN_LEFT:
+        default:
+          pos = offset + 4;
+          break;
+        }
+        drawText (hndl, pos, table->m_y - (height * row) + 6, table->m_row[row].m_cell[column].text, 12);
         offset += tmp;
       }
     }

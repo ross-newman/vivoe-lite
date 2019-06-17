@@ -210,7 +210,7 @@ namespace gva
         gvaRow newrow;
 
         for (i=0;i<6;i++) {
-          gvaCellType cell = {m_screen->statusBar->labels[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL };
+          gvaCellType cell = {m_screen->statusBar->labels[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
           newrow.addCell(cell, widths[i]);
         }
         table.addRow(newrow);
@@ -221,7 +221,7 @@ namespace gva
       {
         gvaTable table(102, 422, 436);
         gvaRow alarmrow;
-        gvaCellType cell = {"Engine over tempreture", ALIGN_LEFT, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
+        gvaCellType cell = {"Engine over tempreture", ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
         
         table.m_border = 0;
         alarmrow.addCell(cell, 100);
@@ -301,7 +301,8 @@ namespace gva
         }
         table.addRow(newrow8);
 
-        newrow9.addCell({"Page 1 of 1", ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
+//        newrow9.addCell({"Page_1_of_1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
+        newrow9.addCell({"Page 1 of 1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
         table.addRow(newrow9);
 
 

@@ -70,7 +70,7 @@ public :
   gvaTable(int x, int y, int width) : widget(x, y, width) {};  
   int addRow(gvaRow newrow) { m_row[m_rows++] = newrow; return m_rows; };
   void setFontName(char *name) { strcpy(m_fontname, name); };
-  void setFontName(int thickness) { m_border=thickness; };
+  void setBorderThickness(int thickness) { m_border=thickness; };
   int m_rows = 0;
   int m_border = 2;
   gvaRow m_row[MAX_ROWS];

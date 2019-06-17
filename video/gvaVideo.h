@@ -1,4 +1,4 @@
-#ifndef GVA_VIDEO_H
+#wi GVA_VIDEO_H
 #define GVA_VIDEO_H
 
 #define VIDEO_DEFAULT_HEIGHT 480

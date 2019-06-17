@@ -10,3 +10,5 @@ cmake_install*
 Makefile
 CMakeCache*
 CMakeFiles
+CPackConfig*
+CPackSourceConfig.cmake
