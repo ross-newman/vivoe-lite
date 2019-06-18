@@ -35,7 +35,7 @@ The following keys can be used to interact with the display:
   * NUM-LOCK toggle special chars
 
 ## DDS
-Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates for this.
+Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates opensource projects implementing GVA.
 * https://github.com/eProsima/Fast-RTPS
 * https://github.com/ADLINK-IST/opensplice
 I will be testing FastRTPS as this is the default choice for [ROS2](https://index.ros.org/doc/ros2/).
