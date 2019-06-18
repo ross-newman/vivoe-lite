@@ -16,6 +16,8 @@ Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML an
 
 ![GVA Dataflow](images/GVA-DataFlow.PNG)
 
+Touch screen inputs and bezel key inputs are sent back to the HMI to update the overlays in the RTP stream. The display can be 'dumb' with HMI / Video processing being done on a seperate LRU. RTP streams being recieved by the display have the overlays already rendered in the video stream.
+
 ### HMI Controls
 
 To build the HMI clone the code and run cmake. Automated builds are handled by travis-ci.
