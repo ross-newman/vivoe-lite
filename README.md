@@ -7,14 +7,14 @@ This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is cur
 ```
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-
 ```
-Now install the submodules **rtp-payloader** and **Fast-RTPS**
-```
-git submodule init
-```
 # HMI
 The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
+
+Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
+
+![GVA Dataflow](images/GVA-DataFlow.PNG)
 
 **GVA Human Machine Interface**
 To build the HMI clone the code and run cmake. Automated builds are handled by travis-ci.
