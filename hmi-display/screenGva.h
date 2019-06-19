@@ -24,55 +24,55 @@ namespace gva
     BMS
   };
 
-  struct functionSelectType {
+  typedef struct functionSelect {
     bool visible;
     int active;
     int hidden;
-  };
+  } functionSelectType;
 
-  struct functionKeysType {
+  typedef struct functionKeys {
     bool visible;
     int active;
     int hidden;
     int toggleActive;
     int toggleOn;
     char labels[6][40];
-  };
+  } functionKeysType;
 
-  struct commonTaskKeysType {
+  typedef struct commonTaskKeys {
     bool visible;
     int active;
     int hidden;
     char labels[8][40];
-  };
+  } commonTaskKeysType;
 
-  struct statusBarType {
+  typedef struct statusBar {
     bool visible;
     char labels[6][80];
-  };
+  } statusBarType;
 
-  struct compassType {
+  typedef struct compass {
     bool visible;
     int bearing;
     int bearingSight;
-  };
+  } compassType;
 
-  struct keyboardType {
+  typedef struct keyboard {
     bool visible;
     keyboardModeType mode;
-  };
+  } keyboardType;
 
-  struct alarmsType {
+  typedef struct alarmsType {
     bool visible;
   };
 
-  struct canvasType {
+  typedef struct canvas {
     bool visible;
     char filename[256];
     char* buffer;
-  };
+  } canvasType;
 
-  struct screenType {
+  typedef struct screen {
     char name[100];
     char gpsDevice[100];
     gvaFunctionEnum currentFunction;
@@ -85,7 +85,7 @@ namespace gva
     compassType compass;
     keyboardType keyboard;
     alarmsType alarms;
-  };
+  } screenType;
 
   class screenGva;
 

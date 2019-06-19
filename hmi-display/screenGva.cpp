@@ -1,4 +1,5 @@
 #include <GeographicLib/LambertConformalConic.hpp> 
+#include <iostream>
 #include <string>
 #include <time.h>
 #include <termios.h>
@@ -12,6 +13,7 @@
 #include "screenGva.h"
 #include "logGva.h"
 
+using namespace std;
 using namespace GeographicLib; 
 
 #define MAX_NMEA 1000
@@ -34,14 +36,17 @@ namespace gva
     update (m_screen);
     char tmp[100];
     struct termios settings;
+  cout << "testcdd\n";
 
     sprintf(tmp, "GVA screen initalised (%dx%d)", m_width, m_height);
     logGva::log (tmp, LOG_INFO);
 
+  cout << "testcdd\n";
     /* Initalise the pasert for NMEA */
     nmea_zero_INFO(&m_info);
     nmea_parser_init(&m_parser);
     
+  cout << "testcdd\n";
     /* Open File Descriptor */
     m_gps = open( screen->gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
     if (m_gps > 0) {
@@ -53,6 +58,7 @@ namespace gva
     }
     tcgetattr(m_gps, &settings);
 
+  cout << "testcdd\n";
     /* Set Baud Rate */
     cfsetospeed(&settings, B4800); /* baud rate */
     tcsetattr(m_gps, TCSANOW, &settings); /* apply the settings */

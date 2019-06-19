@@ -55,8 +55,8 @@ public:
   virtual void setColour (int handle, int red, int green, int blue) = 0;
   virtual void setColourForground (int handle, int red, int green, int blue) = 0;
   virtual void setColourBackground (int handle, int red, int green, int blue) = 0;
-  int getWidth (int handle) { return m_width; };
-  int getHeight (int handle) { return m_height; };
+  int getWidth () { return m_width; };
+  int getHeight () { return m_height; };
   virtual int drawLine (int handle, int x1, int y1, int x2, int y2) = 0;
   virtual void drawCircle (int handle, int x, int y, int radius, bool fill) = 0;
   virtual void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill) = 0;
