@@ -1,4 +1,4 @@
-![VIVOE-LITE](images/Vivoe-Lite-Banner.png)
+![VIVOE-LITE](images/Vivoe-lite-banner.png)
 ![Version](https://img.shields.io/badge/version-0.1.25-brightgreen.svg)
 ![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
@@ -7,16 +7,19 @@ This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is cur
 ```
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-
 ```
-Now install the submodules **rtp-payloader** and **Fast-RTPS**
-```
-git submodule init
-```
 # HMI
 The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
-**GVA Human Machine Interface**
+Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
+
+![GVA Dataflow](images/GVA-DataFlow.PNG)
+
+Touch screen inputs and bezel key inputs are sent back to the HMI to update the overlays in the RTP stream. The display can be 'dumb' with HMI / Video processing being done on a seperate LRU. RTP streams being recieved by the display have the overlays already rendered in the video stream.
+
+### HMI Controls
+
 To build the HMI clone the code and run cmake. Automated builds are handled by travis-ci.
 
 The following keys can be used to interact with the display:
@@ -30,11 +33,13 @@ The following keys can be used to interact with the display:
 * K Keyboard
   * CAPS-LOCK toggle upper case
   * NUM-LOCK toggle special chars
+
 ## DDS
-Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates for this.
+Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates opensource projects implementing GVA.
 * https://github.com/eProsima/Fast-RTPS
 * https://github.com/ADLINK-IST/opensplice
 I will be testing FastRTPS as this is the default choice for [ROS2](https://index.ros.org/doc/ros2/).
+
 ## GPS source
 Application supports locally connected NMEA (USB virtual serial) GPS source. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are read, converted and displayed on the display in the status bar if present. This is dont by the same pthread that updated the clock. If no device is present then a dummy location is used which will place you in London at a famous landmark.
 ```
