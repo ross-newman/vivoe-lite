@@ -3,8 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
-
-#include "rendererCairo.h"
+#include "rendererCairo.hpp"
 
 using namespace std;
 
@@ -218,7 +217,6 @@ rendererCairo::draw (int handle)
           cairo_set_font_size (cr, currentCmd->arg1);
           cairo_move_to (cr, currentCmd->points[0].x,
                          currentCmd->points[0].y);
-//        cairo_rotate (cr, M_PI / 2);
           cairo_show_text (cr, currentCmd->text);
           cairo_restore (cr);
           break;

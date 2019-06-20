@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include "rendererSdl.h"
-#include "debug.h"
+#include "rendererSdl.hpp"
+#include "debug.hpp"
 
 using namespace std;
 

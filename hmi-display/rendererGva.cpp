@@ -1,6 +1,6 @@
 #include <math.h>               /* sqrt */
-#include "debug.h"
-#include "rendererGva.h"
+#include "debug.hpp"
+#include "rendererGva.hpp"
 
 #define PLOT_CIRCLE_X(x, radius, degree) x + (radius) * cos(((M_PI * 2) / 360) * degree)
 #define PLOT_CIRCLE_Y(y, radius, degree) y - (radius) * sin(((M_PI * 2) / 360) * degree)

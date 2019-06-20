@@ -8,11 +8,11 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include "gva.h"
-#include "eventsGva.h"
-#include "debug.h"
-#include "gvaVideoRtpYuv.h"
-#include "hmiGva.h"
+#include "gva.hpp"
+#include "eventsGva.hpp"
+#include "debug.hpp"
+#include "gvaVideoRtpYuv.hpp"
+#include "hmiGva.hpp"
 
 using namespace std;
 using namespace gva;

@@ -10,8 +10,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
-#include "screenGva.h"
-#include "logGva.h"
+#include "screenGva.hpp"
+#include "logGva.hpp"
 
 using namespace std;
 using namespace GeographicLib; 

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "gvaVideoRtpYuv.h"
+#include "gvaVideoRtpYuv.hpp"
 
 using namespace std;
 

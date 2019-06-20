@@ -1,4 +1,4 @@
-#include "gvaVideo.h"
+#include "gvaVideo.hpp"
 
 gvaVideoSource::gvaVideoSource(int height, int width) 
 { 

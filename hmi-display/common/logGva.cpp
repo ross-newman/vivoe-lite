@@ -2,7 +2,7 @@
 #include <sys/sysinfo.h>
 #include <stdio.h>
 #include <string.h>
-#include "logGva.h"
+#include "logGva.hpp"
 
 using namespace std;
 
