@@ -1,14 +1,12 @@
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
 #include "rendererCairo.hpp"
 
 using namespace std;
-
-// apt-get install libcairo2-dev
-// apt-get install libxt-dev
 
 #define SIZE 10
 

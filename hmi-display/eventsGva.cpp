@@ -1,6 +1,6 @@
 #include <cairo-xlib.h>
-#include "gva.h"
-#include "eventsGva.h"
+#include "gva.hpp"
+#include "eventsGva.hpp"
 
 eventsGva::eventsGva(Display *display, Window *window) { 
   m_display = display;

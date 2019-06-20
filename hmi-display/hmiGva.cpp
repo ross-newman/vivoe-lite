@@ -1,5 +1,5 @@
 #include <iostream>
-#include "hmiGva.h"
+#include "hmiGva.hpp"
 
 using namespace gva;
 using namespace std;
