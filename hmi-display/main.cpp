@@ -10,15 +10,11 @@
 #include <X11/Xatom.h>
 #include "gva.hpp"
 #include "eventsGva.hpp"
-#include "debug.hpp"
-#include "gvaVideoRtpYuv.hpp"
 #include "hmiGva.hpp"
+
 
 using namespace std;
 using namespace gva;
-
-#define BIT(b,x) (x & 0x1 << b)
-#define SET_CANVAS_PNG(file) strcpy (hmi::getScreen()->canvas.filename, file); hmi::getScreen()->canvas.buffer = 0;
 
 int
 main (int argc, char *argv[])
@@ -144,16 +140,9 @@ main (int argc, char *argv[])
               break;
             case KEY_F19:
               /* Toggle labels */
-              hmi::getScreen()->functionLeft.visible =
-                hmi::getScreen()->functionLeft.visible ? false : true;
-              hmi::getScreen()->functionRight.visible =
-                hmi::getScreen()->functionRight.visible ? false : true;
-              hmi::getScreen()->control.visible =
-                hmi::getScreen()->control.visible ? false : true;
-              hmi::getScreen()->statusBar->visible =
-                hmi::getScreen()->statusBar->visible ? false : true;
-              hmi::getScreen()->compass.visible =
-                hmi::getScreen()->compass.visible ? false : true;
+              KeyFunction input;
+              input.key = KEY_F19;
+              hmi::dispatch(input);
               break;
             case KEY_FULLSCREEN:
               /* f toggle fullscreen TODO: Does not work */

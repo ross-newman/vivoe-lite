@@ -36,17 +36,14 @@ namespace gva
     update (m_screen);
     char tmp[100];
     struct termios settings;
-  cout << "testcdd\n";
 
     sprintf(tmp, "GVA screen initalised (%dx%d)", m_width, m_height);
     logGva::log (tmp, LOG_INFO);
 
-  cout << "testcdd\n";
     /* Initalise the pasert for NMEA */
     nmea_zero_INFO(&m_info);
     nmea_parser_init(&m_parser);
     
-  cout << "testcdd\n";
     /* Open File Descriptor */
     m_gps = open( screen->gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
     if (m_gps > 0) {
@@ -58,7 +55,6 @@ namespace gva
     }
     tcgetattr(m_gps, &settings);
 
-  cout << "testcdd\n";
     /* Set Baud Rate */
     cfsetospeed(&settings, B4800); /* baud rate */
     tcsetattr(m_gps, TCSANOW, &settings); /* apply the settings */
@@ -210,6 +206,7 @@ namespace gva
     if (m_screen->statusBar->visible)
       {
         int i = 0;
+    /* Setup and draw the status bar, one row table */
         int widths[6] = { 23, 45, 8, 8, 8, 8 };
 //        gvaTable table(10, 443, 620);
         gvaTable table(1, 443, 639);
@@ -315,17 +312,15 @@ namespace gva
         drawTable (m_hndl, &table);
       }
 
-
-
     if (m_screen->compass.visible)
       {
         drawPPI (m_hndl, 165, 370, screen->compass.bearing, screen->compass.bearingSight);
       }
 
-    if (m_screen->control.visible)
+    if (m_screen->control->visible)
       {
-        drawControlKeys (m_hndl, 0, m_screen->control.active,
-                         m_screen->control.hidden);
+        drawControlKeys (m_hndl, 0, m_screen->control->active,
+                         m_screen->control->hidden);
       }
 
     /*
