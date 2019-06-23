@@ -1,6 +1,7 @@
 *.png
 *.bak
 *.jpg
+*.so
 *~
 build
 tmp

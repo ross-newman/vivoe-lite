@@ -6,10 +6,6 @@
 #include "logGva.hpp"
 #include "nmea/nmea.h"
 
-#define MAJOR 0
-#define MINOR 0
-#define PATCH 2
-
 namespace gva
 {
   typedef struct functionSelect {

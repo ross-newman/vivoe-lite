@@ -4,6 +4,10 @@
 #include "debug.hpp"
 #include "gvaVideoRtpYuv.hpp"
 
+#define MAJOR 0
+#define MINOR 1
+#define PATCH 32
+
 enum gvaFunctionEnum 
 {
   SA,

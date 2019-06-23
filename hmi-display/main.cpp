@@ -12,7 +12,6 @@
 #include "eventsGva.hpp"
 #include "hmiGva.hpp"
 
-
 using namespace std;
 using namespace gva;
 
