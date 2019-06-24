@@ -7,3 +7,6 @@
 [submodule "nmealib"]
 	path = nmealib
 	url = https://github.com/ross-newman/nmealib
+[submodule "rtp-payloader"]
+	path = rtp-payloader
+	url = https://github.com/ross-newman/rtp-payloader
