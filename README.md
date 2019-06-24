@@ -68,6 +68,10 @@ newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 ```
 # Config
 See configuration setup in [CONFIG.md](docs/CONFIG.md)
+
+# AI and ML Pipelines
+See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
+
 ## DEF STAN 00-83 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
 For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
 for Video Over Ethernet Part 1: Standards and Protocols, Issue 2. Specifically Appendix B2 YCbCr 4:2:2 Encoded Uncompressed Video.
