@@ -6,7 +6,7 @@
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 92
+#define PATCH 94
 
 enum gvaFunctionEnum 
 {
