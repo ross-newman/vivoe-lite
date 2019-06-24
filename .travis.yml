@@ -7,7 +7,7 @@ before_install:
   - pip install --upgrade --user git+git://github.com/eddyxu/cpp-coveralls.git
 script:
   - sudo apt-get update
-  - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
+  - sudo apt-get install doxygen catch libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
   - mkdir build && cd build && cmake -DENABLE_COVERAGE=ON ..  
   - make
   - make test

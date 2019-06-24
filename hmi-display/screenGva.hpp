@@ -35,11 +35,11 @@ namespace gva
     char labels[8][40];
   } commonTaskKeysType;
 
-  typedef struct locationType {
+  typedef struct {
     locationEnum locationFormat;
     float lat;
     float lon;
-  };
+  } locationType;
 
   typedef struct statusBar {
     bool visible;
@@ -58,9 +58,9 @@ namespace gva
     keyboardModeType mode;
   } keyboardType;
 
-  typedef struct alarmsType {
+  typedef struct {
     bool visible;
-  };
+  } alarmsType;
 
   typedef struct canvas {
     bool visible;
