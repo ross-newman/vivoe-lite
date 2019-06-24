@@ -66,6 +66,7 @@ target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${SWSCALE
 
 macro(do_test str)
     add_executable(test_${str} test/test_${str}.cpp)
+    set (CMAKE_CXX_FLAGS "-w -std=c++11")
     add_test(test_${str} test_${str})
     target_link_libraries(test_${str} test_catch)
     target_link_libraries(test_${str} business_logic)

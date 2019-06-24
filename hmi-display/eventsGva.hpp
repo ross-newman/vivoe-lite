@@ -39,8 +39,8 @@ namespace gva
     int nextGvaEvent(eventGvaType *event); // Use for X11/DDS/Touch events
     void flush();
   private:
-   Display *m_display = 0;
-   Window *m_window = 0;
+   Display *m_display;
+   Window *m_window;
   };
 };
 
