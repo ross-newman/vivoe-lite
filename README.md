@@ -38,6 +38,7 @@ The following keys can be used to interact with the display:
 Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates opensource projects implementing GVA.
 * https://github.com/eProsima/Fast-RTPS
 * https://github.com/ADLINK-IST/opensplice
+
 I will be testing FastRTPS as this is the default choice for [ROS2](https://index.ros.org/doc/ros2/).
 
 ## GPS source
@@ -94,7 +95,7 @@ This standard is also mandated in the NATO version of GVA (NGVA).
 ## STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
 NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
 
-## STANAG 4697 - Platform Extended VIdeo StandarD (PLEVID)
+## STANAG 4697 - Platform Extended Video Standard (PLEVID)
 AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
 
 # Rendering
