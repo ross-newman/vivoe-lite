@@ -4,7 +4,7 @@ language: cpp
 compiler:
   - gcc
 before_install: 
-  - pip install --user cpp-coveralls
+  - pip install --upgrade --user git+git://github.com/eddyxu/cpp-coveralls.git
 script:
   - sudo apt-get update
   - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
