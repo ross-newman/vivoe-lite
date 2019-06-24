@@ -26,7 +26,7 @@ target_link_libraries (hmi-display Geographic)
 
 add_subdirectory(common)
 #set (CMAKE_CXX_FLAGS " -std=c++14 -O2 -fno-exceptions -Wall -Wextra -Werror -pedantic -pedantic-errors ")
-set (CMAKE_CXX_FLAGS "-w -std=c++11 --coverage")
+set (CMAKE_CXX_FLAGS "-w -std=c++11")
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 target_link_libraries(hmi-display SDL2 X11 png pthread hmi-video rtp-payloader nmealib)
