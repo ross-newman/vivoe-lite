@@ -11,8 +11,7 @@ script:
   - mkdir build && cd build && cmake -DENABLE_COVERAGE=ON ..  
   - make
   - ls -hal
-  - ./test_hmi -s
-  - ./test_events -s
+  - xvfb-run --server-args="-screen 0 1024x768x24" make test
 after_success:
   - cd .. && pwd && ls -hal ./build/CMakeFiles/
   - bash <(curl -s https://codecov.io/bash)
