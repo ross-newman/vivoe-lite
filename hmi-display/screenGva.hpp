@@ -8,6 +8,11 @@
 
 namespace gva
 {
+  enum locationEnum {
+    LOCATION_FORMAT_LONG_LAT = 0,
+    LOCATION_FORMAT_MGRS
+  };
+  
   typedef struct functionSelect {
     bool visible;
     int active;
@@ -30,8 +35,15 @@ namespace gva
     char labels[8][40];
   } commonTaskKeysType;
 
+  typedef struct locationType {
+    locationEnum locationFormat;
+    float lat;
+    float lon;
+  };
+
   typedef struct statusBar {
     bool visible;
+    locationType location;
     char labels[6][80];
   } statusBarType;
 
@@ -84,6 +96,7 @@ namespace gva
       nmeaINFO *info;
       nmeaPARSER *parser;
       bool active;
+      locationType *location;
   } args;
 
   class screenGva : public rendererGva

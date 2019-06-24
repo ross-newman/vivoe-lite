@@ -1,4 +1,6 @@
 #include <GeographicLib/LambertConformalConic.hpp> 
+#include <GeographicLib/UTMUPS.hpp>
+#include <GeographicLib/MGRS.hpp>
 #include <iostream>
 #include <string>
 #include <time.h>
@@ -91,7 +93,8 @@ namespace gva
                  tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min,
                  tm->tm_sec);
         a->screen->refresh ();
-        if (*a->gps > 0) {
+        if (*a->gps > 0) 
+        {
           i=0;
           tcflush(*a->gps,TCIOFLUSH);
           read(*a->gps, &buffer[0], 1);
@@ -111,18 +114,32 @@ namespace gva
           logGva::log (tmp, LOG_INFO);
 
           sprintf(tmp, "%s\r\n", buffer);
-          a->info->lon = 0;
-          a->info->lat = 0;
+          a->info->lon = a->location->lon;
+          a->info->lat = a->location->lat;
           nmea_parse(a->parser, tmp, (int)strlen(tmp), a->info);
           if ( a->info->lon && a->info->lat)
           {
             a->info->lat = toDegrees(a->info->lat);
             a->info->lon = toDegrees(a->info->lon);
-
-          sprintf(a->locationString, "Lat:%05.06f Lon:%05.06f [%d,%d]", a->info->lat,
-                  a->info->lon, a->info->sig, a->info->fix);
+            switch (a->location->locationFormat) {
+            case LOCATION_FORMAT_LONG_LAT:
+              break;
+              sprintf(a->locationString, "Lat:%05.06f Lon:%05.06f [%d,%d]", a->info->lat,
+                    a->info->lon, a->info->sig, a->info->fix);
+            case LOCATION_FORMAT_MGRS:
+              {
+                int zone;
+                bool northp;
+                double x, y;
+                UTMUPS::Forward(a->info->lat, a->info->lon, zone, northp, x, y);
+                string mgrs;
+                MGRS::Forward(zone, northp, x, y, a->info->lat, 5, mgrs);
+                sprintf(a->locationString, "MGRS: %s", mgrs.c_str());
+              }
+              break;
+            }
           }
-        }
+        }        
         usleep (1000000);
       }
   }
@@ -139,7 +156,8 @@ namespace gva
     m_args->info = &m_info;
     m_args->gps = &m_gps;
     m_args->screen = this;
-
+    m_args->location = &barData->location;
+    
     /* Launch clock thread */
     if (pthread_create (&m_clock_thread, NULL, clockUpdate, (void *) m_args))
       {

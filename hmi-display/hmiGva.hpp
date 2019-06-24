@@ -12,7 +12,7 @@ using namespace gva;
 // These labels should not change
 #define COMMON_KEYS { true, 0b0001000, 0b00000000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
 #define COMMON_FUNCTION_KEYS_TOP { true, 0b00100000, 0b00000100 }
-#define COMMON_STATUS_BAR { true,  "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:0", "C:0", "O:0" }
+#define COMMON_STATUS_BAR { true, { LOCATION_FORMAT_MGRS, 51.500655, -0.124240 }, "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:0", "C:0", "O:0" }
 #define COMPASS { true, 0, 55 }
 #define CANVAS { true, 0, 0 }
 /*                              Visible    Active    Hidden */
