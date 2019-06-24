@@ -60,6 +60,7 @@ add_dependencies(business_logic nmealib hmi-video rtp-payloader nmealib)
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib)
+set (CMAKE_CXX_FLAGS "-w -std=c++11 --coverage")
 target_compile_definitions(business_logic PRIVATE VIRTUAL=virtual MAIN=unittest_main)
 target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} catch nmealib/include rtp-payloader video hmi-display hmi-display/common )
 
