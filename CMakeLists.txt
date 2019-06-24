@@ -57,7 +57,7 @@ add_dependencies(test_catch catch)
 
 add_library(business_logic STATIC hmi-display/eventsGva.cpp hmi-display/hmiGva.cpp hmi-display/screenGva.cpp hmi-display/rendererGva.cpp  hmi-display/rendererCairo.cpp  hmi-display/common/logGva.cpp hmi-display/viewGva.cpp )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
-add_dependencies(business_logic nmealib hmi-video rtp-payloader nmealib)
+add_dependencies(business_logic nmealib hmi-video rtp-payloader)
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib)
@@ -66,7 +66,6 @@ target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${SWSCALE
 
 macro(do_test str)
     add_executable(test_${str} test/test_${str}.cpp)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
     add_test(test_${str} test_${str})
     target_link_libraries(test_${str} test_catch)
     target_link_libraries(test_${str} business_logic)
