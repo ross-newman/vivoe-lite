@@ -57,7 +57,6 @@ add_dependencies(test_catch catch)
 
 add_library(business_logic STATIC hmi-display/eventsGva.cpp hmi-display/hmiGva.cpp hmi-display/screenGva.cpp hmi-display/rendererGva.cpp  hmi-display/rendererCairo.cpp  hmi-display/common/logGva.cpp hmi-display/viewGva.cpp )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
-
 add_dependencies(business_logic nmealib hmi-video rtp-payloader nmealib)
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
