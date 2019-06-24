@@ -77,6 +77,9 @@ If a valid GPS source is present then an offline map will be available rendered 
 
 You can render maps using [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) and I have [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) is a shared gist for doing this and depositing the results on to a Google Drive account. 
 
+# Development
+See configuration setup in [DEVELOPER.md](docs/CONFIG.md)
+
 # Config
 See configuration setup in [CONFIG.md](docs/CONFIG.md)
 
