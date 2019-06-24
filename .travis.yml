@@ -1,10 +1,24 @@
 dist: xenial
 sudo: true
 language: cpp
-before_install: 
-  - sudo apt-get update
-  - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
 compiler:
   - gcc
+before_install: 
+  - pip install --upgrade --user git+git://github.com/eddyxu/cpp-coveralls.git
 script:
-  - mkdir build && cd build && cmake .. && make
+  - sudo apt-get update
+  - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
+  - mkdir build && cd build && cmake -DENABLE_COVERAGE=ON ..  
+  - make
+  - make test
+after_success:
+  - cd .. && pwd && ls -hal ./build/CMakeFiles/
+  - bash <(curl -s https://codecov.io/bash)
+  - coveralls --build-root build --gcov-options '\-lp' \
+          -e build/external \
+          -e build/include \
+          -e build/CMakeFiles/3.8.0 \
+          -e build/CMakeFiles/Fast-RTPS \
+          -e build/CMakeFiles/nmealib \
+          -e build/CMakeFiles/feature_tests.c \
+          -e build/CMakeFiles/feature_tests.cxx

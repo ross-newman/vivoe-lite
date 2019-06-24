@@ -2,6 +2,8 @@
 ![Version](https://img.shields.io/badge/version-0.1.39-brightgreen.svg)
 ![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2927/badge)](https://bestpractices.coreinfrastructure.org/projects/2927)
+[![Coverage Status](https://coveralls.io/repos/github/ross-newman/vivoe-lite/badge.svg?branch=master)](https://coveralls.io/github/ross-newman/vivoe-lite?branch=master)
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
@@ -11,6 +13,8 @@ sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses
 The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
+
+> NOTE: Only the function keys at the top of the screen are currently implemented! Alarms are currently mocked up.
 
 Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
 
@@ -38,10 +42,11 @@ The following keys can be used to interact with the display:
 Support for FastRTPS is being tested currently and provides RTPS communication as prescribed by the GVA standards. Messages are derived from IDL that is _not_ part of the LDM. There are two DDS protocols on Github that look like good candidates opensource projects implementing GVA.
 * https://github.com/eProsima/Fast-RTPS
 * https://github.com/ADLINK-IST/opensplice
+
 I will be testing FastRTPS as this is the default choice for [ROS2](https://index.ros.org/doc/ros2/).
 
 ## GPS source
-Application supports locally connected NMEA (USB virtual serial) GPS source. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs NMEA formatted strings as shown below. These are read, converted and displayed on the display in the status bar if present. This is dont by the same pthread that updated the clock. If no device is present then a dummy location is used which will place you in London at a famous landmark.
+Application supports locally connected NMEA (USB virtual serial) GPS source. The only tested device is currently the [GlobalSat BU-353-S4 USB](https://www.amazon.co.uk/GlobalSat-BU-353-S4-Receiver-SiRF-Black/dp/B008200LHW/ref=sr_1_1?keywords=GlobalSat+BU-353-S4+USB&qid=1560375523&s=electronics&sr=1-1) available from Amazon and Robotshop. This outputs [NMEA](https://en.wikipedia.org/wiki/NMEA_0183) formatted strings as shown below. These are read, converted and displayed on the display in the status bar if present. This is done by the same thread that updates the clock on the HMI. If no device is present then a dummy location is used which will place you in London at a famous landmark.
 ```
 newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 00000000  24 47 50 47 47 41 2c 32  32 31 34 32 38 2e 30 30  |$GPGGA,221428.00|
@@ -66,135 +71,21 @@ newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 00000130  2c 2c 2c 2c 2c 2c 2c 32  2e 34 2c 31 2e 34 2c 32  |,,,,,,,2.4,1.4,2|
 00000140  2e 30 2a 33 42 0a 0a 24  47 50 52 4d 43 2c 32 32  |.0*3B..$GPRMC,22|
 ```
-# Configuration
-GVA parameters and system wide setting are read in from the .xml configuration files. These are listed below:
-## config.xml
-This is a list of the config filenames. This is the only file that needs to be read into the HMI application to be able to read all the settings.
-```
-<?xml version="1.0"?>
-<Config>
-  <XmlFiles>
-     <GvaConfig>gva-config.xml</GvaConfig>
-     <VideoSourcesConfig>video-sources-config.xml</VideoSourcesConfig>
-     <DisplaysConfig>displays-config.xml</DisplaysConfig>
-     <HmiCommanderConfig>hmi-commander-config.xml</HmiCommanderConfig>
-     <DdsConfig>dds-config.xml</DdsConfig>
-  </XmlFiles>
-</Config>
-```
-## gva-config.xml
-Nearly all the input sources are 4:3 input ratio with the exception of SXVGA which is 5:4. 16:9 may be added later when the HMI spec allows. Colours are taken from the HMI spec.
-```
-<?xml version="1.0"?>
-<Gva>
-  <Resolutions>
-    <Mode>
-      <Name>QVGA</Name>
-      <Dimension>320x240</Dimension>
-    </Mode>
-    <Mode>
-      <Name>VGA</Name>
-      <Dimension>640x480</Dimension>
-    </Mode>
-    <Mode>
-      <Name>PAL</Name>
-      <Dimension>768x5760</Dimension>
-    </Mode>
-    <Mode>
-      <Name>SVGA</Name>
-      <Dimension>800x600</Dimension>
-    </Mode>
-    <Mode>
-      <Name>XVGA</Name>
-      <Dimension>1024x768</Dimension>
-    </Mode>
-    <Mode>
-      <Name>HIRES</Name>
-      <Dimension>1280x960</Dimension>
-    </Mode>
-    <Mode>
-      <Name>SXVGA</Name>
-      <Dimension>1280x1024</Dimension>
-    </Mode>
-    <Mode>
-      <Name>SXVGA+</Name>
-      <Dimension>1400x1050</Dimension>
-    </Mode>
-    <Mode>
-      <Name>UXVGA</Name>
-      <Dimension>1600x1200</Dimension>
-    </Mode>
-    <Mode>
-      <Name>QXVGA</Name>
-      <Dimension>2048x1200</Dimension>
-    </Mode>
-  </Resolutions>
-  <Presentation>
-    <ColourOnGoodOkSafe>#00FF00</ColourOnGoodOkSafe>
-    <ColourAdvisoryWarning>#FFFF00</ColourAdvisoryWarning>
-    <ColourCaution>#FF9900</ColourCaution>
-    <ColourArmedDangerCriticalWarningFailureStop>#FF0000</ColourArmedDangerCriticalWarningFailureStop>
-    <ColourNotAvailableOff>#7F7F7F</ColourNotAvailableOff>
-    <ColourBackgroundSoftKeySoftLabel>#004B00</ColourBackgroundSoftKeySoftLabel>
-  </Presentation>
-</Gva>
-```
-## video-sources-config.xml
-Valid inputs will use the allowed resolutions from **gva-config.xml**
-```
-<?xml version="1.0"?>
-<Inputs>
-</Inputs>
-```
-## displays-config.xml
-This file describes the screen types available on the platform
-```
-<?xml version="1.0"?>
-<Displays>
-  <Screen>
-    <Name>Commander_1<Name>
-    <Resolution>VGA<Resolution>
-  </Screen>
-  <Screen>
-    <Name>Driver_1<Name>
-    <Resolution>VGA<Resolution>
-  </Screen>
-  <Screen>
-    <Name>Driver_2<Name>
-    <Resolution>VGA<Resolution>
-  </Screen>
-  <Screen>
-    <Name>Gunner_1<Name>
-    <Resolution>VGA<Resolution>
-  </Screen>
-</Displays>
-```
-## hmi-commander-config.xml
-This describes the HMI screens and funstions available to the Commander.
-```
-<?xml version="1.0"?>
-<Commander>
-  <Screen>
-    <Name>Commander_1<\Name>
-    <SYS>...<\SYS>
-    <BMS>...<\BMS>
-  </Screen>
-</Commander>
-```
-# Conformance to UK MoD / NATO Defence Standards
-The sample HMI provided was created to comply with the design guidline layed out in Defence Standard 23-09 Part 2 Generic Vehicle Architecture (GVA) Human Machine Interface, Issue 3 as shown below.
-## DEF STAN 23-09 - Generic Vehicle Architecture (GVA)
-Defence Standard 23-09 is currently split into the parts below:
+Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NMEA](https://en.wikipedia.org/wiki/NMEA_0183) messages from the GPS source. Once aquired conversion from decimal long/lat to degrees minutes seconds is required for the internal representation. Conversions to many other formats are possible using [libGeographic](https://geographiclib.sourceforge.io), currently the only conversion implemented is [MGRS](https://en.wikipedia.org/wiki/Military_Grid_Reference_System).
 
-*  Part 0 - The GVA Approach
-*  Part 1 - Infrastructure (Data and Power)
-*  **Part 2 - Human Machine Interface**
-*  Part 3 - Health and Usage Monitoring (issued Dec 2015)
-*  Part 4 - Physical Interfaces (withdrawn)
-*  Part 5 - GVA Data Model and Model Driven Architecture[6]
-*  Part 6 - Security (TBD)
-*  Part 7 - Common Services (TBD)
-*  Part 8 - Safety (TBD)
+# Offline Maps
+If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. Maps come from OpenStreetMap and require processing prior to use. An updated collection of maps can be downloaded from [Geofabrik](https://download.geofabrik.de/)
+
+You can render maps using [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) and I have [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) is a shared gist for doing this and depositing the results on to a Google Drive account. 
+
+# Development
+See configuration setup in [DEVELOPER.md](docs/DEVELOPER.md)
+
+# Config
+See configuration setup in [CONFIG.md](docs/CONFIG.md)
+
+# AI and ML Pipelines
+See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 
 ## DEF STAN 00-83 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
 For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
@@ -211,7 +102,7 @@ This standard is also mandated in the NATO version of GVA (NGVA).
 ## STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
 NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
 
-## STANAG 4697 - Platform Extended VIdeo StandarD (PLEVID)
+## STANAG 4697 - Platform Extended Video Standard (PLEVID)
 AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
 
 # Rendering
@@ -222,7 +113,10 @@ The HMI uses Cairo for rendering the GUI components.
 **GVA HMI Example layout**
 
 # Links
-* https://www.cairographics.org/
 * https://www.vetronics.org/
 * https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture
+* https://www.cairographics.org/
+* https://wiki.openstreetmap.org/wiki/Libosmscout
+* https://download.geofabrik.de/
+* https://geographiclib.sourceforge.io/
 * https://index.ros.org/doc/ros2/
