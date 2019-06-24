@@ -8,8 +8,7 @@ before_install:
 script:
   - sudo apt-get update
   - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
-  - mkdir build && cd build && cmake .. -DCOVERALLS=ON -DCMAKE_BUILD_TYPE=Debug
+  - mkdir build && cd build && cmake .. -DCOVERAGE=1  
   - make
-  - make coveralls
 after_success:
   - coveralls --exclude lib --exclude Fast-RTPS --exclude CMakeFiles --gcov-options '\-lp'
