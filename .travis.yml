@@ -16,5 +16,6 @@ after_success:
           -e build/external \
           -e build/include \
           -e build/CMakeFiles/3.8.0 \
+          -e build/CMakeFiles/Fast-RTPS \
           -e build/CMakeFiles/feature_tests.c \
           -e build/CMakeFiles/feature_tests.cxx
