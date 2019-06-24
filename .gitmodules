@@ -1,9 +1,6 @@
 [submodule "Fast-RTPS"]
 	path = Fast-RTPS
 	url = https://github.com/eProsima/Fast-RTPS
-[submodule "rtp-payloader"]
-	path = rtp-payloader
-	url = http://github.com/ross-newman/rtp-payloader
 [submodule "libosmscout"]
 	path = libosmscout
 	url = https://github.com/Framstag/libosmscout
