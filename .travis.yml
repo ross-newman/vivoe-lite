@@ -1,10 +1,13 @@
 dist: xenial
 sudo: true
 language: cpp
-before_install: 
-  - sudo apt-get update
-  - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
 compiler:
   - gcc
+before_install: 
+  - pip install --user cpp-coveralls
 script:
+  - sudo apt-get update
+  - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
   - mkdir build && cd build && cmake .. && make
+after_success:
+  - coveralls --exclude lib --exclude tests --gcov-options '\-lp'
