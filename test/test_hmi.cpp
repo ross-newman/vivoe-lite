@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include <catch/catch.hpp>
 #include <iostream>
 #include <unistd.h>
 #include <X11/Xlib.h>
