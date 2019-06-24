@@ -68,6 +68,11 @@ newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 ```
 Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NMEA](https://en.wikipedia.org/wiki/NMEA_0183) messages from the GPS source. Once aquired conversion from decimal long/lat to degrees minutes seconds is required for the internal representation. Conversions to many other formats are possible using [libGeographic](https://geographiclib.sourceforge.io), currently the only conversion implemented is [MGRS](https://en.wikipedia.org/wiki/Military_Grid_Reference_System).
 
+# Offline Maps
+If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. Maps come from OpenStreetMap and require processing prior to use. An updated collection of maps can be downloaded from [Geofabrik](https://download.geofabrik.de/)
+
+You can render maps using [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) and I have [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) is a shared gist for doing this and depositing the results on to a Google Drive account. 
+
 # Config
 See configuration setup in [CONFIG.md](docs/CONFIG.md)
 
@@ -100,7 +105,10 @@ The HMI uses Cairo for rendering the GUI components.
 **GVA HMI Example layout**
 
 # Links
-* https://www.cairographics.org/
 * https://www.vetronics.org/
 * https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture
+* https://www.cairographics.org/
+* https://wiki.openstreetmap.org/wiki/Libosmscout
+* https://download.geofabrik.de/
+* https://geographiclib.sourceforge.io/
 * https://index.ros.org/doc/ros2/
