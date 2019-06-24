@@ -1,13 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(hmi-display)
 
-# ------------------------------------------------------------------------------
-# Includes
-# ------------------------------------------------------------------------------
-
-include_directories(include)
-include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
-
 execute_process(COMMAND git submodule update --init) 
 execute_process(COMMAND ../update.sh) 
 add_subdirectory(hmi-display)
@@ -51,6 +44,13 @@ ExternalProject_Add(
 # ------------------------------------------------------------------------------
 include(CTest)
 include(FindPkgConfig)
+
+# ------------------------------------------------------------------------------
+# Includes
+# ------------------------------------------------------------------------------
+
+include_directories(include)
+include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
 
 add_library(test_catch STATIC test/test.cpp)
 add_dependencies(test_catch catch)
