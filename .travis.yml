@@ -11,4 +11,9 @@ script:
   - mkdir build && cd build && cmake .. -DCOVERAGE=1  
   - make
 after_success:
-  - coveralls --exclude lib --exclude Fast-RTPS --exclude CMakeFiles --gcov-options '\-lp'
+  - coveralls --build-root build --gcov-options '\-lp' \
+          -e build/external \
+          -e build/include \
+          -e build/CMakeFiles/3.8.0 \
+          -e build/CMakeFiles/feature_tests.c \
+          -e build/CMakeFiles/feature_tests.cxx
