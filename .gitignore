@@ -2,6 +2,9 @@
 *.bak
 *.jpg
 *.so
+*.cmake
+*.tcl
+external
 *~
 build
 tmp
