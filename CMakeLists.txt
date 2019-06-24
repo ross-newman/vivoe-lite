@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(hmi-display)
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
+
+# ------------------------------------------------------------------------------
+# Includes
+# ------------------------------------------------------------------------------
+
+include_directories(include)
+include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
+
 execute_process(COMMAND git submodule update --init) 
 execute_process(COMMAND ../update.sh) 
 add_subdirectory(hmi-display)
@@ -61,7 +68,7 @@ macro(do_test str)
     add_test(test_${str} test_${str})
     target_link_libraries(test_${str} test_catch)
     target_link_libraries(test_${str} business_logic)
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/nmealib/src ${CMAKE_CURRENT_SOURCE_DIR}/build/include/catch)
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/nmealib/src ${CMAKE_CURRENT_SOURCE_DIR}/build/include)
     add_dependencies(test_${str} nmealib)
     add_dependencies(test_${str} catch)
     target_compile_definitions(test_${str} PRIVATE VIRTUAL=virtual)
