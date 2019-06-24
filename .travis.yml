@@ -9,9 +9,10 @@ script:
   - sudo apt-get update
   - sudo apt-get install doxygen libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
   - mkdir build && cd build && cmake -DENABLE_COVERAGE=ON ..  
-  - make
+  - make test
 after_success:
   - cd .. && pwd && ls -hal ./build/CMakeFiles/
+  - bash <(curl -s https://codecov.io/bash)
   - coveralls --build-root build --gcov-options '\-lp' \
           -e build/external \
           -e build/include \
