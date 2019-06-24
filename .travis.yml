@@ -11,11 +11,12 @@ script:
   - mkdir build && cd build && cmake .. -DENABLE_COVERAGE=ON 
   - make
 after_success:
-  - cd ..
+  - cd .. && pwd && ls -hal ./build
   - coveralls --build-root build --gcov-options '\-lp' \
           -e build/external \
           -e build/include \
           -e build/CMakeFiles/3.8.0 \
           -e build/CMakeFiles/Fast-RTPS \
+          -e build/CMakeFiles/nmealib \
           -e build/CMakeFiles/feature_tests.c \
           -e build/CMakeFiles/feature_tests.cxx
