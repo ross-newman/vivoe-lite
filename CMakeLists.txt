@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(hmi-display)
-set(CXX /usr/bin)
+
 execute_process(COMMAND git submodule update --init) 
 execute_process(COMMAND ../update.sh) 
 add_subdirectory(hmi-display)
@@ -56,6 +56,7 @@ add_library(test_catch STATIC test/test.cpp)
 add_dependencies(test_catch catch)
 
 add_library(business_logic STATIC hmi-display/eventsGva.cpp hmi-display/hmiGva.cpp hmi-display/screenGva.cpp hmi-display/rendererGva.cpp  hmi-display/rendererCairo.cpp  hmi-display/common/logGva.cpp hmi-display/viewGva.cpp )
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-6")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
 add_dependencies(business_logic nmealib hmi-video rtp-payloader)
 pkg_check_modules(CAIRO REQUIRED cairo)
