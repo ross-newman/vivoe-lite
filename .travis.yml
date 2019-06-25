@@ -15,6 +15,7 @@ script:
 after_success:
   - cd .. && pwd && ls -hal ./build/CMakeFiles/
   - bash <(curl -s https://codecov.io/bash)
+  - xvfb-run --server-args="-screen 0 1024x768x24" make test
   - |
     coveralls --build-root build --gcov-options '\-lp' \
       -e build/external \
