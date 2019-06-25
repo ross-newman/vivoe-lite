@@ -20,6 +20,7 @@ after_success:
     coveralls --build-root build --gcov-options '\-lp' \
       -e build/external \
       -e build/include \
-      -e build/CMakeFiles/Fast-RTPS \
-      -e build/CMakeFiles/nmealib \
-      -e build/CMakeFiles/Testing \
+      -e libosmscout \
+      -e Fast-RTPS \
+      -e nmealib \
+      -e test \
