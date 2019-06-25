@@ -2,6 +2,8 @@
 #define RENDERER_GVA_HPP
 
 #include <string.h>
+#include <vector> 
+#include "gva.hpp"
 #include "rendererCairo.hpp"
 
 #define MAX_ROWS 50
@@ -39,11 +41,18 @@ struct gvaColourType
 class widget {
 public:
   widget() { };
-  widget(int x, int y, int width) : m_x(x), m_y(y), m_width(width) { };
-  widget(int x, int y) : m_x(x), m_y(y) { };
+  widget(int x, int y) : m_x(x), m_y(y), m_width(0), m_height(0)  { };
+  widget(int x, int y, int width) : m_x(x), m_y(y), m_width(width), m_height(0) { };
+  widget(int x, int y, int width, int height) : m_x(x), m_y(y), m_width(width), m_height(height) { };
+  int getX() { return m_x; };
+  int getY() { return m_y; };
+  int getWidth() { return m_width; };
+  int getHeight() { return m_height; };
+private:
   int m_x = 0;
   int m_y = 0;
   int m_width = 0;
+  int m_height = 0;
 };
 
 typedef struct gvaCellType  {
@@ -78,6 +87,42 @@ public :
   char m_fontname[100] = "Courier";
 };
 
+class hotspot : public widget {
+public :
+  hotspot(int groupId, int x, int y) : m_groupId(groupId), m_binding(0), widget(x, y) {};  
+  hotspot(int groupId, int binding, int x, int y, int width, int height) : m_groupId(groupId), m_binding(binding), widget(x, y, width, height) {};  
+  int getGroupId() { return m_groupId; };
+  int getBinding() { return m_binding; };
+private:
+  int m_groupId; // Group hostpots together
+  int m_binding; // Bind a value or a key to this hotspot
+};
+
+class touchGva 
+{
+public:
+  gvaStatusTypes add(int groupId, int x, int y) { m_hotspots.push_back(hotspot(groupId, x, y)); return GVA_SUCCESS; }
+  gvaStatusTypes add(int groupId, int binding, int x, int y, int width, int height) { m_hotspots.push_back(hotspot(groupId, binding, x, y, width, height));  return GVA_SUCCESS; }
+  gvaStatusTypes addAbsolute(int groupId, int binding, int x, int y, int xx, int yy) { m_hotspots.push_back(hotspot(groupId, binding, x, y, xx-x, yy-y));  return GVA_SUCCESS; }
+  void reset() { m_hotspots.clear(); };
+  bool check(int groupId, int *binding, int x, int y) {
+    y = MIN_HEIGHT - y;
+    for (auto i = m_hotspots.begin(); i != m_hotspots.end(); ++i) {
+
+      if ( (x > i->getX()) &&
+           (x < ( i->getX() + i->getWidth() ) ) &&
+           (y > i->getY()) &&
+           (y < ( i->getY() + i->getHeight() ) ) &&
+           (i->getGroupId() == groupId) ) {
+        *binding = i->getBinding();
+        return true;
+      }
+    }
+  }
+public:
+  std::vector<hotspot> m_hotspots;
+};
+
 class rendererGva : public rendererCairo
 {
 public:  
@@ -89,7 +134,9 @@ public:
   void drawTable(int handle, gvaTable *table);
   void drawMode(int handle);
   void drawKeyboard(int handle, keyboardModeType mode);
+  touchGva *getTouch() { return &m_touch; };
 private:
+  touchGva m_touch;
   int m_width;
   int m_height;
   char m_upperKeys[3][10] = { { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' }, { 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '-' }, { 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '-', '-', '-' } };

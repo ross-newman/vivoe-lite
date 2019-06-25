@@ -37,7 +37,7 @@ main (int argc, char *argv[])
   /*
    * Initalise the display events
    */
-  eventsGva io(hmi::getRendrer()->getDisplay(), hmi::getRendrer()->getWindow());
+  eventsGva io(hmi::getRendrer()->getDisplay(), hmi::getRendrer()->getWindow(), hmi::getRendrer()->getTouch());
   
   /*
    * Setup video sources (default size will be 640 x 480)

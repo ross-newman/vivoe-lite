@@ -6,11 +6,14 @@
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 117
+#define PATCH 119
+
+#define MIN_HEIGHT 480
+#define MIN_WIDTH 640
 
 enum gvaFunctionEnum 
 {
-  SA,
+  SA = 0,
   WPN,
   DEF,
   SYS,
@@ -23,7 +26,7 @@ enum gvaFunctionEnum
 enum gvaKeyEnum 
 {
   /* These are physical GVA keys around the display */
-  KEY_SA = 0,
+  KEY_SA = 1,
   KEY_WPN,
   KEY_DEF,
   KEY_SYS,

@@ -32,7 +32,7 @@ TEST_CASE( "eventsGva Constructor2", "Constructor test2" ){
   hmi::start();
   hmi::dispatch(on);    
 
-  eventsGva io(hmi::getRendrer()->getDisplay(), hmi::getRendrer()->getWindow());
+  eventsGva io(hmi::getRendrer()->getDisplay(), hmi::getRendrer()->getWindow(), hmi::getRendrer()->getTouch());
   
   REQUIRE( hmi::getRendrer()->getDisplay() !=0 );
   REQUIRE( hmi::getRendrer()->getWindow() !=0 );

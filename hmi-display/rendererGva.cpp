@@ -116,12 +116,13 @@ rendererGva::drawSaKeys (int hndl, int y, int active, int hide)
     {
       if (!(1 << (7 - i) & hide))
         {
-          (1 << (7 - i) & active) ? setColourBackground (hndl,
-                                                         YELLOW) :
+          (1 << (7 - i) & active) ? setColourBackground (hndl,YELLOW) :
             setColourBackground (hndl, DARK_GREEN);
           drawRectangle (hndl, (i * width) + offset, y,
                          (i * width) + width - spacing + offset, y + 10,
                          true);
+           m_touch.addAbsolute(SA, (int)(KEY_SA + i), (i * width) + offset, y,
+                         (i * width) + width - spacing + offset, y + 10);
         }
     }
 }
@@ -284,11 +285,11 @@ rendererGva::drawTable (int hndl, gvaTable *table)
               (int) CAIRO_FONT_WEIGHT_NORMAL, table->m_fontname);
 
   for (row = 0; row< table->m_rows; row++) {
-    int offset = table->m_x;
+    int offset = table->getX();
     for (column = 0; column < table->m_row[row].m_cells; column++)
       {
         int pos = 0;
-        int tmp = table->m_row[row].m_widths[column] * ((double)  table->m_width / 100);
+        int tmp = table->m_row[row].m_widths[column] * ((double)  table->getWidth() / 100);
   
         setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
                     (int) table->m_row[row].m_cell[column].weight == WEIGHT_BOLD ?
@@ -297,7 +298,7 @@ rendererGva::drawTable (int hndl, gvaTable *table)
   
         setColourForground (hndl, table->m_row[row].m_cell[column].foreground.red, table->m_row[row].m_cell[column].foreground.green, table->m_row[row].m_cell[column].foreground.blue);
         setColourBackground (hndl, table->m_row[row].m_cell[column].background.red, table->m_row[row].m_cell[column].background.green, table->m_row[row].m_cell[column].background.blue);
-        drawRectangle (hndl, offset, table->m_y - (height * row), offset + tmp, table->m_y - (height * row) + height, true);
+        drawRectangle (hndl, offset, table->getY() - (height * row), offset + tmp, table->getY() - (height * row) + height, true);
 
         drawColor (hndl, table->m_row[row].m_cell[column].textcolour.red, table->m_row[row].m_cell[column].textcolour.green, table->m_row[row].m_cell[column].textcolour.blue);
         
@@ -316,7 +317,7 @@ rendererGva::drawTable (int hndl, gvaTable *table)
           pos = offset + 4;
           break;
         }
-        drawText (hndl, pos, table->m_y - (height * row) + 6, table->m_row[row].m_cell[column].text, 12);
+        drawText (hndl, pos, table->getY() - (height * row) + 6, table->m_row[row].m_cell[column].text, 12);
         offset += tmp;
       }
     }

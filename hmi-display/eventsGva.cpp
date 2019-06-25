@@ -1,12 +1,14 @@
 #include <cairo-xlib.h>
 #include "gva.hpp"
+#include "rendererGva.hpp"
 #include "eventsGva.hpp"
 
 namespace gva
 {
-  eventsGva::eventsGva(Display *display, Window *window) { 
+  eventsGva::eventsGva(Display *display, Window *window, touchGva *touch) { 
     m_display = display;
     m_window = window;
+    m_touch = touch;
     
     /* 
      * select kind of events we are interested in 
@@ -20,12 +22,22 @@ namespace gva
   int 
   eventsGva::nextGvaEvent(eventGvaType *event) {
     XEvent e;
+    int binding = 0;
 
     XNextEvent (m_display, &e);
     
-    event->type = NO_EVENT;
+    event->type == NO_EVENT;
 
     switch (e.type) {
+      case ButtonPressMask :
+        m_touch->check(SA, &binding, e.xbutton.x, e.xbutton.y);
+        if (binding) {
+          event->type = KEY_EVENT;
+          event->key = (gvaKeyEnum)binding;
+        }
+        break;
+      case ButtonReleaseMask :
+        break;
       case KeyPress:
         {
           event->type = KEY_EVENT;
@@ -133,9 +145,6 @@ namespace gva
           event->type = REDRAW_EVENT;
         }
         break;
-      case ButtonPressMask :
-      case ButtonReleaseMask :
-      break;
       default:
         {
           /* Unknown X11 key event */

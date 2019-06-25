@@ -1,6 +1,7 @@
 #ifndef EVENTS_GVA_HPP
 #define EVENTS_GVA_HPP
 #include <X11/Xlib.h>
+#include "rendererGva.hpp"
 #include "gva.hpp"
 
 namespace gva
@@ -35,12 +36,13 @@ namespace gva
   class eventsGva {
   public:
     eventsGva() { m_display = 0; };
-    eventsGva(Display *display, Window *window); 
+    eventsGva(Display *display, Window *window, touchGva *touch); 
     int nextGvaEvent(eventGvaType *event); // Use for X11/DDS/Touch events
     void flush();
   private:
    Display *m_display;
    Window *m_window;
+   touchGva *m_touch;
   };
 };
 

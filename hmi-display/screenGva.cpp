@@ -174,6 +174,7 @@ namespace gva
 
     /* Reset the drawing context, must be reset before redrawing the screen */
     reset ();
+    getTouch()->reset();
 
     // Set background green
     setColourForground (m_hndl, GREEN);
@@ -323,6 +324,7 @@ namespace gva
         table.addRow(newrow8);
 
 //        newrow9.addCell({"Page_1_of_1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
+
         newrow9.addCell({"Page 1 of 1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
         table.addRow(newrow9);
 
