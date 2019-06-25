@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(hmi-display)
-
+set(CXX /usr/bin)
 execute_process(COMMAND git submodule update --init) 
 execute_process(COMMAND ../update.sh) 
 add_subdirectory(hmi-display)
