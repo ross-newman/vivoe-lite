@@ -16,10 +16,8 @@ after_success:
   - cd .. && pwd && ls -hal ./build/CMakeFiles/
   - bash <(curl -s https://codecov.io/bash)
   - coveralls --build-root build --gcov-options '\-lp' \
-          -E build/external \
-          -E build/include \
-          -E build/CMakeFiles/3.8.0 \
-          -E build/CMakeFiles/Fast-RTPS \
-          -E build/CMakeFiles/nmealib \
-          -E build/CMakeFiles/feature_tests.c \
-          -E build/CMakeFiles/feature_tests.cxx
+          -e external \
+          -e include \
+          -e CMakeFiles/Fast-RTPS \
+          -e CMakeFiles/nmealib \
+          -e CMakeFiles/Testing
