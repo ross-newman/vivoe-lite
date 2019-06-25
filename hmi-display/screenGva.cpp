@@ -14,6 +14,7 @@
 #include <termios.h>
 #include "screenGva.hpp"
 #include "logGva.hpp"
+#include "debug.hpp"
 
 using namespace std;
 using namespace GeographicLib; 
@@ -85,63 +86,64 @@ namespace gva
     char tmp[MAX_NMEA] = {0};
 
     while (a->active)
+    {
+      int i,ii = 0;
+      t = time (NULL);
+      tm = localtime (&t);
+      sprintf (a->clockString, "%02d/%02d/%02d %02d:%02d:%02d", tm->tm_mday,
+               tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min,
+               tm->tm_sec);
+      a->screen->refresh ();
+      if (*a->gps > 0) 
       {
-        int i,ii = 0;
-        t = time (NULL);
-        tm = localtime (&t);
-        sprintf (a->clockString, "%02d/%02d/%02d %02d:%02d:%02d", tm->tm_mday,
-                 tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min,
-                 tm->tm_sec);
-        a->screen->refresh ();
-        if (*a->gps > 0) 
-        {
-          i=0;
-          tcflush(*a->gps,TCIOFLUSH);
-          read(*a->gps, &buffer[0], 1);
+        i=0;
+        tcflush(*a->gps,TCIOFLUSH);
+        read(*a->gps, &buffer[0], 1);
 
-          memset(buffer, 0, MAX_NMEA);
-          while (buffer[0]!='$') read(*a->gps, &buffer[0], 1);
-          while (buffer[i++]!='\n') {
-            ii = read(*a->gps, &c, 1);
-            if (ii==1) {
-               buffer[i]=c;
-  //             printf("0x%02x ", c);
-             }
-            if (i==MAX_NMEA) break;
-          }
-          buffer[i-1]=0;
-          sprintf(tmp, "GPS NMEA %s", buffer);
-          logGva::log (tmp, LOG_INFO);
+        memset(buffer, 0, MAX_NMEA);
+        while (buffer[0]!='$') read(*a->gps, &buffer[0], 1);
+        while (buffer[i++]!='\n') {
+          ii = read(*a->gps, &c, 1);
+          if (ii==1) {
+             buffer[i]=c;
+//             printf("0x%02x ", c);
+           }
+          if (i==MAX_NMEA) break;
+        }
+        buffer[i-1]=0;
+        sprintf(tmp, "GPS NMEA %s", buffer);
+        logGva::log (tmp, LOG_INFO);
 
-          sprintf(tmp, "%s\r\n", buffer);
-          a->info->lon = a->location->lon;
-          a->info->lat = a->location->lat;
-          nmea_parse(a->parser, tmp, (int)strlen(tmp), a->info);
-          if ( a->info->lon && a->info->lat)
-          {
-            a->info->lat = toDegrees(a->info->lat);
-            a->info->lon = toDegrees(a->info->lon);
-            switch (a->location->locationFormat) {
-            case LOCATION_FORMAT_LONG_LAT:
-              break;
-              sprintf(a->locationString, "Lat:%05.06f Lon:%05.06f [%d,%d]", a->info->lat,
-                    a->info->lon, a->info->sig, a->info->fix);
-            case LOCATION_FORMAT_MGRS:
-              {
-                int zone;
-                bool northp;
-                double x, y;
-                UTMUPS::Forward(a->info->lat, a->info->lon, zone, northp, x, y);
-                string mgrs;
-                MGRS::Forward(zone, northp, x, y, a->info->lat, 5, mgrs);
-                sprintf(a->locationString, "MGRS: %s", mgrs.c_str());
-              }
-              break;
-            }
-          }
-        }        
-        usleep (1000000);
+        sprintf(tmp, "%s\r\n", buffer);
+        a->info->lon = a->location->lon;
+        a->info->lat = a->location->lat;
+        nmea_parse(a->parser, tmp, (int)strlen(tmp), a->info);
+        a->info->lat = toDegrees(a->info->lat);
+        a->info->lon = toDegrees(a->info->lon);
       }
+      
+      if ( a->info->lon && a->info->lat)
+      {
+        switch (a->location->locationFormat) {
+        case LOCATION_FORMAT_LONG_LAT:
+          break;
+          sprintf(a->locationString, "Lat:%05.06f Lon:%05.06f [%d,%d]", a->info->lat,
+                a->info->lon, a->info->sig, a->info->fix);
+        case LOCATION_FORMAT_MGRS:
+          {
+            int zone;
+            bool northp;
+            double x, y;
+            UTMUPS::Forward(a->info->lat, a->info->lon, zone, northp, x, y);
+            string mgrs;
+            MGRS::Forward(zone, northp, x, y, a->info->lat, 5, mgrs);
+            sprintf(a->locationString, "MGRS: %s", mgrs.c_str());
+          }
+          break;
+        }
+      }        
+      usleep (1000000);
+    }
   }
 
   void
@@ -157,6 +159,8 @@ namespace gva
     m_args->gps = &m_gps;
     m_args->screen = this;
     m_args->location = &barData->location;
+    m_args->info->lon = DUMMY_LON;
+    m_args->info->lat = DUMMY_LAT;
     
     /* Launch clock thread */
     if (pthread_create (&m_clock_thread, NULL, clockUpdate, (void *) m_args))
