@@ -77,4 +77,5 @@ macro(do_test str)
 endmacro(do_test)
 
 do_test(events)
-do_test(hmi)
+do_test(log)
+#do_test(hmi)
