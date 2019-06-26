@@ -310,7 +310,7 @@ rendererGva::drawTable (int hndl, gvaTable *table)
           pos = offset + (tmp/2 - w/2);
           break;
         case ALIGN_RIGHT:
-          pos = offset + (tmp - w);
+          pos = offset + (tmp - w - 4);
           break;
         case ALIGN_LEFT:
         default:

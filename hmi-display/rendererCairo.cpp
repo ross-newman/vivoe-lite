@@ -467,7 +467,8 @@ rendererCairo::getTextWidth (int handle, char *str, int fontSize)
 {
   cairo_t *cr = m_render_handle[handle].cr;
   cairo_text_extents_t extents;
-
+  cairo_select_font_face(cr, "Courier", CAIRO_FONT_SLANT_NORMAL,
+      CAIRO_FONT_WEIGHT_NORMAL);
   cairo_set_font_size (cr, fontSize);
   cairo_text_extents (cr, str, &extents);
   return extents.x_advance;
