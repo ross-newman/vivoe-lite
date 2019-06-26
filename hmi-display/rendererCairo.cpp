@@ -8,8 +8,6 @@
 
 using namespace std;
 
-#define SIZE 10
-
 void
 rendererCairo::draw (int handle)
 {

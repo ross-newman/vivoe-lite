@@ -50,6 +50,7 @@ main (int argc, char *argv[])
     update = true;
     io.nextGvaEvent(&event);
 
+#if DEBUG_VIDEO_LIVE
     /*
      * Get the live video frame if Driver (DRV)
      */  
@@ -57,6 +58,7 @@ main (int argc, char *argv[])
       rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
       io.flush();
     }
+#endif
       
     switch (event.type) {
       case KEY_EVENT :
@@ -123,25 +125,73 @@ main (int argc, char *argv[])
                 hmi::dispatch(bms);
               }
               break;
-            case KEY_F14:
-              /* Alarms */
+            case KEY_F13:
+              /* Control UP */
               {
-                functionKeysType left = ALARM_KEYS_LEFT;
-                functionKeysType right = ALARM_KEYS_RIGHT;
-
-                hmi::getScreen()->compass.visible = false;
-                hmi::getScreen()->canvas.visible = false;
-                hmi::getScreen()->alarms.visible = true;
-                hmi::getScreen()->functionTop->active = 0x1 << 0;
-                hmi::getScreen()->functionLeft = left;
-                hmi::getScreen()->functionRight = right;
+                KeyFunction input;
+                input.key = KEY_F13;
+                hmi::dispatch(input);
+              }
+              break;
+            case KEY_F14:
+              /* Control Alarms */
+              {
+                KeyAlarms alarms;
+                KeyFunction input;
+                hmi::dispatch(alarms);
+                input.key = KEY_F14;
+                hmi::dispatch(input);
+              }
+              break;
+            case KEY_F15:
+              /*  */
+              {
+                KeyFunction input;
+                input.key = KEY_F15;
+                hmi::dispatch(input);
+              }
+              break;
+            case KEY_F16:
+              /*  */
+              {
+                KeyFunction input;
+                input.key = KEY_F16;
+                hmi::dispatch(input);
+              }
+              break;
+            case KEY_F17:
+              /* Control Arrow Up */
+              {
+                KeyFunction input;
+                input.key = KEY_F17;
+                hmi::getScreen()->keyboard.mode = (hmi::getScreen()->keyboard.mode == KEYBOARD_UPPER) ?  KEYBOARD_LOWER :  KEYBOARD_UPPER; 
+                hmi::dispatch(input);
+              }
+              break;
+            case KEY_F18:
+              /* Control Arrow Down */
+              {
+                KeyFunction input;
+                input.key = KEY_F18;
+                hmi::getScreen()->keyboard.mode = (hmi::getScreen()->keyboard.mode == KEYBOARD_NUMBERS) ?  KEYBOARD_UPPER :  KEYBOARD_NUMBERS; 
+                hmi::dispatch(input);
               }
               break;
             case KEY_F19:
-              /* Toggle labels */
-              KeyFunction input;
-              input.key = KEY_F19;
-              hmi::dispatch(input);
+              /* Control labels */
+              {
+                KeyFunction input;
+                input.key = KEY_F19;
+                hmi::dispatch(input);
+              }
+              break;
+            case KEY_F20:
+              /*  */
+              {
+                KeyFunction input;
+                input.key = KEY_F20;
+                hmi::dispatch(input);
+              }
               break;
             case KEY_FULLSCREEN:
               /* f toggle fullscreen TODO: Does not work */
@@ -160,20 +210,7 @@ main (int argc, char *argv[])
             case KEY_KEYBOARD:
               /* k toggle keyboard */
               {
-                hmi::getScreen()->keyboard.visible =
-                hmi::getScreen()->keyboard.visible ? false : true;
-              }
-              break;
-            case KEY_F17:
-              /* Up Arrow keyboard */
-              {
-                hmi::getScreen()->keyboard.mode = (hmi::getScreen()->keyboard.mode == KEYBOARD_UPPER) ?  KEYBOARD_LOWER :  KEYBOARD_UPPER; 
-              }
-              break;
-            case KEY_F18:
-              /* Down Arrow keyboard */
-              {
-                hmi::getScreen()->keyboard.mode = (hmi::getScreen()->keyboard.mode == KEYBOARD_NUMBERS) ?  KEYBOARD_UPPER :  KEYBOARD_NUMBERS; 
+                hmi::getScreen()->keyboard.visible = hmi::getScreen()->keyboard.visible ? false : true;
               }
               break;
             case KEY_PLUS:

@@ -118,10 +118,10 @@ rendererGva::drawSaKeys (int hndl, int y, int active, int hide)
         {
           (1 << (7 - i) & active) ? setColourBackground (hndl,YELLOW) :
             setColourBackground (hndl, DARK_GREEN);
-          drawRectangle (hndl, (i * width) + offset, y,
+           drawRectangle (hndl, (i * width) + offset, y,
                          (i * width) + width - spacing + offset, y + 10,
                          true);
-           m_touch.addAbsolute(SA, (int)(KEY_SA + i), (i * width) + offset, y,
+           m_touch.addAbsolute(TOP, (int)(KEY_SA + i), (i * width) + offset, y,
                          (i * width) + width - spacing + offset, y + 10);
         }
     }
@@ -144,24 +144,24 @@ rendererGva::drawControlKeys (int hndl, int y, int active, int hide)
   setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
                (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
 
-  for (i = 0; i < 8; i++)
-    {
-      if (!(0xb10000000 >> i & hide))
-        {
-          (0xb10000000 >> i & active) ? setColourBackground (hndl,
-                                                             GREY) :
-            setColourBackground (hndl, DARK_GREEN);
-          (0xb10000000 >> i & active) ? setColourForground (hndl,
-                                                            DARK_GREY) :
-            setColourForground (hndl, DARK_GREEN2);
-          drawRectangle (hndl, (i * w) + offset, y, (i * w) + w - 5 + offset,
-                         y + 20, true);
-          (0xb10000000 >> i & active) ? drawColor (hndl,
-                                                   BLACK) : drawColor (hndl,
-                                                                       WHITE);
-          drawText (hndl, (i * w) + offset + 5, y + 6, labels[i], 12);
-        }
+  for (i = 0; i < 8; i++) {
+    if ((1 << (7 - i) & hide)) {
+      setColourBackground (hndl, GREY);
+      setColourForground (hndl, DARK_GREY);
+    } else {
+      setColourBackground (hndl, DARK_GREEN);
+      (1 << (7 - i) & active) ? setColourForground (hndl, YELLOW) :
+        setColourForground (hndl, DARK_GREEN2);
     }
+    drawRectangle (hndl, (i * w) + offset, y, (i * w) + w - 5 + offset,
+                   y + 20, true);
+                   
+    (1 << (7 - i) & hide) ? drawColor (hndl,
+                                             BLACK) : drawColor (hndl,
+                                                                 WHITE);
+    m_touch.addAbsolute(BOTTOM, (int)(KEY_F13 + i), (i * w) + offset, y, (i * w) + w - 5 + offset, y + 20);
+    drawText (hndl, (i * w) + offset + 5, y + 6, labels[i], 12);
+  }
 }
 
 void
@@ -256,7 +256,7 @@ void
 rendererGva::drawMode (int hndl)
 {
   int offset = m_width * 0.4;
-  int y = m_height * 0.85;
+  int y = m_height * 0.08;
   setColourForground (hndl, WHITE);
   setColourBackground (hndl, DARK_BLUE);
   setLineThickness (hndl, 1, LINE_SOLID);

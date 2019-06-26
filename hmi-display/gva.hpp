@@ -20,7 +20,18 @@ enum gvaFunctionEnum
   DRV,
   STR,
   COM,
-  BMS
+  BMS,
+  ALARMSX,
+};
+
+enum gvaFunctionGoupEnum 
+{
+  TOP,
+  BOTTOM,
+  LEFT,
+  RIGHT,
+  ALARM_TABLE,
+  KEYBOARD
 };
 
 enum gvaKeyEnum 

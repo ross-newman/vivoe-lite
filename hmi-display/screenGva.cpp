@@ -185,7 +185,7 @@ namespace gva
     setColourBackground (m_hndl, GREEN);
     drawRectangle (m_hndl, 0, 0, m_width, m_height, true);
 
-#if 1
+    // Draw the background canvas first
     if (m_screen->canvas.visible)
       {
         if (m_screen->canvas.buffer) {
@@ -194,8 +194,8 @@ namespace gva
           textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
         }
       }
-#endif
 
+    // Draw the LEFT bezel keys
     if (m_screen->functionLeft.visible)
       {
         drawFunctionKeys (m_hndl, 1, m_screen->functionLeft.active,
@@ -204,6 +204,8 @@ namespace gva
                           m_screen->functionLeft.toggleOn,
                           m_screen->functionLeft.labels);
       }
+
+    // Draw the RIGHT bezel keys
     if (m_screen->functionRight.visible)
       {
         drawFunctionKeys (m_hndl, m_width - 100 - 1,
@@ -213,18 +215,20 @@ namespace gva
                           m_screen->functionRight.toggleOn,
                           m_screen->functionRight.labels);
       }
-#if 1
+
+    // Draw the TOP bezel keys     
     drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop->active,
                 m_screen->functionTop->hidden);
-#endif
-    if (m_screen->keyboard.visible) {
-      drawKeyboard (m_hndl, m_screen->keyboard.mode);
-    }
 
-#if 0
+    // Draw the maintinance mode indicator 
     drawMode (m_hndl);
-#endif
-
+    
+    // Draw the onscreen KEYBOARD
+    if (m_screen->keyboard.visible)
+    {
+      drawKeyboard(m_hndl, m_screen->keyboard.mode);
+    }
+    
     /* Setup and draw the status bar, one row table */
     if (m_screen->statusBar->visible)
       {

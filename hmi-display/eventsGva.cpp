@@ -14,8 +14,8 @@ namespace gva
      * select kind of events we are interested in 
      */
     XSelectInput (m_display, *m_window,
-                  KeyPressMask | KeyReleaseMask | 
-                  ButtonPressMask	| ButtonReleaseMask |
+                  KeyPressMask | 
+                  ButtonPressMask |
                   ExposureMask  | StructureNotifyMask);
   }
 
@@ -30,7 +30,8 @@ namespace gva
 
     switch (e.type) {
       case ButtonPressMask :
-        m_touch->check(SA, &binding, e.xbutton.x, e.xbutton.y);
+        m_touch->check(TOP, &binding, e.xbutton.x, e.xbutton.y);
+        if (!binding) m_touch->check(BOTTOM, &binding, e.xbutton.x, e.xbutton.y);
         if (binding) {
           event->type = KEY_EVENT;
           event->key = (gvaKeyEnum)binding;
@@ -42,87 +43,89 @@ namespace gva
         {
           event->type = KEY_EVENT;
           switch (e.xkey.keycode)
-            {
-            case 0x09:
-              /* exit on ESC key press */
-              event->key = KEY_ESC;
-              break;
-            case 0xa:
-              /* 1 maps to SA */
-              event->key = KEY_SA;
-              break;
-            case 0xb:
-              /* 2 maps to WPN */
-              event->key = KEY_WPN;
-              break;
-            case 0xc:
-              /* 3 maps to DEF */
-              event->key = KEY_DEF;
-              break;
-            case 0xd:
-              /* 4 maps to SYS */
-              event->key = KEY_SYS;
-              break;
-            case 0xe:
-              /* 5 maps to DRV */
-              event->key = KEY_DRV;
-              break;
-            case 0xf:
-              /* 6 maps to STR */
-              event->key = KEY_STR;
-              break;
-            case 0x10:
-              /* 7 maps to COM */
-              event->key = KEY_COM;
-              break;
-            case 0x11:
-              /* 8 maps to BMS */
-              event->key = KEY_BMS;
-              break;
-            case 0x26:
-              /* a maps to ALARMS */
-              event->key = KEY_F14;
-              break;
-            case 0x29:
-              /* f toggle fullscreen TODO: Does not work */
-              event->key = KEY_FULLSCREEN;
-              break;
-            case 0x2d:
-              /* k toggle keyboard */
-              event->key = KEY_KEYBOARD;
-              break;
-            case 0x42:
-              /* caps_lock keyboard */
-              event->key = KEY_F17;
-              break;
-            case 0x4D:
-              /* num_lock keyboard */
-              event->key = KEY_F18;
-              break;
-            case 0x2e:
-              /* l show / hide labels */
-              event->key = KEY_F19;
-              break;
-            case 0x15:
-              /* + keyboard */
-              event->key = KEY_PLUS;
-              break;
-            case 0x14:
-              /* - show / hide labels */
-              event->key = KEY_MINUS;
-              break;
-            case 0x3c:
-              /* > keyboard */
-              event->key = KEY_GREATER;
-              break;
-            case 0x3b:
-              /* < show / hide labels */
-              event->key = KEY_LESS;
-              break;
-            default:
-              printf ("KeyPress not defined 0x%x\n", e.xkey.keycode);
-              break;
-            }
+          {
+          case 0x09:
+            /* exit on ESC key press */
+            event->key = KEY_ESC;
+            break;
+          case 0xa:
+            /* 1 maps to SA */
+            event->key = KEY_SA;
+            break;
+          case 0xb:
+            /* 2 maps to WPN */
+            event->key = KEY_WPN;
+            break;
+          case 0xc:
+            /* 3 maps to DEF */
+            event->key = KEY_DEF;
+            break;
+          case 0xd:
+            /* 4 maps to SYS */
+            event->key = KEY_SYS;
+            break;
+          case 0xe:
+            /* 5 maps to DRV */
+            event->key = KEY_DRV;
+            break;
+          case 0xf:
+            /* 6 maps to STR */
+            event->key = KEY_STR;
+            break;
+          case 0x10:
+            /* 7 maps to COM */
+            event->key = KEY_COM;
+            break;
+          case 0x11:
+            /* 8 maps to BMS */
+            event->key = KEY_BMS;
+            break;
+          case 0x26:
+            /* a maps to ALARMS */
+            event->key = KEY_F14;
+            break;
+          case 0x29:
+            /* f toggle fullscreen TODO: Does not work */
+            event->key = KEY_FULLSCREEN;
+            break;
+          case 0x2d:
+            /* k toggle keyboard */
+            event->key = KEY_KEYBOARD;
+printf("Keyboard\n");
+            break;
+          case 0x42:
+            /* caps_lock keyboard */
+            event->key = KEY_F17;
+            break;
+          case 0x4D:
+            /* num_lock keyboard */
+            event->key = KEY_F18;
+            break;
+          case 0x2e:
+            /* l show / hide labels */
+            event->key = KEY_F19;
+            break;
+          case 0x15:
+            /* + keyboard */
+            event->key = KEY_PLUS;
+            break;
+          case 0x14:
+            /* - show / hide labels */
+            event->key = KEY_MINUS;
+            break;
+          case 0x3c:
+            /* > keyboard */
+            event->key = KEY_GREATER;
+            break;
+          case 0x3b:
+            /* < show / hide labels */
+            event->key = KEY_LESS;
+            break;
+          default:
+            printf ("KeyPress not defined 0x%x\n", e.xkey.keycode);
+            break;
+          }
+          break;
         }      
       case KeyRelease:
         {
