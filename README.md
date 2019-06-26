@@ -77,6 +77,8 @@ Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NME
 If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. Maps come from OpenStreetMap and require processing prior to use. An updated collection of maps can be downloaded from [Geofabrik](https://download.geofabrik.de/)
 
 You can render maps using [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) and I have [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) is a shared gist for doing this and depositing the results on to a Google Drive account. 
+# Screenshot
+See images directory [images/README.md](images/README.md)
 
 # Development
 See configuration setup in [DEVELOPER.md](docs/DEVELOPER.md)
