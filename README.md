@@ -14,7 +14,7 @@ The project includes an refferance implementation of the GVA Human Machin Interf
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
-> NOTE: Only the function keys at the top of the screen are currently implemented! Alarms are currently mocked up.
+> NOTE: Not all labels are currently implemented, project in heavy development! See [DEVELOPER.md](docs/DEVELOPER.md) for issues and features.
 
 Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
 
