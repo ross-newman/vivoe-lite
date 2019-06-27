@@ -12,3 +12,18 @@ New features may be added from time to time. Raise a bug report to request a fea
 
 # Vunrabilities
 If you find an issue or problem with the code you can raise a bug detailing the issue and steps required to reproduce it. This will then get addressed. https://github.com/ross-newman/vivoe-lite/issues
+
+# Notes
+## Features under development
+- [x] Live GPS (USB) source support
+- [ ] Display incomming live uncompressed RTP video streams
+- [ ] Display outgoing live uncompressed RTP video streams
+- [ ] DDS control in gva-tool
+- [ ] XML config files need implementing
+- [ ] Alarms class needs implementing
+- [ ] Keyboard input working with touch input (mouse click)
+
+## Known Issues
+* Not all labels are implemented and touch (mouse click enabled)
+* Maps BMS currently mocked up
+* Live video input macro defined out (Issue with Gstreamer1.0)
