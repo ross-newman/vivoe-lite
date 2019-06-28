@@ -9,7 +9,10 @@ using namespace gva;
 
 #define LABEL_NULL "Unused!"
 
+// 
 // These labels should not change
+// 
+
 //                              Visible    Active    Hidden
 #define COMMON_KEYS              { true, 0b0010000,  0b00010000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
 #define COMMON_FUNCTION_KEYS_TOP { true, 0b01000000, 0b0000100 }
@@ -47,7 +50,9 @@ using namespace gva;
 #define ALARM_KEYS_LEFT          { true, 0b000000, 0b111100, 0b000000, 0b000000, { "Sort", "Order", "Show.Overridden", "Select.All", LABEL_NULL, LABEL_NULL } }
 #define ALARM_KEYS_RIGHT         { true, 0b000000, 0b111011, 0b000000, 0b000000, { "Override", "Clear", "Add Note", LABEL_NULL, "Page.Up", "Page.Down" } }
 
+// 
 // forward declarations
+// 
 struct stateOff;
 struct stateSA;
 struct stateWPN;
@@ -59,8 +64,7 @@ struct stateCOM;
 struct stateBMS;
 struct stateAlarms;
 
-
-// ----------------------------------------------------------------------------
+// 
 // Event Declarations
 //
 struct KeyPowerOn : tinyfsm::Event { };
@@ -75,7 +79,7 @@ struct KeyBMS : tinyfsm::Event { };
 struct KeyAlarms : tinyfsm::Event { };
 struct KeyFunction : tinyfsm::Event { int key; };
 
-// ----------------------------------------------------------------------------
+//
 // 2. State Machine Base Class Declaration
 //
 struct Hmi : tinyfsm::Fsm<Hmi>
@@ -112,6 +116,7 @@ protected:
   static screenType m_screen;
   static screenGva *m_render;
   static bool m_labelsOn;
+  static int m_lastState;
 public:
   static void key(int key);
   static void reset();

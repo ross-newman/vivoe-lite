@@ -275,6 +275,7 @@ rendererCairo::init (int width, int height)
   Visual *visual = DefaultVisual (m_render_handle[0].win.dpy,
                                   DefaultScreen (m_render_handle[0].win.dpy));
 
+
   XClearWindow (m_render_handle[0].win.dpy, m_render_handle[0].win.win);
 
   m_render_handle[0].surface =

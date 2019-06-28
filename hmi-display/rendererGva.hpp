@@ -127,9 +127,9 @@ class rendererGva : public rendererCairo
 {
 public:  
   rendererGva(int width, int height);
-  void drawFunctionKeys(int handle, int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
-  void drawSaKeys(int handle, int y, int active, int hide);
-  void drawControlKeys(int handle, int y, int active, int hide);
+  void drawFunctionLabels(int handle, int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
+  void drawTopLabels(int handle, int y, int active, int hide);
+  void drawControlLabels(int handle, int y, int active, int hide);
   void drawPPI(int handle, int x, int y, int degrees, int sightAzimuth);
   void drawTable(int handle, gvaTable *table);
   void drawMode(int handle);
@@ -147,7 +147,7 @@ private:
 class FunctionKeySimple
 {
 public:
-  void draw(rendererGva *r, int hndl, int x, int y, char* text);
+  void draw(rendererGva *r, int hndl, int x, int y, int width, int height, char* text);
   int getX() { return m_x; };
   int getY() { return m_y; };
 private: 

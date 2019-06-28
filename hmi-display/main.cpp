@@ -15,6 +15,12 @@
 using namespace std;
 using namespace gva;
 
+void dispatch(int key) {
+  KeyFunction input;
+  input.key = key;
+  hmi::dispatch(input);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -125,12 +131,46 @@ main (int argc, char *argv[])
                 hmi::dispatch(bms);
               }
               break;
+            case KEY_F1:
+              dispatch(KEY_F1);
+              break;
+            case KEY_F2:
+              dispatch(KEY_F2);
+              break;
+            case KEY_F3:
+              dispatch(KEY_F3);
+              break;
+            case KEY_F4:
+              dispatch(KEY_F4);
+              break;
+            case KEY_F5:
+              dispatch(KEY_F5);
+              break;
+            case KEY_F6:
+              dispatch(KEY_F6);
+              break;
+            case KEY_F7:
+              dispatch(KEY_F7);
+              break;
+            case KEY_F8:
+              dispatch(KEY_F8);
+              break;
+            case KEY_F9:
+              dispatch(KEY_F9);
+              break;
+            case KEY_F10:
+              dispatch(KEY_F10);
+              break;
+            case KEY_F11:
+              dispatch(KEY_F11);
+              break;
+            case KEY_F12:
+              dispatch(KEY_F12);
+              break;
             case KEY_F13:
               /* Control UP */
               {
-                KeyFunction input;
-                input.key = KEY_F13;
-                hmi::dispatch(input);
+                dispatch(KEY_F13);
               }
               break;
             case KEY_F14:

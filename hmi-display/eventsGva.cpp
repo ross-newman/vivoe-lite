@@ -32,6 +32,8 @@ namespace gva
       case ButtonPressMask :
         m_touch->check(TOP, &binding, e.xbutton.x, e.xbutton.y);
         if (!binding) m_touch->check(BOTTOM, &binding, e.xbutton.x, e.xbutton.y);
+        if (!binding) m_touch->check(RIGHT, &binding, e.xbutton.x, e.xbutton.y);
+        if (!binding) m_touch->check(LEFT, &binding, e.xbutton.x, e.xbutton.y);
         if (binding) {
           event->type = KEY_EVENT;
           event->key = (gvaKeyEnum)binding;
@@ -91,7 +93,6 @@ namespace gva
           case 0x2d:
             /* k toggle keyboard */
             event->key = KEY_KEYBOARD;
-printf("Keyboard\n");
             break;
           case 0x42:
             /* caps_lock keyboard */
@@ -133,7 +134,6 @@ printf("Keyboard\n");
         }
         break;
       case 25:
-          printf("Resize %d\n", 25);
       case ConfigureNotify:
         {
           XConfigureEvent *cev = &e.xconfigure;

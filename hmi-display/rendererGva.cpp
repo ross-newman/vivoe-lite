@@ -23,13 +23,13 @@ rendererCairo (width, height)
 }
 
 void
-FunctionKeySimple::draw (rendererGva * r, int hndl, int x, int y, char *text)
+FunctionKeySimple::draw (rendererGva * r, int hndl, int x, int y, int width, int height, char *text)
 {
   char copy[256];
   char delim[] = ".";
   char *ptr = NULL;
 
-  r->drawRectangle (hndl, x, y, x + 100, y + 50, true);
+  r->drawRectangle (hndl, x, y, x + width, y + height, true);
   r->drawColor (hndl, WHITE);
 
   strncpy (copy, text, 40);
@@ -69,7 +69,7 @@ FunctionKeyToggle::toggle (rendererGva * r, int hndl, char *label1,
 }
 
 void
-rendererGva::drawFunctionKeys (int hndl, int x, int active, int hide,
+rendererGva::drawFunctionLabels (int hndl, int x, int active, int hide,
                                int toggle, int toggleOn, char labels[6][40])
 {
   int i = 0;
@@ -81,7 +81,9 @@ rendererGva::drawFunctionKeys (int hndl, int x, int active, int hide,
   setLineThickness (hndl, 2, LINE_SOLID);
   setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
                (int) CAIRO_FONT_WEIGHT_NORMAL, "Courier");
-
+               
+  int firstKey = (x<DEFAULT_WIDTH/2) ? KEY_F1 : KEY_F7;
+  int group = (x<DEFAULT_WIDTH/2) ? LEFT : RIGHT;
   for (i = 0; i < 6; i++)
     {
       setColourBackground (hndl, DARK_GREEN);
@@ -91,7 +93,8 @@ rendererGva::drawFunctionKeys (int hndl, int x, int active, int hide,
                                                         YELLOW) :
             setColourForground (hndl, DARK_GREEN2);
           FunctionKeyToggle *key = new FunctionKeyToggle ();
-          key->draw (this, hndl, x, offset - (i * 65), labels[i]);
+          key->draw (this, hndl, x, offset - (i * 65), 100, 50, labels[i]);
+          m_touch.add(group, (int)(firstKey + i),  x, offset - (i * 65), 100, 50);
 
           if ((1 << (5 - i) & toggle))
             key->toggle (this, hndl, "On", "Off");
@@ -100,7 +103,7 @@ rendererGva::drawFunctionKeys (int hndl, int x, int active, int hide,
 }
 
 void
-rendererGva::drawSaKeys (int hndl, int y, int active, int hide)
+rendererGva::drawTopLabels (int hndl, int y, int active, int hide)
 {
   int i = 0;
   int offset = m_width * 0.02;
@@ -128,7 +131,7 @@ rendererGva::drawSaKeys (int hndl, int y, int active, int hide)
 }
 
 void
-rendererGva::drawControlKeys (int hndl, int y, int active, int hide)
+rendererGva::drawControlLabels (int hndl, int y, int active, int hide)
 {
   int i = 0;
   int offset = 20;

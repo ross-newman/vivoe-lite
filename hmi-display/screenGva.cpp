@@ -195,20 +195,20 @@ namespace gva
         }
       }
 
-    // Draw the LEFT bezel keys
+    // Draw the LEFT bezel labels
     if (m_screen->functionLeft.visible)
       {
-        drawFunctionKeys (m_hndl, 1, m_screen->functionLeft.active,
+        drawFunctionLabels (m_hndl, 1, m_screen->functionLeft.active,
                           m_screen->functionLeft.hidden,
                           m_screen->functionLeft.toggleActive,
                           m_screen->functionLeft.toggleOn,
                           m_screen->functionLeft.labels);
       }
 
-    // Draw the RIGHT bezel keys
+    // Draw the RIGHT bezel labels
     if (m_screen->functionRight.visible)
       {
-        drawFunctionKeys (m_hndl, m_width - 100 - 1,
+        drawFunctionLabels (m_hndl, m_width - 100 - 1,
                           m_screen->functionRight.active,
                           m_screen->functionRight.hidden,
                           m_screen->functionRight.toggleActive,
@@ -216,8 +216,8 @@ namespace gva
                           m_screen->functionRight.labels);
       }
 
-    // Draw the TOP bezel keys     
-    drawSaKeys (m_hndl, m_height - 11, m_screen->functionTop->active,
+    // Draw the TOP bezel labels     
+    drawTopLabels (m_hndl, m_height - 11, m_screen->functionTop->active,
                 m_screen->functionTop->hidden);
 
     // Draw the maintinance mode indicator 
@@ -347,7 +347,7 @@ namespace gva
 
     if (m_screen->control->visible)
       {
-        drawControlKeys (m_hndl, 0, m_screen->control->active,
+        drawControlLabels (m_hndl, 0, m_screen->control->active,
                          m_screen->control->hidden);
       }
 

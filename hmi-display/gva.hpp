@@ -24,7 +24,7 @@ enum gvaFunctionEnum
   ALARMSX,
 };
 
-enum gvaFunctionGoupEnum 
+enum gvaFunctionGroupEnum 
 {
   TOP,
   BOTTOM,

@@ -52,7 +52,45 @@ Hmi::labelsOn() {
 
 void
 Hmi::key(int key) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
   switch (key){
+  case KEY_F1 :
+    m_screen.functionLeft.active = 1 << 5;
+    break;
+  case KEY_F2 :
+    m_screen.functionLeft.active = 1 << 4;
+    break;
+  case KEY_F3 :
+    m_screen.functionLeft.active = 1 << 3;
+    break;
+  case KEY_F4 :
+    m_screen.functionLeft.active = 1 << 2;
+    break;
+  case KEY_F5 :
+    m_screen.functionLeft.active = 1 << 1;
+    break;
+  case KEY_F6 :
+    m_screen.functionLeft.active = 1;
+    break;
+  case KEY_F7 :
+    m_screen.functionRight.active = 1 << 5;
+    break;
+  case KEY_F8 :
+    m_screen.functionRight.active = 1 << 4;
+    break;
+  case KEY_F9 :
+    m_screen.functionRight.active = 1 << 3;
+    break;
+  case KEY_F10 :
+    m_screen.functionRight.active = 1 << 2;
+    break;
+  case KEY_F11 :
+    m_screen.functionRight.active = 1 << 1;
+    break;
+  case KEY_F12 :
+    m_screen.functionRight.active = 1;
+    break;
   case KEY_F13 :
     m_screen.control->active = 1 << 7;
     break;
@@ -87,6 +125,7 @@ struct stateSA : Hmi
     if (!BIT (7, m_screen.functionTop->hidden))
       {
         reset();
+        m_lastState = SA;
         m_screen = m_manager->getScreen(SA);
                 
         m_screen.control->visible = true;
@@ -114,6 +153,7 @@ struct stateWPN : Hmi
   void entry() override {
     if (!BIT (6, m_screen.functionTop->hidden))
       {
+        m_lastState = WPN;
         reset();
         m_screen = m_manager->getScreen(WPN);
 
@@ -142,6 +182,7 @@ struct stateDEF : Hmi
   void entry() override {
     if (!BIT (5, m_screen.functionTop->hidden))
       {
+        m_lastState = DEF;
         reset();
         m_screen = m_manager->getScreen(DEF);
 
@@ -167,6 +208,7 @@ struct stateSYS : Hmi
   void entry() override {
     if (!BIT (4, m_screen.functionTop->hidden))
       {
+        m_lastState = SYS;
         reset();
         m_screen = m_manager->getScreen(SYS);
 
@@ -203,6 +245,7 @@ struct stateDRV : Hmi
   void entry() override {
     if (!BIT (3, m_screen.functionTop->hidden))
       {
+        m_lastState = DRV;
         reset();
         m_screen = m_manager->getScreen(DRV);
 
@@ -228,6 +271,7 @@ struct stateSTR : Hmi
   void entry() override {
     if (!BIT (2, m_screen.functionTop->hidden))
       {
+        m_lastState = STR;
         reset();
         m_screen = m_manager->getScreen(STR);
 
@@ -253,6 +297,7 @@ struct stateCOM : Hmi
   void entry() override {
     if (!BIT (1, m_screen.functionTop->hidden))
       {
+        m_lastState = COM;
         reset();
         m_screen = m_manager->getScreen(COM);
 
@@ -278,6 +323,7 @@ struct stateBMS : Hmi
   void entry() override {
     if (!BIT (0, m_screen.functionTop->hidden))
       {
+        m_lastState = BMS;
         reset();
         m_screen = m_manager->getScreen(BMS);
 
@@ -305,6 +351,36 @@ struct stateAlarms : Hmi
   void entry() override {
   if (!BIT (1, m_screen.control->hidden))
       {
+        printf("Enter Alarms state %d\n", m_lastState);
+        if (m_lastState == ALARMSX) { 
+          switch (m_lastState) {
+          case SA:
+            transit<stateSA>(); 
+            return; 
+          case WPN:
+            transit<stateWPN>(); 
+            return; 
+          case DEF:
+            transit<stateDEF>(); 
+            return; 
+          case SYS:
+            transit<stateSYS>(); 
+            return; 
+          case DRV:
+            transit<stateDRV>(); 
+            return; 
+          case STR:
+            transit<stateSTR>(); 
+            return; 
+          case COM:
+            transit<stateCOM>(); 
+            return; 
+          case BMS:
+            transit<stateBMS>(); 
+            return; 
+          }
+        }
+        m_lastState = ALARMSX;
         reset();
         m_screen = m_manager->getScreen(ALARMSX);
 
@@ -322,6 +398,7 @@ struct stateAlarms : Hmi
   void react(KeySTR const &) override { transit<stateSTR>(); };
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
+  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
   void react(KeyFunction const &e) { key(e.key); };
 };
 
@@ -395,6 +472,7 @@ keyboardType Hmi::m_keyboard;
 alarmsType Hmi::m_alarms;
 screenType Hmi::m_screen;
 screenGva* Hmi::m_render;
+int  Hmi::m_lastState;
 bool Hmi::m_labelsOn;
 
 // ----------------------------------------------------------------------------
