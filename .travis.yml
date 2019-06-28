@@ -1,8 +1,12 @@
 dist: xenial
 sudo: true
 language: cpp
+git:
+  submodules: true
 compiler:
   - gcc
+before_install:
+  - git submodule update --init --recursive
 script:
   - sudo apt-get update
   - sudo apt-get install doxygen catch valgrind libcairo2-dev libxt-dev doxygen libxml2-dev libsdl2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev
