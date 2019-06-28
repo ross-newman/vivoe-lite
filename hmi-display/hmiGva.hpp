@@ -115,8 +115,9 @@ protected:
   static alarmsType m_alarms;
   static screenType m_screen;
   static screenGva *m_render;
-  static bool m_labelsOn;
   static int m_lastState;
+  static bool m_labelsOn;
+  static bool m_alarmsOn;
 public:
   static void key(int key);
   static void reset();

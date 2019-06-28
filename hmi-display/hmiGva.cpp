@@ -352,7 +352,8 @@ struct stateAlarms : Hmi
   if (!BIT (1, m_screen.control->hidden))
       {
         printf("Enter Alarms state %d\n", m_lastState);
-        if (m_lastState == ALARMSX) { 
+        if (m_alarmsOn) { 
+          m_alarmsOn = false;
           switch (m_lastState) {
           case SA:
             transit<stateSA>(); 
@@ -380,7 +381,7 @@ struct stateAlarms : Hmi
             return; 
           }
         }
-        m_lastState = ALARMSX;
+        m_alarmsOn = true;
         reset();
         m_screen = m_manager->getScreen(ALARMSX);
 
@@ -474,6 +475,7 @@ screenType Hmi::m_screen;
 screenGva* Hmi::m_render;
 int  Hmi::m_lastState;
 bool Hmi::m_labelsOn;
+bool Hmi::m_alarmsOn = false;
 
 // ----------------------------------------------------------------------------
 // Initial state definition
