@@ -14,7 +14,7 @@ The project includes an refferance implementation of the GVA Human Machin Interf
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
-> NOTE: Only the function keys at the top of the screen are currently implemented! Alarms are currently mocked up.
+> NOTE: Not all labels are currently implemented, project in heavy development! See [DEVELOPER.md](docs/DEVELOPER.md) for issues and features.
 
 Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
 
@@ -77,9 +77,12 @@ Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NME
 If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. Maps come from OpenStreetMap and require processing prior to use. An updated collection of maps can be downloaded from [Geofabrik](https://download.geofabrik.de/)
 
 You can render maps using [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) and I have [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) is a shared gist for doing this and depositing the results on to a Google Drive account. 
+# Screenshot
+See [screenshots](images/README.md) in the images directory. 
 
 # Development
-See configuration setup in [DEVELOPER.md](docs/DEVELOPER.md)
+See developer guidelines in [DEVELOPER.md](docs/DEVELOPER.md)
+See current development plan and known issues in [ISSUES.md](docs/ISSUES.md)
 
 # Config
 See configuration setup in [CONFIG.md](docs/CONFIG.md)
