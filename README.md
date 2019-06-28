@@ -81,8 +81,7 @@ You can render maps using [Google Colaboratory](https://colab.research.google.co
 See [screenshots](images/README.md) in the images directory. 
 
 # Development
-See developer guidelines in [DEVELOPER.md](docs/DEVELOPER.md)
-See current development plan and known issues in [ISSUES.md](docs/ISSUES.md)
+See developer guidelines in [DEVELOPER.md](docs/DEVELOPER.md) which also contains the list of currently known issues.
 
 # Config
 See configuration setup in [CONFIG.md](docs/CONFIG.md)
