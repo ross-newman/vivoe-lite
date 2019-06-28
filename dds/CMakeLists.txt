@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #find_package(fastcdr REQUIRED)
 #find_package(fastrtps REQUIRED)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 message(STATUS "PROJECT_NAME = dds")
 target_link_libraries(dds fastcdr fastrtps)
 
