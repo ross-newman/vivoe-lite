@@ -20,7 +20,7 @@ add_subdirectory(nmealib)
 add_subdirectory(dds)
 option(THIRDPARTY "Turn no third party modules" ON)
 set(THIRDPARTY ON CACHE BOOL "enable X functionality")
-#add_subdirectory(Fast-RTPS)
+add_subdirectory(Fast-RTPS)
 #add_subdirectory(libosmscout)
 message(STATUS "PROJECT_NAME = ${PROJECT_NAME}")
 file(COPY images/test2.png images/map.png
