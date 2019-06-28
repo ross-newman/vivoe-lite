@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<gva>
+  <tool>
+    <Domain>5</Domain>
+    <LogFile>log.txt</LogFile>
+    <Device>/dev/dio_A</Device>
+  </tool>
+  <board>
+    <Id>0x01</Id>
+  </board>
+</gva>

@@ -206,9 +206,9 @@ xmlStreamFile(const char *filename)
         return -1;
     }
 
-    xmlParse(&doc, "testharness", (xmlChar *)"LogFile", tmp);
+    xmlParse(&doc, "tool", (xmlChar *)"LogFile", tmp);
     strcpy(xml.logFile, tmp);
-    xmlParse(&doc, "testharness",  (xmlChar *)"Device", tmp);
+    xmlParse(&doc, "tool",  (xmlChar *)"Device", tmp);
     strcpy(xml.device, tmp);
 
     doc = xmlParseFile(filename);
