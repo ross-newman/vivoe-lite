@@ -1,0 +1,28 @@
+// geoLocation.idl
+
+enum locationFormat
+{
+    LONLAT,
+    MGRS
+};
+
+struct dateTime
+{
+    unsigned short year;
+    octet month;
+    octet day;
+    octet hour;
+    octet minute;
+    octet second;
+};
+
+struct geoLocation
+{
+    float lon;
+    float lat;
+    boolean gpsLoc;
+    unsigned short bearing;
+    unsigned short siteAzimuth;
+    unsigned short cameraAzimuth;
+    unsigned short satilites;
+};

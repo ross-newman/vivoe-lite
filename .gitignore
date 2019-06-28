@@ -16,3 +16,14 @@ CMakeCache*
 CMakeFiles
 CPackConfig*
 CPackSourceConfig.cmake
+dds/libdds.a
+gva-tools/gva-tool
+hmi-display/hmi-display
+hmi-display/log.txt
+include/
+libbusiness_logic.a
+libtest_catch.a
+test_events
+test_log
+video/libhmi-video.a
+

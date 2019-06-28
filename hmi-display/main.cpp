@@ -106,7 +106,8 @@ main (int argc, char *argv[])
     update = true;
     io.nextGvaEvent(&event);
 
-#if DEBUG_VIDEO_LIVE
+  if (opt.videoEnabled)
+  {
     /*
      * Get the live video frame if Driver (DRV)
      */  
@@ -114,8 +115,8 @@ main (int argc, char *argv[])
       rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
       io.flush();
     }
-#endif
-      
+  }
+  
     switch (event.type) {
       case KEY_EVENT :
         {
