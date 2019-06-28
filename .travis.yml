@@ -1,8 +1,6 @@
 dist: xenial
 sudo: true
 language: cpp
-git:
-  submodules: true
 compiler:
   - gcc
 before_install:
