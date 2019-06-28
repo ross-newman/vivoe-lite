@@ -5,6 +5,7 @@
  * @brief The example HMI application.
  */
 #include <iostream>
+#include <string>
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -15,11 +16,57 @@
 using namespace std;
 using namespace gva;
 
+struct opts {
+  bool videoEnabled;
+  bool windowEnabled;
+  char config[256];
+};
+
+opts opt = {0};
+
 void dispatch(int key) {
   KeyFunction input;
   input.key = key;
   hmi::dispatch(input);
-}
+};
+
+int
+getopt(int argc, char *argv[])
+{
+  int c = 0;
+  while ((c = getopt (argc, argv, "hvwcl:")) != -1) 
+  switch (c) {
+    case 'v':
+      cout << "Version " << MAJOR << "." << MINOR << "." << PATCH << endl;
+      return 0;
+    case 'w':
+      opt.windowEnabled = true;
+      return -1;
+    case 'c':
+      strcpy(opt.config,optarg);
+      return -1;
+    case 'x':
+      opt.videoEnabled = true;
+      return -1;
+    case 'h':
+      cout << "  -c : XML config file" << endl;
+      cout << "  -h : help" << endl;
+      cout << "  -w : Show HMI window, for debug when no GVA display present" << endl;
+      cout << "  -v : Version" << endl;
+      cout << "  -l : Live video" << endl;
+      return 0;
+    case '?':
+      if (optopt == 'c')
+        cerr << "Option -" << optopt << " requires an argument.\n" << endl;
+      else if (isprint (optopt))
+        cerr << "Unknown option `-%c'.\n" << endl;
+      else
+        cerr << std::hex << "Unknown option character, -h for help'" << optopt << "'." << endl;
+      return 1;
+    default:
+      abort ();
+  }
+};
 
 int
 main (int argc, char *argv[])
@@ -29,10 +76,13 @@ main (int argc, char *argv[])
   char* rtpBuffer;
   int hndl;
   bool update;
+  
 
-  cout << "hmi_display (v" << MAJOR << "." << MINOR << "." << PATCH <<
-    ") author ross@rossnewman.com...\n";
-
+  cout << "hmi_display (author: ross@rossnewman.com)..." << endl;
+  
+  int ret = getopt(argc, argv);
+  if (ret >= 0) return ret;
+  
   // instantiate events
   KeyPowerOn on;
 

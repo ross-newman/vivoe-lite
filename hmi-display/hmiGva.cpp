@@ -28,6 +28,7 @@ Hmi::reset()
   m_screen.alarms.visible = false;
   m_screen.control->active = 0;
   m_labelsOn = false;
+  m_alarmsOn = false;
 }
 
 void 
@@ -349,47 +350,45 @@ struct stateBMS : Hmi
 struct stateAlarms : Hmi
 {
   void entry() override {
-  if (!BIT (1, m_screen.control->hidden))
-      {
-        printf("Enter Alarms state %d\n", m_lastState);
-        if (m_alarmsOn) { 
-          m_alarmsOn = false;
-          switch (m_lastState) {
-          case SA:
-            transit<stateSA>(); 
-            return; 
-          case WPN:
-            transit<stateWPN>(); 
-            return; 
-          case DEF:
-            transit<stateDEF>(); 
-            return; 
-          case SYS:
-            transit<stateSYS>(); 
-            return; 
-          case DRV:
-            transit<stateDRV>(); 
-            return; 
-          case STR:
-            transit<stateSTR>(); 
-            return; 
-          case COM:
-            transit<stateCOM>(); 
-            return; 
-          case BMS:
-            transit<stateBMS>(); 
-            return; 
-          }
+    if (!BIT (1, m_screen.control->hidden)) {
+      if (m_alarmsOn) { 
+        m_alarmsOn = false;
+        switch (m_lastState) {
+        case SA:
+          transit<stateSA>(); 
+          return; 
+        case WPN:
+          transit<stateWPN>(); 
+          return; 
+        case DEF:
+          transit<stateDEF>(); 
+          return; 
+        case SYS:
+          transit<stateSYS>(); 
+          return; 
+        case DRV:
+          transit<stateDRV>(); 
+          return; 
+        case STR:
+          transit<stateSTR>(); 
+          return; 
+        case COM:
+          transit<stateCOM>(); 
+          return; 
+        case BMS:
+          transit<stateBMS>(); 
+          return; 
         }
-        m_alarmsOn = true;
-        reset();
-        m_screen = m_manager->getScreen(ALARMSX);
-
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
-        m_screen.alarms.visible = true;
-        m_screen.control->active = 0x1 << 6;
       }
+      reset();
+      m_alarmsOn = true;
+      m_screen = m_manager->getScreen(ALARMSX);
+
+      m_screen.control->visible = true;
+      m_screen.statusBar->visible = true;
+      m_screen.alarms.visible = true;
+      m_screen.control->active = 0x1 << 6;
+    }
   };
   void react(KeySA const &) override { transit<stateSA>(); };
   void react(KeyWPN const &) override { transit<stateWPN>(); };
