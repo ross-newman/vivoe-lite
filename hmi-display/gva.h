@@ -1,12 +1,12 @@
 #ifndef GVA_H
 #define GVA_H
-#include "logGva.hpp"
-#include "debug.hpp"
-#include "gvaVideoRtpYuv.hpp"
+#include "log_gva.h"
+#include "debug.h"
+#include "gva_video_rtp_yuv.h"
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 180
+#define PATCH 206
 
 #define MIN_HEIGHT 480
 #define MIN_WIDTH 640

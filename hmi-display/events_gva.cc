@@ -1,7 +1,7 @@
 #include <cairo-xlib.h>
-#include "gva.hpp"
-#include "rendererGva.hpp"
-#include "eventsGva.hpp"
+#include "gva.h"
+#include "renderer_gva.h"
+#include "events_gva.h"
 
 namespace gva
 {

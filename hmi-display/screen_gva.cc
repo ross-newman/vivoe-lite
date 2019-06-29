@@ -12,9 +12,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
-#include "screenGva.hpp"
-#include "logGva.hpp"
-#include "debug.hpp"
+#include "screen_gva.h"
+#include "log_gva.h"
+#include "debug.h"
 
 using namespace std;
 using namespace GeographicLib; 

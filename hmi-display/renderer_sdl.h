@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include "renderer.hpp"
+#include "renderer.h"
 
 #define MAX_HANDLES 10
 

@@ -1,6 +1,6 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
-#include "debug.hpp"
+#include "debug.h"
 
 #define MAX_HANDLES 10
 

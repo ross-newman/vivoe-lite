@@ -9,9 +9,10 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include "gva.hpp"
-#include "eventsGva.hpp"
-#include "hmiGva.hpp"
+#include "gva.h"
+#include "events_gva.h"
+#include "hmi_gva.h"
+#include "log_gva.h"
 
 using namespace std;
 using namespace gva;
@@ -76,8 +77,10 @@ main (int argc, char *argv[])
   char* rtpBuffer;
   int hndl;
   bool update;
+  char ipaddr[] = "127.0.0.1";
+  int port = 5004;
+  char tmp[256];
   
-
   cout << "hmi_display (author: ross@rossnewman.com)..." << endl;
   
   int ret = getopt(argc, argv);
@@ -90,17 +93,19 @@ main (int argc, char *argv[])
   
   hmi::dispatch(on);
   
-  /*
-   * Initalise the display events
-   */
+  //
+  // Initalise the display events
+  //
   eventsGva io(hmi::getRendrer()->getDisplay(), hmi::getRendrer()->getWindow(), hmi::getRendrer()->getTouch());
   
-  /*
-   * Setup video sources (default size will be 640 x 480)
-   */
-  gvaVideoRtpYuv *rtpStream1 = new gvaVideoRtpYuv("127.0.0.1", 5004);
+  //
+  // Setup video sources (default size will be 640 x 480 unless specified)
+  //
+  gvaVideoRtpYuv *rtpStream1 = new gvaVideoRtpYuv(ipaddr, port);
   cout << "Resolution " << rtpStream1->getHeight() << "x" << rtpStream1->getWidth() << "\n";
   rtpBuffer = (char*)malloc(rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
+  sprintf(tmp, "GVA Incomming RTP stream initalised %s:%d", ipaddr, port);
+  logGva::log (tmp, LOG_INFO);
 
   while (!done) {
     update = true;
@@ -108,9 +113,9 @@ main (int argc, char *argv[])
 
   if (opt.videoEnabled)
   {
-    /*
-     * Get the live video frame if Driver (DRV)
-     */  
+    //
+    // Get the live video frame if Driver (DRV)
+    //  
     if (hmi::getScreen()->currentFunction == DRV) {
       rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
       io.flush();
@@ -123,60 +128,60 @@ main (int argc, char *argv[])
           switch (event.key)
             {
             case KEY_ESC:
-              /* exit on ESC key press */
+              // exit on ESC key press 
               done = 1;
               break;
             case KEY_SA:
-              /* 1 maps to F1 */
+              // 1 maps to F1 
               {
                 KeySA sa;
                 hmi::dispatch(sa);
               }
               break;
             case KEY_WPN:
-              /* 2 maps to F2 */
+              // 2 maps to F2
               {
                 KeyWPN wpn;
                 hmi::dispatch(wpn);
               }
               break;
             case KEY_DEF:
-              /* 3 maps to F3 */
+              // 3 maps to F3
               {
                 KeyDEF def;
                 hmi::dispatch(def);
               }
               break;
             case KEY_SYS:
-              /* 4 maps to F4 */
+              // 4 maps to F4
               {
                 KeySYS sys;
                 hmi::dispatch(sys);
               }
               break;
             case KEY_DRV:
-              /* 5 maps to F5 */
+              // 5 maps to F5
               {
                 KeyDRV drv;
                 hmi::dispatch(drv);
               }
               break;
             case KEY_STR:
-              /* 6 maps to F6 */
+              // 6 maps to F6
               {
                 KeySTR str;
                 hmi::dispatch(str);
               }
               break;
             case KEY_COM:
-              /* 7 maps to F7 */
+              // 7 maps to F7
               {
                 KeyCOM com;
                 hmi::dispatch(com);
               }
               break;
             case KEY_BMS:
-              /* 8 maps to F8 */
+              // 8 maps to F8 
               {
                 KeyBMS bms;
                 hmi::dispatch(bms);
@@ -219,13 +224,13 @@ main (int argc, char *argv[])
               dispatch(KEY_F12);
               break;
             case KEY_F13:
-              /* Control UP */
+              // Control UP 
               {
                 dispatch(KEY_F13);
               }
               break;
             case KEY_F14:
-              /* Control Alarms */
+              // Control Alarms
               {
                 KeyAlarms alarms;
                 KeyFunction input;
@@ -235,7 +240,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_F15:
-              /*  */
+              // F15
               {
                 KeyFunction input;
                 input.key = KEY_F15;
@@ -243,7 +248,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_F16:
-              /*  */
+              // F16
               {
                 KeyFunction input;
                 input.key = KEY_F16;
@@ -251,7 +256,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_F17:
-              /* Control Arrow Up */
+              // F17 Control Arrow Up
               {
                 KeyFunction input;
                 input.key = KEY_F17;
@@ -260,7 +265,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_F18:
-              /* Control Arrow Down */
+              // F18 Control Arrow Down
               {
                 KeyFunction input;
                 input.key = KEY_F18;
@@ -269,7 +274,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_F19:
-              /* Control labels */
+              // F19 Control labels 
               {
                 KeyFunction input;
                 input.key = KEY_F19;
@@ -277,7 +282,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_F20:
-              /*  */
+              // F20
               {
                 KeyFunction input;
                 input.key = KEY_F20;
@@ -285,7 +290,7 @@ main (int argc, char *argv[])
               }
               break;
             case KEY_FULLSCREEN:
-              /* f toggle fullscreen TODO: Does not work */
+              // f toggle fullscreen TODO: Does not work 
 #if 0
               {
                 Atom wm_state = XInternAtom (d, "_NET_WM_STATE", true);
@@ -299,7 +304,7 @@ main (int argc, char *argv[])
 #endif
               break;
             case KEY_KEYBOARD:
-              /* k toggle keyboard */
+              // k toggle keyboard 
               {
                 hmi::getScreen()->keyboard.visible = hmi::getScreen()->keyboard.visible ? false : true;
               }
@@ -345,8 +350,9 @@ main (int argc, char *argv[])
     }
   }
 
-  /*
-   * Clean up code goes here
-   */
+  //
+  // Clean up code goes here
+  //
+  free(rtpStream1);
   cout << "Exiting hmi_display...\n";
 }

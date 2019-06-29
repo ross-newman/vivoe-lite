@@ -3,8 +3,8 @@
 
 #include <string.h>
 #include <vector> 
-#include "gva.hpp"
-#include "rendererCairo.hpp"
+#include "gva.h"
+#include "renderer_cairo.h"
 
 #define MAX_ROWS 50
 #define MAX_CELLS 10
@@ -133,6 +133,8 @@ public:
   void drawPPI(int handle, int x, int y, int degrees, int sightAzimuth);
   void drawTable(int handle, gvaTable *table);
   void drawMode(int handle);
+  void drawButton (int hndl, char *keytext, int fontSize, int x, int y, int size);
+  void drawButton (int hndl, char *keytext, int fontSize, int x, int y, int height, int width, int align);
   void drawKeyboard(int handle, keyboardModeType mode);
   touchGva *getTouch() { return &m_touch; };
 private:

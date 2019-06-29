@@ -1,8 +1,8 @@
 #ifndef HMI_GVA_HPP
 #define HMI_GVA_HPP
-#include "tinyfsm.hpp"
-#include "viewGva.hpp"
-#include "screenGva.hpp"
+#include "tinyfsm.h"
+#include "view_gva.h"
+#include "screen_gva.h"
 #include <iostream>
 
 using namespace gva;

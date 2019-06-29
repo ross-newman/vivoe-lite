@@ -1,9 +1,9 @@
-#ifndef VIEW_GVA_HPP
-#define VIEW_GVA_HPP
+#ifndef VIEW_GVA_H
+#define VIEW_GVA_H
 #include <string>
 #include <functional>
-#include "gva.hpp"
-#include "screenGva.hpp"
+#include "gva.h"
+#include "screen_gva.h"
 
 #define MAX_LABEL 50
 namespace gva

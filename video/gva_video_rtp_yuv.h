@@ -1,7 +1,7 @@
 #ifndef GVA_VIDEO_RTP_YUV_H
 #define GVA_VIDEO_RTP_YUV_H
-#include "gvaVideo.hpp"
-#include "rtpStream.h"
+#include "gva_video.h"
+#include "rtp_stream.h"
 
 /*
  * Buffers are assumed to be YUV

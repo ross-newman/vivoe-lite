@@ -1,5 +1,5 @@
-#include "screenGva.hpp"
-#include "viewGva.hpp"
+#include "screen_gva.h"
+#include "view_gva.h"
 
 namespace gva
 {

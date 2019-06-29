@@ -1,9 +1,9 @@
 #ifndef SCREEN_GVA_HPP
 #define SCREEN_GVA_HPP
 #include <pthread.h>
-#include "gva.hpp"
-#include "rendererGva.hpp"
-#include "logGva.hpp"
+#include "gva.h"
+#include "renderer_gva.h"
+#include "log_gva.h"
 #include "nmea/nmea.h"
 
 namespace gva

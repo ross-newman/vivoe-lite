@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
-#include "renderer.hpp"
+#include "renderer.h"
 
 #define MAX_COMMANDS 1000
 #define MAX_IMAGES 100

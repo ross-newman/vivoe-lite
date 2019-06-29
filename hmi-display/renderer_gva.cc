@@ -1,6 +1,6 @@
 #include <math.h>               /* sqrt */
-#include "debug.hpp"
-#include "rendererGva.hpp"
+#include "debug.h"
+#include "renderer_gva.h"
 
 #define PLOT_CIRCLE_X(x, radius, degree) x + (radius) * cos(((M_PI * 2) / 360) * degree)
 #define PLOT_CIRCLE_Y(y, radius, degree) y - (radius) * sin(((M_PI * 2) / 360) * degree)
@@ -327,6 +327,27 @@ rendererGva::drawTable (int hndl, gvaTable *table)
 }
 
 void
+rendererGva::drawButton (int hndl, char *keyText, int fontSize, int x, int y, int size) {
+  drawButton(hndl, keyText, fontSize, x, y, size, size, ALIGN_LEFT);
+}
+
+void
+rendererGva::drawButton (int hndl, char *keyText, int fontSize, int x, int y, int width, int height, int align)
+{
+  int textX = 6;
+  setColourForground (hndl, GREY);
+  drawRoundedRectangle (hndl, x, y, width, height, 6, true);
+  setColourForground (hndl, WHITE);
+  setTextFont (hndl,  (int) CAIRO_FONT_SLANT_NORMAL,
+               (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
+  int textHeight = getTextHeight (hndl, "qh", fontSize);
+  int textWidth = getTextWidth (hndl, keyText, fontSize);
+  drawColor (hndl, WHITE);
+  if (align==ALIGN_CENTRE) textX = (width / 2) - (textWidth / 2);
+  drawText (hndl, x + textX, y + (height - textHeight - 4) , keyText, fontSize);  
+};
+
+void
 rendererGva::drawKeyboard (int hndl, keyboardModeType mode)
 {
   int i = 0;
@@ -359,59 +380,47 @@ rendererGva::drawKeyboard (int hndl, keyboardModeType mode)
   setLineThickness (hndl, 1, LINE_SOLID);
   setTextFont (hndl, (int) CAIRO_FONT_SLANT_NORMAL,
                (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
+
+  // Draw keys
+  setColourForground (hndl, GREY);
+  setColourForground (hndl, WHITE);
+  drawColor (hndl, WHITE);
   for (i = 0; i < 10; i++)
     {
       sprintf (keyText, "%c", keyboard[0][i]);
-      setColourForground (hndl, GREY);
-      drawRoundedRectangle (hndl, 125 + (i * (bSize + 5)),
-                            yLocation + padding + (bSize + 5) * 3, bSize,
-                            bSize, 6, true);
-      setColourForground (hndl, WHITE);
-      drawColor (hndl, WHITE);
-      drawText (hndl, 125 + ((i * (bSize + 5)) + 8),
-                yLocation + padding + ((bSize + 5) * 3) + 15, keyText,
-                fontSize);
+      drawButton (hndl, keyText, fontSize, 125 + (i * (bSize + 5)),
+                            yLocation + padding + (bSize + 5) * 3, bSize);
     }
   for (i = 0; i < 9; i++)
     {
       sprintf (keyText, "%c", keyboard[1][i]);
-      setColourForground (hndl, GREY);
-      drawRoundedRectangle (hndl, 140 + (i * (bSize + 5)),
-                            yLocation + padding + (bSize + 5) * 2, bSize,
-                            bSize, 6, true);
-      setColourForground (hndl, WHITE);
-      drawColor (hndl, WHITE);
-      drawText (hndl, 140 + ((i * (bSize + 5)) + 8),
-                yLocation + padding + ((bSize + 5) * 2) + 15, keyText,
-                fontSize);
+      drawButton (hndl, keyText, fontSize, 140 + (i * (bSize + 5)),
+                            yLocation + padding + (bSize + 5) * 2, bSize);
     }
   for (i = 0; i < 8; i++)
     {
       sprintf (keyText, "%c", keyboard[2][i]);
-      setColourForground (hndl, GREY);
-      drawRoundedRectangle (hndl, 160 + (i * (bSize + 5)),
-                            yLocation + padding + (bSize + 5) * 1, bSize,
-                            bSize, 6, true);
-      setColourForground (hndl, WHITE);
-      drawColor (hndl, WHITE);
-      drawText (hndl, 160 + ((i * (bSize + 5)) + 8),
-                yLocation + padding + ((bSize + 5) * 1) + 15, keyText,
-                fontSize);
+      drawButton (hndl, keyText, fontSize, 160 + (i * (bSize + 5)),
+                            yLocation + padding + (bSize + 5) * 1, bSize);
     }
 
   /*
    * Space Bar and Mode
    */
-  setColourForground (hndl, GREY);
+  drawButton (hndl, "123", fontSize, 144, yLocation + 5, bSize + 5, bSize, ALIGN_RIGHT);
+  drawButton (hndl, "SPACE", fontSize, 185, yLocation + 5, bSize + 202, bSize, ALIGN_CENTRE);
+  drawButton (hndl, "^", fontSize, 426, yLocation + 5, bSize, bSize, ALIGN_RIGHT);
+  drawButton (hndl, "Mode", fontSize, 463, yLocation + 20, 50, 50, ALIGN_RIGHT);
+#if 0
   drawRoundedRectangle (hndl, 144, yLocation + 5, bSize + 5, bSize, 6, true);
   drawRoundedRectangle (hndl, 185, yLocation + 5, bSize + 202, bSize, 6,
                         true);
   drawRoundedRectangle (hndl, 426, yLocation + 5, bSize, bSize, 6, true);
   drawRoundedRectangle (hndl, 463, yLocation + 20, 50, 50, 6, true);
   setColourForground (hndl, WHITE);
-  drawColor (hndl, WHITE);
   drawText (hndl, 142 + 8, yLocation + 5 + 15, "123", fontSize);
   drawText (hndl, 270, yLocation + 5 + 15, "SPACE", fontSize);
   drawText (hndl, 426 + 8, yLocation + 5 + 15, "^", fontSize);
   drawText (hndl, 463 + 8, yLocation + 50, "Mode", fontSize);
+#endif
 }

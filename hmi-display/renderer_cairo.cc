@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
-#include "rendererCairo.hpp"
+#include "renderer_cairo.h"
 
 using namespace std;
 

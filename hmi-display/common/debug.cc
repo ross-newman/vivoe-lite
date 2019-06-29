@@ -1,4 +1,4 @@
-#include "debug.hpp"
+#include "debug.h"
 
 void
 DumpHex (const void *data, size_t size)

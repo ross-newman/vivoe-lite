@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include "gva.hpp"
-#include "eventsGva.hpp"
-#include "hmiGva.hpp"
+#include "gva.h"
+#include "events_gva.h"
+#include "hmi_gva.h"
 
 using namespace gva;
 

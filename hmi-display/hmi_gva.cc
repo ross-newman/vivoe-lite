@@ -1,6 +1,6 @@
 #include <iostream>
-#include "hmiGva.hpp"
-#include "viewGva.hpp"
+#include "hmi_gva.h"
+#include "view_gva.h"
 
 using namespace gva;
 using namespace std;

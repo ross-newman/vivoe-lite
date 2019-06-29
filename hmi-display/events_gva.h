@@ -1,8 +1,8 @@
 #ifndef EVENTS_GVA_HPP
 #define EVENTS_GVA_HPP
 #include <X11/Xlib.h>
-#include "rendererGva.hpp"
-#include "gva.hpp"
+#include "renderer_gva.h"
+#include "gva.h"
 
 namespace gva
 {
