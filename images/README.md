@@ -4,8 +4,8 @@
 ![SYS Screen](Screenshot-Sys.png)<br>
 **SYS Screen**
 
-![BMS Screen](Screenshot-Maps.png)<br>
-**BMS Screen**
+![BMS Screen](Screenshot-OSMScout-Map.png)<br>
+**BMS Screen (offline maps rendered with OSMScout)**
 
 ![Alarms Screen](Screenshot-Alarms.png)<br>
 **Alarms Screen**
