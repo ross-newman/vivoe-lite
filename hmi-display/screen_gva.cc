@@ -180,20 +180,23 @@ namespace gva
     reset ();
     getTouch()->reset();
 
-    // Set background green
-    setColourForground (m_hndl, GREEN);
-    setColourBackground (m_hndl, GREEN);
-    drawRectangle (m_hndl, 0, 0, m_width, m_height, true);
-
     // Draw the background canvas first
-    if (m_screen->canvas.visible)
-      {
-        if (m_screen->canvas.buffer) {
-          textureRGB (m_hndl, 0, 0, m_screen->canvas.buffer);
-        } else {
-          textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
-        }
-      }
+    switch (m_screen->canvas.bufferType) {
+      case SURFACE_CAIRO:
+        textureRGB (m_hndl, 0, 0, m_screen->canvas.surface);
+        break;
+      case SURFACE_FILE:
+        textureRGB (m_hndl, 0, 0, m_screen->canvas.buffer);
+        textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
+        break;
+      default:
+      case SURFACE_NONE:
+        // Set background green
+        setColourForground (m_hndl, GREEN);
+        setColourBackground (m_hndl, GREEN);
+        drawRectangle (m_hndl, 0, 0, m_width, m_height, true);
+        break;
+    }
 
     // Draw the LEFT bezel labels
     if (m_screen->functionLeft.visible)

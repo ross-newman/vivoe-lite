@@ -1,6 +1,7 @@
-#ifndef SCREEN_GVA_HPP
-#define SCREEN_GVA_HPP
+#ifndef SCREEN_GVA_H
+#define SCREEN_GVA_H
 #include <pthread.h>
+#include "cairo.h"
 #include "gva.h"
 #include "renderer_gva.h"
 #include "log_gva.h"
@@ -61,11 +62,20 @@ namespace gva
   typedef struct {
     bool visible;
   } alarmsType;
+  
+  enum surfaceType {
+    SURFACE_NONE = 0,
+    SURFACE_FILE,
+    SURFACE_BUFFER_RGB24,
+    SURFACE_CAIRO
+  };
 
   typedef struct canvas {
     bool visible;
+    surfaceType bufferType;
     char filename[256];
     char* buffer;
+    cairo_surface_t *surface;
   } canvasType;
 
   typedef struct screen {

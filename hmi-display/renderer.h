@@ -1,5 +1,5 @@
-#ifndef RENDERER_HPP
-#define RENDERER_HPP
+#ifndef RENDERER_H
+#define RENDERER_H
 #include "debug.h"
 
 #define MAX_HANDLES 10

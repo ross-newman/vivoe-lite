@@ -1,5 +1,5 @@
-#ifndef RENDERER_SDL_HPP
-#define RENDERER_SDL_HPP
+#ifndef RENDERER_SDL_H
+#define RENDERER_SDL_H
 
 #include <iostream>
 #include <stdio.h>

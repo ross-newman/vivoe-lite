@@ -203,6 +203,12 @@ rendererCairo::draw (int handle)
           cairo_paint (cr);
           cairo_surface_destroy(m_image_list[currentCmd->arg1].image);
           break;
+        case COMMAND_IMAGE_TEXTURE_PERSIST:
+          cairo_set_source_surface (cr, m_image_list[currentCmd->arg1].image,
+                                    currentCmd->points[0].x,
+                                    currentCmd->points[0].y);
+          cairo_paint (cr);
+          break;
         case COMMAND_TEXT_FONT:
           cairo_select_font_face (cr,
                                   currentCmd->text,
@@ -539,6 +545,21 @@ rendererCairo::textureRGB (int handle, int x, int y, void *buffer)
 
   return 0;
 }
+
+int 
+rendererCairo::textureRGB (int handle, int x, int y, cairo_surface_t *surface) {
+  m_image_list[m_image_tail].image = surface;
+
+  m_draw_commands[m_draw_tail].command = COMMAND_IMAGE_TEXTURE_PERSIST;
+  m_draw_commands[m_draw_tail].points[0].x = x;
+  m_draw_commands[m_draw_tail].points[0].y = y;
+  m_draw_commands[m_draw_tail].arg1 = m_image_tail++;
+
+  m_draw_tail++;
+
+  return 0;
+}
+
 
 void
 rendererCairo::scale (int handle, float x)

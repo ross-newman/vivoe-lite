@@ -5,13 +5,13 @@
 using namespace gva;
 using namespace std;
 
-#define CANVAS { true, "test2.png", 0 }
+#define CANVAS { true, SURFACE_NONE, "", 0 }
 #define KEYBOARD { false, KEYBOARD_UPPER }
 #define ALARMS { false }
 #define SCREEN { "Situational Awareness", "/dev/ttyUSB0", SA, m_canvas, &m_top, &m_status, SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, m_keyboard, m_alarms }
 #define init(var, typ, data) {typ x = data; var = x; }
 #define BIT(b,x) (x & 0x1 << b)
-#define SET_CANVAS_PNG(file) strcpy (m_screen.canvas.filename, file); m_screen.canvas.buffer = 0;
+#define SET_CANVAS_PNG(file) strcpy (m_screen.canvas.filename, file); m_screen.canvas.bufferType = SURFACE_FILE; m_screen.canvas.buffer = 0;
 
 void
 Hmi::reset()
@@ -23,6 +23,8 @@ Hmi::reset()
   } else {
     labelsOff();
   }
+  m_screen.canvas.visible = false;
+  m_screen.canvas.bufferType = SURFACE_NONE;
   m_screen.compass.visible = false;
   m_screen.keyboard.visible = (m_screen.keyboard.visible) ? true : false;
   m_screen.alarms.visible = false;
@@ -133,7 +135,7 @@ struct stateSA : Hmi
         m_screen.statusBar->visible = true;
         m_screen.compass.visible = true;
         m_screen.canvas.visible = true;
-        SET_CANVAS_PNG("test2.png");
+        if (!m_screen.canvas.surface) SET_CANVAS_PNG("test2.png");
         m_screen.functionTop->active = 0x1 << 7;
       }
   };
@@ -216,16 +218,9 @@ struct stateSYS : Hmi
         m_screen.control->visible = true;
         m_screen.statusBar->visible = true;
         m_screen.compass.visible = true;
-#if 0
-        if (rtpBuffer) {
-          m_screen.canvas.buffer = rtpBuffer;
-        } else {
-          SET_CANVAS_PNG("test2.png");
-        }
-#else
         m_screen.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
-#endif
+
         m_screen.functionTop->active = 0x1 << 4;
       }
   };
@@ -331,7 +326,14 @@ struct stateBMS : Hmi
         m_screen.control->visible = true;
         m_screen.statusBar->visible = true;
         m_screen.canvas.visible = true;
+
+#if 1
+        m_map->project(DEFAULT_ZOOM, DUMMY_LON, DUMMY_LAT, &m_screen.canvas.surface);
+        m_screen.canvas.bufferType = SURFACE_CAIRO;
+ //       cairo_surface_write_to_png(hmi::getScreen()->canvas.surface,"map_test.png");
+#else
         SET_CANVAS_PNG("map.png");
+#endif
         m_screen.functionTop->active = 0x1 << 0;
       }
   };
@@ -412,6 +414,10 @@ struct stateOn : Hmi
       m_manager = new viewGvaManager(&m_status);
     m_labelsOn = true;
     
+    // Render a map for BMS
+    m_map = new rendererMap("/opt/osmscout/maps/england-latest/", 
+      "/opt/osmscout/stylesheets/standard.oss", MIN_WIDTH, MIN_HEIGHT);
+    
     init(m_top, functionSelectType, COMMON_FUNCTION_KEYS_TOP);
     init(m_bottom, commonTaskKeysType, COMMON_KEYS);
     init(m_status, statusBarType, COMMON_STATUS_BAR);
@@ -472,6 +478,7 @@ keyboardType Hmi::m_keyboard;
 alarmsType Hmi::m_alarms;
 screenType Hmi::m_screen;
 screenGva* Hmi::m_render;
+rendererMap* Hmi::m_map;
 int  Hmi::m_lastState;
 bool Hmi::m_labelsOn;
 bool Hmi::m_alarmsOn = false;

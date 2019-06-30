@@ -1,5 +1,5 @@
-#ifndef EVENTS_GVA_HPP
-#define EVENTS_GVA_HPP
+#ifndef EVENTS_GVA_H
+#define EVENTS_GVA_H
 #include <X11/Xlib.h>
 #include "renderer_gva.h"
 #include "gva.h"

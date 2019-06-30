@@ -1,5 +1,5 @@
-#ifndef RENDERER_SDL_HPP
-#define RENDERER_SDL_HPP
+#ifndef RENDERER_SDL_H
+#define RENDERER_SDL_H
 
 #include <iostream>
 #include <stdio.h>
@@ -39,6 +39,7 @@ enum draw_type
   COMMAND_COLOUR_BG,
   COMMAND_COLOUR_FG,
   COMMAND_IMAGE_TEXTURE,
+  COMMAND_IMAGE_TEXTURE_PERSIST,
   COMMAND_LINE_JOIN,
   COMMAND_PEN_COLOUR,
   COMMAND_PEN_CURVE,
@@ -117,6 +118,7 @@ public:
   void drawTextCentre (int handle, int x, char* text, int size);
   int textureRGB (int handle, int x, int y, void *buffer, char *file);
   int textureRGB (int handle, int x, int y, void *buffer);
+  int textureRGB (int handle, int x, int y, cairo_surface_t *surface);
   void scale (int handle, float x);
   void present (int handle);
   

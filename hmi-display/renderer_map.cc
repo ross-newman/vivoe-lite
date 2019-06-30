@@ -12,40 +12,47 @@
 rendererMap::rendererMap(string map, string style, int width, int height)
 : m_width(width), m_height(height), m_map(map), m_style(style)
 {
-  osmscout::DatabaseParameter databaseParameter;
-  osmscout::DatabaseRef       database(new osmscout::Database(databaseParameter));
-  m_mapService = (osmscout::MapServiceRef)(new osmscout::MapService(database));
+  m_database = (osmscout::DatabaseRef)(new osmscout::Database(m_databaseParameter));
+  m_mapService = (osmscout::MapServiceRef)(new osmscout::MapService(m_database));
 
-  if (!database->Open(map.c_str())) {
+  if (!m_database->Open(map.c_str())) {
     logGva::log("Cannot open libosmscout database", LOG_ERROR);
   }
 
-  m_styleConfig = (osmscout::StyleConfigRef)new osmscout::StyleConfig(database->GetTypeConfig());
+  m_styleConfig = (osmscout::StyleConfigRef)new osmscout::StyleConfig(m_database->GetTypeConfig());
 
   if (!m_styleConfig->Load(style)) {
     logGva::log("Cannot open libosmscout style", LOG_ERROR);
+  }
+
+  m_surface=cairo_image_surface_create(CAIRO_FORMAT_RGB24, m_width, m_height);
+  if (m_surface!=nullptr) {
+    m_cairo=cairo_create(m_surface);
+    logGva::log("Created libosmscout cairo surface", LOG_INFO);
+  } else {
+    logGva::log("Cannot create libosmscout cairo surface", LOG_ERROR);
   }
 };
 
 rendererMap::~rendererMap()
 {
-  free(m_surface);
+printf("ERROR\n");
+  cairo_destroy(m_cairo);
+  cairo_surface_destroy(m_surface);
 };
 
 int 
-rendererMap::project(double zoom, double lon, double lat)
+rendererMap::project(double zoom, double lon, double lat, cairo_surface_t **surface)
 {
-  m_surface=cairo_image_surface_create(CAIRO_FORMAT_RGB24, m_width, m_height);
 
   if (m_surface!=nullptr) {
-    cairo_t *cairo=cairo_create(m_surface);
 
-    if (cairo!=nullptr) {
-      osmscout::MercatorProjection  projection;
-      osmscout::MapParameter        drawParameter;
-      osmscout::AreaSearchParameter searchParameter;
-      osmscout::MapData             data;
-      osmscout::MapPainterCairo     painter(m_styleConfig);
+    if (m_cairo!=nullptr) {
+      static osmscout::MercatorProjection  projection;
+      static osmscout::MapParameter        drawParameter;
+      static osmscout::AreaSearchParameter searchParameter;
+      static osmscout::MapData             data;
+      static osmscout::MapPainterCairo     painter(m_styleConfig);
 
       drawParameter.SetFontSize(3.0);
       drawParameter.SetLabelLineMinCharCount(15);
@@ -75,12 +82,14 @@ rendererMap::project(double zoom, double lon, double lat)
       if (painter.DrawMap(projection,
                           drawParameter,
                           data,
-                          cairo)) {
+                          m_cairo)) {
         // Map rendered
       }
-
-      cairo_destroy(cairo);
     }
+  } else {
+    return GVA_ERROR;
   }
-  return 0;
+
+  *surface = m_surface;
+  return GVA_SUCCESS;
 };

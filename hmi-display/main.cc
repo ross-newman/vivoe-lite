@@ -7,9 +7,10 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include "gva.h"
+#include "renderer_map.h"
 #include "events_gva.h"
 #include "hmi_gva.h"
 #include "log_gva.h"
@@ -106,22 +107,20 @@ main (int argc, char *argv[])
   rtpBuffer = (char*)malloc(rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
   sprintf(tmp, "GVA Incomming RTP stream initalised %s:%d", ipaddr, port);
   logGva::log (tmp, LOG_INFO);
-
+  
   while (!done) {
     update = true;
     io.nextGvaEvent(&event);
 
-  if (opt.videoEnabled)
-  {
-    //
-    // Get the live video frame if Driver (DRV)
-    //  
-    if (hmi::getScreen()->currentFunction == DRV) {
-      rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
-      io.flush();
+    if (opt.videoEnabled)
+    {
+      // Get the live video frame if Driver (DRV)
+      if (hmi::getScreen()->currentFunction == DRV) {
+        rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
+        io.flush();
+      }
     }
-  }
-  
+    
     switch (event.type) {
       case KEY_EVENT :
         {

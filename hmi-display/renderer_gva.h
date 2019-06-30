@@ -1,5 +1,5 @@
-#ifndef RENDERER_GVA_HPP
-#define RENDERER_GVA_HPP
+#ifndef RENDERER_GVA_H
+#define RENDERER_GVA_H
 
 #include <string.h>
 #include <vector> 
