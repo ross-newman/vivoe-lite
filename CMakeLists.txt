@@ -62,11 +62,17 @@ include(FindPkgConfig)
 # ------------------------------------------------------------------------------
 
 include_directories(include)
+include_directories(${CMAKE_BINARY_DIR}/libosmscout/libosmscout/include)
+include_directories(${CMAKE_BINARY_DIR}/libosmscout/libosmscout-map/include)
+include_directories(${CMAKE_BINARY_DIR}/libosmscout/libosmscout-map-cairo/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map/include)
+include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map-cairo/include)
 include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
 
 add_library(test_catch STATIC test/test.cc)
 add_dependencies(test_catch catch)
-add_library(business_logic STATIC hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc )
+add_library(business_logic STATIC hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
 add_dependencies(business_logic nmealib hmi-video rtp-payloader)
 pkg_check_modules(CAIRO REQUIRED cairo)

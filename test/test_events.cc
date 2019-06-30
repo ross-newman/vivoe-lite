@@ -2,11 +2,9 @@
 #include <catch/catch.hpp>
 #include <iostream>
 #include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
 #include "gva.h"
-#include "events_gva.h"
 #include "hmi_gva.h"
+#include "events_gva.h"
 
 using namespace gva;
 
