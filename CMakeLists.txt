@@ -132,9 +132,9 @@ include(FindPkgConfig)
 # ------------------------------------------------------------------------------
 
 include_directories(include)
-include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/src/libosmscout/include)
-include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/src/libosmscout-map/include)
-include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/src/libosmscout-map-cairo/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map-cairo/include)
 include_directories(${CMAKE_BINARY_DIR}/external/rtp-payloader/src)
 include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout/include)
 include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map/include)
