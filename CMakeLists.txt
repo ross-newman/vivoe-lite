@@ -141,6 +141,7 @@ include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout/include)
 include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map/include)
 include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map-cairo/include)
 include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
+link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src)
 
 add_library(test_catch STATIC test/test.cc)
 add_dependencies(test_catch catch)
