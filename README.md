@@ -74,10 +74,12 @@ newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NMEA](https://en.wikipedia.org/wiki/NMEA_0183) messages from the GPS source. Once aquired conversion from decimal long/lat to degrees minutes seconds is required for the internal representation. Conversions to many other formats are possible using [libGeographic](https://geographiclib.sourceforge.io), currently the only conversion implemented is [MGRS](https://en.wikipedia.org/wiki/Military_Grid_Reference_System).
 
 # Offline Maps
-If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. Maps come from OpenStreetMap and require processing prior to use. An updated collection of maps can be downloaded from [Geofabrik](https://download.geofabrik.de/)
+If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. OpenStreetMap database is required plus some additional processing prior to use. An regularly updated collection of global maps can be downloaded from [Geofabrik](https://download.geofabrik.de/). Entire world comes in at 77Gb before processing.
 
-You can render maps using [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) and I have [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) is a shared gist for doing this and depositing the results on to a Google Drive account. 
-# Screenshot
+You can render maps using servers provided by [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) using my [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) for processing the data and depositing the results on to a Google Drive account. 
+
+Tutorial [documentation for libosmscout](http://libosmscout.sourceforge.net/tutorials/importing/) contains a full description on how to prepare the maps database.
+# Screensho
 See [screenshots](images/README.md) in the images directory. 
 
 # Development
