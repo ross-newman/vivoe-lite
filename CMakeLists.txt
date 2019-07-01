@@ -26,6 +26,7 @@ include(ExternalProject)
 # ------------------------------------------------------------------------------
 # Fast-RTPS
 # ------------------------------------------------------------------------------
+message(STATUS "SUBPROJECT_NAME = FAST_RTPS")
 set(BUILD_DOCUMENTATION OFF CACHE BOOL "Disable build documentation")
 
 ExternalProject_Add(
@@ -34,13 +35,15 @@ ExternalProject_Add(
     GIT_TAG             #6a6f79c
     GIT_SHALLOW         5
     GIT_CONFIG          fetch.recurseSubmodules=true
-    CMAKE_ARGS          ""
+    CMAKE_ARGS          "-DTHIRDPARTY=ON"
     PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS/tmp
     STAMP_DIR           ${CMAKE_BINARY_DIR}/external/Fast-RTPS/stamp
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
+#    CONFIGURE_COMMAND   "cmake -DTHIRDPARTY=ON ../src"
+    SOURCE_SUBDIR        "../src"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
 )
@@ -48,6 +51,7 @@ ExternalProject_Add(
 # ------------------------------------------------------------------------------
 # libosmscout
 # ------------------------------------------------------------------------------
+message(STATUS "SUBPROJECT_NAME = libosmscout")
 set(OSMSCOUT_BUILD_TEST OFF CACHE BOOL "Disable build of test library")
 list(APPEND CMAKE_MODULE_PATH ../libosmscout/cmake)
 
@@ -70,6 +74,7 @@ ExternalProject_Add(
 # ------------------------------------------------------------------------------
 # rtp-payloader
 # ------------------------------------------------------------------------------
+message(STATUS "SUBPROJECT_NAME = rtp-payloader")
 ExternalProject_Add(
     rtp_payloader
     GIT_REPOSITORY      https://github.com/ross-newman/rtp-payloader
@@ -87,6 +92,7 @@ ExternalProject_Add(
 # ------------------------------------------------------------------------------
 # libnema
 # ------------------------------------------------------------------------------
+message(STATUS "SUBPROJECT_NAME = libnmea")
 ExternalProject_Add(
     libnmea
     GIT_REPOSITORY      https://github.com/ross-newman/nmealib
@@ -104,6 +110,7 @@ ExternalProject_Add(
 # ------------------------------------------------------------------------------
 # Catch
 # ------------------------------------------------------------------------------
+message(STATUS "SUBPROJECT_NAME = catch")
 list(APPEND CATCH_CMAKE_ARGS
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
 )
