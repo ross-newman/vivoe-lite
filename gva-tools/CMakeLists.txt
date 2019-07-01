@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 
 find_package(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
+include_directories(${CMAKE_BINARY_DIR}/external/)
 set(LIBS ${LIBS} ${LIBXML2_LIBRARIES})
-
 add_executable(gva-tool gva-tool.cpp)
+add_dependencies(gva-tool Fast_RTPS)
 set (CMAKE_CXX_FLAGS "-Wwrite-strings -w")
 target_link_libraries(gva-tool ncurses xml2)

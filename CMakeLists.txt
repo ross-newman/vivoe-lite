@@ -32,10 +32,15 @@ ExternalProject_Add(
     Fast_RTPS
     GIT_REPOSITORY      https://github.com/eProsima/Fast-RTPS
     GIT_TAG             #6a6f79c
-    GIT_SHALLOW         1
-    GIT_CONFIG          ExternalProject_Add=true
-    CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS
+    GIT_SHALLOW         5
+    GIT_CONFIG          fetch.recurseSubmodules=true
+    CMAKE_ARGS          ""
+    PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS/prefix
+    TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS/tmp
+    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/Fast-RTPS/stamp
+    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
+    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
+    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
 )
@@ -51,7 +56,7 @@ ExternalProject_Add(
     GIT_REPOSITORY      https://github.com/Framstag/libosmscout
     GIT_TAG             #43c67e9
     GIT_SHALLOW         1
-    CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
+    CMAKE_ARGS          ""
     PREFIX              ${CMAKE_BINARY_DIR}/external/libosmscout/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/libosmscout/tmp
     STAMP_DIR           ${CMAKE_BINARY_DIR}/external/libosmscout/stamp
@@ -69,7 +74,7 @@ ExternalProject_Add(
     rtp_payloader
     GIT_REPOSITORY      https://github.com/ross-newman/rtp-payloader
     GIT_SHALLOW         1
-    CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
+    CMAKE_ARGS          ""
     PREFIX              ${CMAKE_BINARY_DIR}/external/rtp-payloader/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/rtp-payloader/tmp
     STAMP_DIR           ${CMAKE_BINARY_DIR}/external/rtp-payloader/stamp
@@ -86,7 +91,7 @@ ExternalProject_Add(
     libnmea
     GIT_REPOSITORY      https://github.com/ross-newman/nmealib
     GIT_SHALLOW         1
-    CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
+    CMAKE_ARGS          ""
     PREFIX              ${CMAKE_BINARY_DIR}/external/libnmea/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/libnmea/tmp
     STAMP_DIR           ${CMAKE_BINARY_DIR}/external/libnmea/stamp
@@ -117,6 +122,9 @@ ExternalProject_Add(
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/catch/build
 )
 
+option(BUILD_TESTS "Build the tests" OFF)
+
+if (BUILD_TESTS)
 # ------------------------------------------------------------------------------
 # Tests
 # ------------------------------------------------------------------------------
@@ -146,12 +154,12 @@ add_dependencies(test_catch catch)
 
 add_library(business_logic STATIC hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
-add_dependencies(business_logic libnmea hmi-video rtp_payloader)
+add_dependencies(business_logic libnmea hmi-video rtp_payloader libosmscout)
 #add_dependencies(business_logic osmscout osmscout_map osmscout_map_cairo)
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(PANGO REQUIRED pango)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
-link_directories(business_logic ${CMAKE_BINARY_DIR}/external/libnmea/build/src)
+link_directories(business_logic /external/libnmea/build/src)
 target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib)
 target_compile_definitions(business_logic PRIVATE VIRTUAL=virtual MAIN=unittest_main)
 target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} catch nmealib rtp-payloader video hmi-display hmi-display/common )
@@ -170,3 +178,4 @@ endmacro(do_test)
 do_test(events)
 do_test(log)
 #do_test(hmi)
+endif (BUILD_TESTS)

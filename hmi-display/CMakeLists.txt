@@ -31,6 +31,7 @@ link_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout)
 link_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map)
 
 add_executable(hmi-display main.cc renderer_sdl.cc renderer_cairo.cc renderer_gva.cc screen_gva.cc events_gva.cc ./common/debug.cc ./common/log_gva.cc hmi_gva.cc view_gva.cc renderer_map.cc)
+add_dependencies(hmi-display libosmscout)
 target_link_libraries (hmi-display Geographic osmscout osmscout_map osmscout_map_cairo)
 add_subdirectory(common)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
