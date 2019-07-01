@@ -78,6 +78,14 @@ namespace gva
     cairo_surface_t *surface;
   } canvasType;
 
+  typedef struct label {
+    bool visible;
+    char text[256];
+    int x;
+    int y;
+    int fontSize;
+  } labelType;
+
   typedef struct screen {
     char name[100];
     char gpsDevice[100];
@@ -91,6 +99,7 @@ namespace gva
     compassType compass;
     keyboardType keyboard;
     alarmsType alarms;
+    labelType label;
   } screenType;
 
   class screenGva;

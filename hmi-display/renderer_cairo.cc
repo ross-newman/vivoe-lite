@@ -9,13 +9,13 @@
 using namespace std;
 
 void
-rendererCairo::draw (int handle)
+rendererCairo::draw ()
 {
   int count = 0;
   cairo_surface_t *surface;
   double dashed[] = { 1.0 };
 
-  cairo_t *cr = m_render_handle[handle].cr;
+  cairo_t *cr = m_render.cr;
 
   /* Push the render to prevent flicker, flush when done */
   cairo_push_group (cr);
@@ -248,16 +248,16 @@ rendererCairo::~rendererCairo ()
     free(m_texture);
     m_texture = 0;
   }
-  cairo_destroy (m_render_handle[0].cr);
+  cairo_destroy (m_render.cr);
 
-  XCloseDisplay (m_render_handle[0].win.dpy);
+  XCloseDisplay (m_render.win.dpy);
 }
 
 int
 rendererCairo::init (int width, int height)
 {
-  m_render_handle[0].size.width = width;
-  m_render_handle[0].size.height = height;
+  m_render.size.width = width;
+  m_render.size.height = height;
 
   if (XInitThreads () == 0)
     {
@@ -266,8 +266,8 @@ rendererCairo::init (int width, int height)
     }
     
   /* open connection with the server */
-  m_render_handle[0].win.dpy = XOpenDisplay (NULL);
-  if (m_render_handle[0].win.dpy == NULL)
+  m_render.win.dpy = XOpenDisplay (NULL);
+  if (m_render.win.dpy == NULL)
     {
       fprintf (stderr, "Cannot open display\n");
       exit (1);
@@ -276,40 +276,40 @@ rendererCairo::init (int width, int height)
   m_height = height;
   m_width = width;
 
-  win_init (&m_render_handle[0].win, width, height);
+  win_init (&m_render.win, width, height);
 
-  Visual *visual = DefaultVisual (m_render_handle[0].win.dpy,
-                                  DefaultScreen (m_render_handle[0].win.dpy));
+  Visual *visual = DefaultVisual (m_render.win.dpy,
+                                  DefaultScreen (m_render.win.dpy));
 
 
-  XClearWindow (m_render_handle[0].win.dpy, m_render_handle[0].win.win);
+  XClearWindow (m_render.win.dpy, m_render.win.win);
 
-  m_render_handle[0].surface =
-    cairo_xlib_surface_create (m_render_handle[0].win.dpy,
-                               m_render_handle[0].win.win, visual,
-                               m_render_handle[0].win.width,
-                               m_render_handle[0].win.height);
-  m_render_handle[0].cr = cairo_create (m_render_handle[0].surface);
+  m_render.surface =
+    cairo_xlib_surface_create (m_render.win.dpy,
+                               m_render.win.win, visual,
+                               m_render.win.width,
+                               m_render.win.height);
+  m_render.cr = cairo_create (m_render.surface);
 
-  cairo_set_source_rgb (m_render_handle[0].cr, 1, 1, 1);
+  cairo_set_source_rgb (m_render.cr, 1, 1, 1);
 
   return 0;
 }
 
 void
-rendererCairo::setPixel (int handle, int x, int y)
+rendererCairo::setPixel (int x, int y)
 {
 }
 
 void
-rendererCairo::setColour (int handle, int red, int green, int blue)
+rendererCairo::setColour (int red, int green, int blue)
 {
-  setColourForground (handle, red, green, blue);
-  setColourBackground (handle, red, green, blue);
+  setColourForground (red, green, blue);
+  setColourBackground (red, green, blue);
 }
 
 void
-rendererCairo::setColourForground (int handle, int red, int green, int blue)
+rendererCairo::setColourForground (int red, int green, int blue)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_COLOUR_FG;
   m_draw_commands[m_draw_tail].arg1 = red;
@@ -319,7 +319,7 @@ rendererCairo::setColourForground (int handle, int red, int green, int blue)
 }
 
 void
-rendererCairo::setColourBackground (int handle, int red, int green, int blue)
+rendererCairo::setColourBackground (int red, int green, int blue)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_COLOUR_BG;
   m_draw_commands[m_draw_tail].arg1 = red;
@@ -329,7 +329,7 @@ rendererCairo::setColourBackground (int handle, int red, int green, int blue)
 }
 
 void
-rendererCairo::setLineType (int handle, int type)
+rendererCairo::setLineType (int type)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_LINE_JOIN;
   m_draw_commands[m_draw_tail].arg1 = type;
@@ -337,7 +337,7 @@ rendererCairo::setLineType (int handle, int type)
 }
 
 void
-rendererCairo::setLineThickness (int handle, int thickness, lineType fill)
+rendererCairo::setLineThickness (int thickness, lineType fill)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_THICKNESS;
   m_draw_commands[m_draw_tail].arg1 = thickness;
@@ -346,9 +346,9 @@ rendererCairo::setLineThickness (int handle, int thickness, lineType fill)
 }
 
 int
-rendererCairo::movePen (int handle, int x, int y)
+rendererCairo::movePen (int x, int y)
 {
-  y = m_render_handle[handle].size.height - y;
+  y = m_render.size.height - y;
 
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_MOVE;
   m_draw_commands[m_draw_tail].points[0].x = x;
@@ -358,9 +358,9 @@ rendererCairo::movePen (int handle, int x, int y)
 }
 
 int
-rendererCairo::drawPen (int handle, int x, int y, bool close)
+rendererCairo::drawPen (int x, int y, bool close)
 {
-  y = m_render_handle[handle].size.height - y;
+  y = m_render.size.height - y;
 
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_DRAW;
   m_draw_commands[m_draw_tail].points[0].x = x;
@@ -372,10 +372,10 @@ rendererCairo::drawPen (int handle, int x, int y, bool close)
 }
 
 int
-rendererCairo::drawLine (int handle, int x1, int y1, int x2, int y2)
+rendererCairo::drawLine (int x1, int y1, int x2, int y2)
 {
-  y1 = m_render_handle[handle].size.height - y1;
-  y2 = m_render_handle[handle].size.height - y2;
+  y1 = m_render.size.height - y1;
+  y2 = m_render.size.height - y2;
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_LINE;
   m_draw_commands[m_draw_tail].points[0].x = x1;
   m_draw_commands[m_draw_tail].points[0].y = y1;
@@ -384,9 +384,9 @@ rendererCairo::drawLine (int handle, int x1, int y1, int x2, int y2)
 }
 
 void
-rendererCairo::drawCircle (int handle, int x, int y, int radius, bool fill)
+rendererCairo::drawCircle (int x, int y, int radius, bool fill)
 {
-  y = m_render_handle[handle].size.height - y;
+  y = m_render.size.height - y;
   m_draw_commands[m_draw_tail].command = COMMAND_CIRCLE;
   m_draw_commands[m_draw_tail].points[0].x = x;
   m_draw_commands[m_draw_tail].points[0].y = y;
@@ -398,11 +398,11 @@ rendererCairo::drawCircle (int handle, int x, int y, int radius, bool fill)
 }
 
 void
-rendererCairo::drawRectangle (int handle, int x1, int y1, int x2, int y2,
+rendererCairo::drawRectangle (int x1, int y1, int x2, int y2,
                               bool fill)
 {
-  y1 = m_render_handle[handle].size.height - y1;
-  y2 = m_render_handle[handle].size.height - y2;
+  y1 = m_render.size.height - y1;
+  y2 = m_render.size.height - y2;
 
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_RECTANGLE;
   m_draw_commands[m_draw_tail].points[0].x = x1;
@@ -414,10 +414,10 @@ rendererCairo::drawRectangle (int handle, int x1, int y1, int x2, int y2,
 }
 
 void
-rendererCairo::drawRoundedRectangle (int handle, int x, int y, int width,
+rendererCairo::drawRoundedRectangle (int x, int y, int width,
                                      int height, int courner, bool fill)
 {
-  y = m_render_handle[handle].size.height - y;
+  y = m_render.size.height - y;
 
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_ROUNDED_RECTANGLE;
   m_draw_commands[m_draw_tail].points[0].x = x;
@@ -430,12 +430,12 @@ rendererCairo::drawRoundedRectangle (int handle, int x, int y, int width,
 }
 
 void
-rendererCairo::drawTriangle (int handle, int x1, int y1, int x2, int y2,
+rendererCairo::drawTriangle (int x1, int y1, int x2, int y2,
                              int x3, int y3, bool fill)
 {
-  y1 = m_render_handle[handle].size.height - y1;
-  y2 = m_render_handle[handle].size.height - y2;
-  y3 = m_render_handle[handle].size.height - y3;
+  y1 = m_render.size.height - y1;
+  y2 = m_render.size.height - y2;
+  y3 = m_render.size.height - y3;
 
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_TRIANGLE;
   m_draw_commands[m_draw_tail].points[0].x = x1;
@@ -449,7 +449,7 @@ rendererCairo::drawTriangle (int handle, int x1, int y1, int x2, int y2,
 }
 
 int
-rendererCairo::drawColor (int handle, int r, int g, int b)
+rendererCairo::drawColor (int r, int g, int b)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_PEN_COLOUR;
   m_draw_commands[m_draw_tail].colour.red = r;
@@ -460,7 +460,7 @@ rendererCairo::drawColor (int handle, int r, int g, int b)
 }
 
 void
-rendererCairo::setTextFont (int handle, int slope, int weight, char *fontName)
+rendererCairo::setTextFont (int slope, int weight, char *fontName)
 {
   m_draw_commands[m_draw_tail].command = COMMAND_TEXT_FONT;
   m_draw_commands[m_draw_tail].arg1 = slope;
@@ -470,9 +470,9 @@ rendererCairo::setTextFont (int handle, int slope, int weight, char *fontName)
 }
 
 int
-rendererCairo::getTextWidth (int handle, char *str, int fontSize)
+rendererCairo::getTextWidth (char *str, int fontSize)
 {
-  cairo_t *cr = m_render_handle[handle].cr;
+  cairo_t *cr = m_render.cr;
   cairo_text_extents_t extents;
   cairo_select_font_face(cr, "Courier", CAIRO_FONT_SLANT_NORMAL,
       CAIRO_FONT_WEIGHT_NORMAL);
@@ -482,9 +482,9 @@ rendererCairo::getTextWidth (int handle, char *str, int fontSize)
 }
 
 int
-rendererCairo::getTextHeight (int handle, char *str, int fontSize)
+rendererCairo::getTextHeight (char *str, int fontSize)
 {
-  cairo_t *cr = m_render_handle[handle].cr;
+  cairo_t *cr = m_render.cr;
   cairo_text_extents_t extents;
 
   cairo_set_font_size (cr, fontSize);
@@ -493,9 +493,9 @@ rendererCairo::getTextHeight (int handle, char *str, int fontSize)
 }
 
 void
-rendererCairo::drawText (int handle, int x, int y, char *text, int size)
+rendererCairo::drawText (int x, int y, char *text, int size)
 {
-  y = m_render_handle[handle].size.height - y;
+  y = m_render.size.height - y;
 
   m_draw_commands[m_draw_tail].command = COMMAND_TEXT;
   m_draw_commands[m_draw_tail].points[0].x = x;
@@ -506,13 +506,26 @@ rendererCairo::drawText (int handle, int x, int y, char *text, int size)
 }
 
 void
-rendererCairo::drawTextCentre (int handle, int x, char *text, int size)
+rendererCairo::drawLabel (int x, int y, char *text, int size)
 {
-  drawText (handle, x, 200, text, size);
+  y = m_render.size.height - y;
+
+  m_draw_commands[m_draw_tail].command = COMMAND_TEXT;
+  m_draw_commands[m_draw_tail].points[0].x = x;
+  m_draw_commands[m_draw_tail].points[0].y = y;
+  m_draw_commands[m_draw_tail].arg1 = size;
+  strcpy (m_draw_commands[m_draw_tail].text, text);
+  m_draw_tail++;
+}
+
+void
+rendererCairo::drawTextCentre (int x, char *text, int size)
+{
+  drawText (x, 200, text, size);
 }
 
 int
-rendererCairo::textureRGB (int handle, int x, int y, void *buffer, char *file)
+rendererCairo::textureRGB (int x, int y, void *buffer, char *file)
 {
   strcpy (m_image_list[m_image_tail].name, file);
 
@@ -530,7 +543,7 @@ rendererCairo::textureRGB (int handle, int x, int y, void *buffer, char *file)
 }
 
 int
-rendererCairo::textureRGB (int handle, int x, int y, void *buffer)
+rendererCairo::textureRGB (int x, int y, void *buffer)
 {
   m_image_list[m_image_tail].image =
     cairo_image_surface_create_for_data ((unsigned char*)buffer, CAIRO_FORMAT_RGB24, m_width, m_height,
@@ -547,7 +560,7 @@ rendererCairo::textureRGB (int handle, int x, int y, void *buffer)
 }
 
 int 
-rendererCairo::textureRGB (int handle, int x, int y, cairo_surface_t *surface) {
+rendererCairo::textureRGB (int x, int y, cairo_surface_t *surface) {
   m_image_list[m_image_tail].image = surface;
 
   m_draw_commands[m_draw_tail].command = COMMAND_IMAGE_TEXTURE_PERSIST;
@@ -562,12 +575,12 @@ rendererCairo::textureRGB (int handle, int x, int y, cairo_surface_t *surface) {
 
 
 void
-rendererCairo::scale (int handle, float x)
+rendererCairo::scale (float x)
 {
 }
 
 void
-rendererCairo::present (int handle)
+rendererCairo::present ()
 {
 }
 

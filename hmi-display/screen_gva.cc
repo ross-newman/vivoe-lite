@@ -43,11 +43,11 @@ namespace gva
     sprintf(tmp, "GVA screen initalised (%dx%d)", m_width, m_height);
     logGva::log (tmp, LOG_INFO);
 
-    /* Initalise the pasert for NMEA */
+    // Initalise the pasert for NMEA
     nmea_zero_INFO(&m_info);
     nmea_parser_init(&m_parser);
     
-    /* Open File Descriptor */
+    // Open File Descriptor
     m_gps = open( screen->gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
     if (m_gps > 0) {
       sprintf(tmp, "GPS Opened %s", screen->gpsDevice);
@@ -58,9 +58,9 @@ namespace gva
     }
     tcgetattr(m_gps, &settings);
 
-    /* Set Baud Rate */
-    cfsetospeed(&settings, B4800); /* baud rate */
-    tcsetattr(m_gps, TCSANOW, &settings); /* apply the settings */
+    // Set Baud Rate
+    cfsetospeed(&settings, B4800); // baud rate 
+    tcsetattr(m_gps, TCSANOW, &settings); // apply the settings
   }
 
   screenGva::~screenGva ()
@@ -176,32 +176,37 @@ namespace gva
   {
     char *texture = 0;
 
-    /* Reset the drawing context, must be reset before redrawing the screen */
+    // Reset the drawing context, must be reset before redrawing the screen
     reset ();
     getTouch()->reset();
 
     // Draw the background canvas first
     switch (m_screen->canvas.bufferType) {
       case SURFACE_CAIRO:
-        textureRGB (m_hndl, 0, 0, m_screen->canvas.surface);
+        textureRGB (0, 0, m_screen->canvas.surface);
         break;
       case SURFACE_FILE:
-        textureRGB (m_hndl, 0, 0, m_screen->canvas.buffer);
-        textureRGB (m_hndl, 0, 0, texture, m_screen->canvas.filename);
+        textureRGB (0, 0, m_screen->canvas.buffer);
+        textureRGB (0, 0, texture, m_screen->canvas.filename);
         break;
       default:
       case SURFACE_NONE:
         // Set background green
-        setColourForground (m_hndl, GREEN);
-        setColourBackground (m_hndl, GREEN);
-        drawRectangle (m_hndl, 0, 0, m_width, m_height, true);
+        setColourForground (GREEN);
+        setColourBackground (GREEN);
+        drawRectangle (0, 0, m_width, m_height, true);
         break;
+    }
+
+    // Draw label
+    if (m_screen->label.visible) {
+      drawLabel (m_screen->label.x, m_screen->label.y, m_screen->label.text, m_screen->label.fontSize);
     }
 
     // Draw the LEFT bezel labels
     if (m_screen->functionLeft.visible)
       {
-        drawFunctionLabels (m_hndl, 1, m_screen->functionLeft.active,
+        drawFunctionLabels (1, m_screen->functionLeft.active,
                           m_screen->functionLeft.hidden,
                           m_screen->functionLeft.toggleActive,
                           m_screen->functionLeft.toggleOn,
@@ -211,7 +216,7 @@ namespace gva
     // Draw the RIGHT bezel labels
     if (m_screen->functionRight.visible)
       {
-        drawFunctionLabels (m_hndl, m_width - 100 - 1,
+        drawFunctionLabels (m_width - 100 - 1,
                           m_screen->functionRight.active,
                           m_screen->functionRight.hidden,
                           m_screen->functionRight.toggleActive,
@@ -220,23 +225,23 @@ namespace gva
       }
 
     // Draw the TOP bezel labels     
-    drawTopLabels (m_hndl, m_height - 11, m_screen->functionTop->active,
+    drawTopLabels (m_height - 11, m_screen->functionTop->active,
                 m_screen->functionTop->hidden);
 
     // Draw the maintinance mode indicator 
-    drawMode (m_hndl);
+    drawMode ();
     
     // Draw the onscreen KEYBOARD
     if (m_screen->keyboard.visible)
     {
-      drawKeyboard(m_hndl, m_screen->keyboard.mode);
+      drawKeyboard(m_screen->keyboard.mode);
     }
     
-    /* Setup and draw the status bar, one row table */
+    // Setup and draw the status bar, one row table
     if (m_screen->statusBar->visible)
       {
         int i = 0;
-    /* Setup and draw the status bar, one row table */
+    // Setup and draw the status bar, one row table
         int widths[6] = { 23, 45, 8, 8, 8, 8 };
 //        gvaTable table(10, 443, 620);
         gvaTable table(1, 443, 639);
@@ -247,10 +252,10 @@ namespace gva
           newrow.addCell(cell, widths[i]);
         }
         table.addRow(newrow);
-        drawTable (m_hndl, &table);
+        drawTable (&table);
       }
 
-    /* Draw the alarms if any */
+    // Draw the alarms if any
       {
         gvaTable table(102, 422, 436);
         gvaRow alarmrow;
@@ -259,10 +264,10 @@ namespace gva
         table.m_border = 0;
         alarmrow.addCell(cell, 100);
         table.addRow(alarmrow);
-        drawTable (m_hndl, &table);
+        drawTable (&table);
       }
 
-    /* Setup and draw the alarms */
+    // Setup and draw the alarms
     if (m_screen->alarms.visible)
       {
         int i = 0;
@@ -340,24 +345,24 @@ namespace gva
         table.addRow(newrow9);
 
 
-        drawTable (m_hndl, &table);
+        drawTable (&table);
       }
 
     if (m_screen->compass.visible)
       {
-        drawPPI (m_hndl, 165, 370, screen->compass.bearing, screen->compass.bearingSight);
+        drawPPI (165, 370, screen->compass.bearing, screen->compass.bearingSight);
       }
 
     if (m_screen->control->visible)
       {
-        drawControlLabels (m_hndl, 0, m_screen->control->active,
+        drawControlLabels (0, m_screen->control->active,
                          m_screen->control->hidden);
       }
 
-    /*
-     *  Refersh display
-     */
-    draw (m_hndl);
+    //
+    // Refersh display
+    //
+    draw ();
     m_last_screen = *screen;
   }
   
@@ -372,9 +377,9 @@ namespace gva
   {
     XClientMessageEvent dummyEvent;
 
-    /*
-     * Send a dummy event to force screen update 
-     */
+    //
+    // Send a dummy event to force screen update 
+    //
     memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
     dummyEvent.type = Expose;
     dummyEvent.window = *getWindow ();

@@ -23,16 +23,16 @@ public:
   rendererSdl (void);
    ~rendererSdl ();
   int init (int width, int height);
-  void setPixel (int handle, int x, int y);
-  int drawLine (int handle, int x1, int y1, int x2, int y2);
-  void drawCircle (int handle, int x, int y, int radius, bool fill);
-  void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill);
-  int drawColor (int handle, int r, int g, int b);
-  int textureRGB (int handle, int x, int y, void *buffer);
-  void scale (int handle, float x);
-  void present (int handle);
+  void setPixel (int x, int y);
+  int drawLine (int x1, int y1, int x2, int y2);
+  void drawCircle (int x, int y, int radius, bool fill);
+  void drawRectangle (int x1, int y1, int x2, int y2, bool fill);
+  int drawColor (int r, int g, int b);
+  int textureRGB (int x, int y, void *buffer);
+  void scale (float x);
+  void present ();
 private:
-  void fillCircle (int handle, int x, int y, int radius);
+  void fillCircle (int x, int y, int radius);
   int getFreeHandle ();
   handle_type m_render_handle[MAX_HANDLES];
   pthread_t m_event_thread;

@@ -97,48 +97,49 @@ public:
   ~rendererCairo ();
   int init (int width, int height);   
   // Pure Virtual functions
-  void setPixel (int handle, int x, int y);
-  void setColour (int handle, int red, int green, int blue);
-  void setColourForground (int handle, int red, int green, int blue);
-  void setColourBackground (int handle, int red, int green, int blue);
-  void setLineType (int handle, int type);
-  void setLineThickness (int handle, int thickness, lineType fill);
-  int movePen (int handle, int x, int y);
-  int drawPen (int handle, int x, int y, bool close);
-  int drawLine (int handle, int x1, int y1, int x2, int y2);
-  void drawCircle (int handle, int x, int y, int radius, bool fill);
-  void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill);
-  void drawRoundedRectangle (int handle, int x1, int y1, int x2, int y2, int courner, bool fill);
-  void drawTriangle (int handle, int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
-  int drawColor (int handle, int r, int g, int b);
-  void setTextFont (int handle, int slope, int weight, char* fontName);
-  int getTextWidth (int handle, char* str, int fontSize);
-  int getTextHeight (int handle, char* str, int fontSize);
-  void drawText (int handle, int x, int y, char* text, int size);
-  void drawTextCentre (int handle, int x, char* text, int size);
-  int textureRGB (int handle, int x, int y, void *buffer, char *file);
-  int textureRGB (int handle, int x, int y, void *buffer);
-  int textureRGB (int handle, int x, int y, cairo_surface_t *surface);
-  void scale (int handle, float x);
-  void present (int handle);
+  void setPixel (int x, int y);
+  void setColour (int red, int green, int blue);
+  void setColourForground (int red, int green, int blue);
+  void setColourBackground (int red, int green, int blue);
+  void setLineType (int type);
+  void setLineThickness (int thickness, lineType fill);
+  int movePen (int x, int y);
+  int drawPen (int x, int y, bool close);
+  int drawLine (int x1, int y1, int x2, int y2);
+  void drawCircle (int x, int y, int radius, bool fill);
+  void drawRectangle (int x1, int y1, int x2, int y2, bool fill);
+  void drawRoundedRectangle (int x1, int y1, int x2, int y2, int courner, bool fill);
+  void drawTriangle (int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
+  int drawColor (int r, int g, int b);
+  void setTextFont (int slope, int weight, char* fontName);
+  int getTextWidth (char* str, int fontSize);
+  int getTextHeight (char* str, int fontSize);
+  void drawText (int x, int y, char* text, int size);
+  void drawLabel (int x, int y, char* text, int size);
+  void drawTextCentre (int x, char* text, int size);
+  int textureRGB (int x, int y, void *buffer, char *file);
+  int textureRGB (int x, int y, void *buffer);
+  int textureRGB (int x, int y, cairo_surface_t *surface);
+  void scale (float x);
+  void present ();
   
   // Cairo specific functions
-  void draw (int handle);
+  void draw ();
   void reset () { m_draw_tail = 0; m_image_tail = 0;}
-  win_t* getWin() { return &m_render_handle[0].win; }
-  Window* getWindow() { return &m_render_handle[0].win.win; }
-  Display* getDisplay() { return m_render_handle[0].win.dpy; }
-  void setHeight(int height) { cairo_xlib_surface_set_size(m_render_handle[0].surface, m_render_handle[0].win.width, height); 
-      cairo_scale(m_render_handle[0].cr, 1.0, (double)height / m_render_handle[0].win.height);  m_render_handle[0].win.height = height; }
-  void setWidth(int width) { cairo_xlib_surface_set_size(m_render_handle[0].surface, width, m_render_handle[0].win.height); 
-      cairo_scale(m_render_handle[0].cr, (double)width / m_render_handle[0].win.width, 1.0);  m_render_handle[0].win.width = width; }
-  int getHeight() { return m_render_handle[0].win.height; }
-  int getWidth() { return m_render_handle[0].win.width; }
+  win_t* getWin() { return &m_render.win; }
+  Window* getWindow() { return &m_render.win.win; }
+  Display* getDisplay() { return m_render.win.dpy; }
+  void setHeight(int height) { cairo_xlib_surface_set_size(m_render.surface, m_render.win.width, height); 
+      cairo_scale(m_render.cr, 1.0, (double)height / m_render.win.height);  m_render.win.height = height; }
+  void setWidth(int width) { cairo_xlib_surface_set_size(m_render.surface, width, m_render.win.height); 
+      cairo_scale(m_render.cr, (double)width / m_render.win.width, 1.0);  m_render.win.width = width; }
+  int getHeight() { return m_render.win.height; }
+  int getWidth() { return m_render.win.width; }
 private:
   unsigned char* m_texture;
   int m_current_handle;
   double m_scale;
-  handle_type m_render_handle[1];
+  handle_type m_render;
   Window m_root;
 
   /*

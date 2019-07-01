@@ -67,6 +67,7 @@ getopt(int argc, char *argv[])
     default:
       abort ();
   }
+  return -1;
 };
 
 int
@@ -110,7 +111,6 @@ main (int argc, char *argv[])
   while (!done) {
     update = true;
     io.nextGvaEvent(&event);
-
     if (opt.videoEnabled)
     {
       // Get the live video frame if Driver (DRV)

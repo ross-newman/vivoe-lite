@@ -90,18 +90,18 @@ rendererSdl::init (int width, int height)
 
 
 void
-rendererSdl::setPixel (int handle, int x, int y)
+rendererSdl::setPixel (int x, int y)
 {
-  SDL_Renderer *surface = m_render_handle[handle].renderer;
+  SDL_Renderer *surface = m_render_handle[0].renderer;
   SDL_RenderDrawPoint (surface, x, y);
 }
 
 int
-rendererSdl::textureRGB (int handle, int x, int y, void *buff)
+rendererSdl::textureRGB (int x, int y, void *buff)
 {
   char *buffer_ptr = NULL;
   int pitch = 0;
-  SDL_Texture *buffer = SDL_CreateTexture (m_render_handle[handle].renderer,
+  SDL_Texture *buffer = SDL_CreateTexture (m_render_handle[0].renderer,
                                            SDL_PIXELFORMAT_RGBA8888,
                                            SDL_TEXTUREACCESS_STREAMING,
                                            x,
@@ -140,7 +140,7 @@ rendererSdl::textureRGB (int handle, int x, int y, void *buff)
         }
 
       if (SDL_RenderCopy
-          (m_render_handle[handle].renderer, buffer, NULL, NULL))
+          (m_render_handle[0].renderer, buffer, NULL, NULL))
         {
           cout << "Error could not render texture SDL_RenderCopy()\n";
         }
@@ -153,35 +153,35 @@ rendererSdl::textureRGB (int handle, int x, int y, void *buff)
 }
 
 int
-rendererSdl::drawLine (int handle, int x1, int y1, int x2, int y2)
+rendererSdl::drawLine (int x1, int y1, int x2, int y2)
 {
   y1 = m_render_handle[0].size.height - y1;
   y2 = m_render_handle[0].size.height - y2;
   cout << "line : " << x1 << "," << y1 << "," << x2 << "," << y2 << "\n";
-  SDL_RenderDrawLine (m_render_handle[handle].renderer, x1, y1, x2, y2);
+  SDL_RenderDrawLine (m_render_handle[0].renderer, x1, y1, x2, y2);
   return 0;
 }
 
 int
-rendererSdl::drawColor (int handle, int r, int g, int b)
+rendererSdl::drawColor (int r, int g, int b)
 {
-  SDL_SetRenderDrawColor (m_render_handle[handle].renderer, r, g, b,
+  SDL_SetRenderDrawColor (m_render_handle[0].renderer, r, g, b,
                           SDL_ALPHA_OPAQUE);
   return 0;
 }
 
 void
-rendererSdl::drawCircle (int handle, int x, int y, int radius, bool fill)
+rendererSdl::drawCircle (int x, int y, int radius, bool fill)
 {
   y = m_render_handle[0].size.height - y;
 
   if (fill)
     {
-      fillCircle (handle, x, y, radius);
+      fillCircle (x, y, radius);
       return;
     }
 
-  SDL_Renderer *surface = m_render_handle[handle].renderer;
+  SDL_Renderer *surface = m_render_handle[0].renderer;
   // if the first pixel in the screen is represented by (0,0) (which is in sdl)
   // remember that the beginning of the circle is not in the middle of the pixel
   // but to the left-top from it:
@@ -194,25 +194,25 @@ rendererSdl::drawCircle (int handle, int x, int y, int radius, bool fill)
 
   while (xx >= yy)
     {
-      setPixel (handle, (int) (cx + xx), (int) (cy + yy));
-      setPixel (handle, (int) (cx + yy), (int) (cy + xx));
+      setPixel ((int) (cx + xx), (int) (cy + yy));
+      setPixel ((int) (cx + yy), (int) (cy + xx));
 
       if (x != 0)
         {
-          setPixel (handle, (int) (cx - xx), (int) (cy + yy));
-          setPixel (handle, (int) (cx + yy), (int) (cy - xx));
+          setPixel ((int) (cx - xx), (int) (cy + yy));
+          setPixel ((int) (cx + yy), (int) (cy - xx));
         }
 
       if (y != 0)
         {
-          setPixel (handle, (int) (cx + xx), (int) (cy - yy));
-          setPixel (handle, (int) (cx - yy), (int) (cy + xx));
+          setPixel ((int) (cx + xx), (int) (cy - yy));
+          setPixel ((int) (cx - yy), (int) (cy + xx));
         }
 
       if (xx != 0 && yy != 0)
         {
-          setPixel (handle, (int) (cx - xx), (int) (cy - yy));
-          setPixel (handle, (int) (cx - yy), (int) (cy - xx));
+          setPixel ((int) (cx - xx), (int) (cy - yy));
+          setPixel ((int) (cx - yy), (int) (cy - xx));
         }
 
       error += yy;
@@ -229,9 +229,9 @@ rendererSdl::drawCircle (int handle, int x, int y, int radius, bool fill)
 }
 
 void
-rendererSdl::fillCircle (int handle, int x, int y, int radius)
+rendererSdl::fillCircle (int x, int y, int radius)
 {
-  SDL_Renderer *surface = m_render_handle[handle].renderer;
+  SDL_Renderer *surface = m_render_handle[0].renderer;
   // Note that there is more to altering the bitrate of this 
   // method than just changing this value.  See how pixels are
   // altered at the following web page for tips:
@@ -261,20 +261,20 @@ rendererSdl::fillCircle (int handle, int x, int y, int radius)
 }
 
 void
-rendererSdl::drawRectangle (int handle, int x1, int y1, int x2, int y2,
+rendererSdl::drawRectangle (int x1, int y1, int x2, int y2,
                             bool fill)
 {
   // TODO : Implement function
 }
 
 void
-rendererSdl::scale (int handle, float x)
+rendererSdl::scale (float x)
 {
-  SDL_RenderSetScale (m_render_handle[handle].renderer, x, x);
+  SDL_RenderSetScale (m_render_handle[0].renderer, x, x);
 }
 
 void
-rendererSdl::present (int handle)
+rendererSdl::present ()
 {
-  SDL_RenderPresent (m_render_handle[handle].renderer);
+  SDL_RenderPresent (m_render_handle[0].renderer);
 }

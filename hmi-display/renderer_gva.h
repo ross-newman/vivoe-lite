@@ -127,15 +127,16 @@ class rendererGva : public rendererCairo
 {
 public:  
   rendererGva(int width, int height);
-  void drawFunctionLabels(int handle, int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
-  void drawTopLabels(int handle, int y, int active, int hide);
-  void drawControlLabels(int handle, int y, int active, int hide);
-  void drawPPI(int handle, int x, int y, int degrees, int sightAzimuth);
-  void drawTable(int handle, gvaTable *table);
-  void drawMode(int handle);
-  void drawButton (int hndl, char *keytext, int fontSize, int x, int y, int size);
-  void drawButton (int hndl, char *keytext, int fontSize, int x, int y, int height, int width, int align);
-  void drawKeyboard(int handle, keyboardModeType mode);
+  void drawLabels(char * text, int fontSize, int x, int y);
+  void drawFunctionLabels(int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
+  void drawTopLabels(int y, int active, int hide);
+  void drawControlLabels(int y, int active, int hide);
+  void drawPPI(int x, int y, int degrees, int sightAzimuth);
+  void drawTable(gvaTable *table);
+  void drawMode();
+  void drawButton (char *keytext, int fontSize, int x, int y, int size);
+  void drawButton (char *keytext, int fontSize, int x, int y, int height, int width, int align);
+  void drawKeyboard(keyboardModeType mode);
   touchGva *getTouch() { return &m_touch; };
 private:
   touchGva m_touch;
@@ -149,7 +150,7 @@ private:
 class FunctionKeySimple
 {
 public:
-  void draw(rendererGva *r, int hndl, int x, int y, int width, int height, char* text);
+  void draw(rendererGva *r, int x, int y, int width, int height, char* text);
   int getX() { return m_x; };
   int getY() { return m_y; };
 private: 
@@ -160,7 +161,7 @@ private:
 class FunctionKeyToggle : public FunctionKeySimple
 {
 public:
-  void toggle(rendererGva *r, int hndl, char* label1, char* label2);
+  void toggle(rendererGva *r, char* label1, char* label2);
 };
 
 #endif

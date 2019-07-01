@@ -26,6 +26,8 @@ include(ExternalProject)
 # ------------------------------------------------------------------------------
 # Fast-RTPS
 # ------------------------------------------------------------------------------
+option(QUICK "Skip libosmscout as its installed" OFF)
+if(!QUICK)
 message(STATUS "SUBPROJECT_NAME = FAST_RTPS")
 set(BUILD_DOCUMENTATION OFF CACHE BOOL "Disable build documentation")
 
@@ -42,7 +44,6 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
-#    CONFIGURE_COMMAND   "cmake -DTHIRDPARTY=ON ../src"
     SOURCE_SUBDIR        "../src"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
@@ -70,6 +71,7 @@ ExternalProject_Add(
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
 )
+endif(QUICK)
 
 # ------------------------------------------------------------------------------
 # rtp-payloader

@@ -50,19 +50,19 @@ class renderer
 {
 public:
   int init (int width, int height);
-  virtual void setPixel (int handle, int x, int y) = 0;
-  virtual void setColour (int handle, int red, int green, int blue) = 0;
-  virtual void setColourForground (int handle, int red, int green, int blue) = 0;
-  virtual void setColourBackground (int handle, int red, int green, int blue) = 0;
+  virtual void setPixel (int x, int y) = 0;
+  virtual void setColour (int red, int green, int blue) = 0;
+  virtual void setColourForground (int red, int green, int blue) = 0;
+  virtual void setColourBackground (int red, int green, int blue) = 0;
   int getWidth () { return m_width; };
   int getHeight () { return m_height; };
-  virtual int drawLine (int handle, int x1, int y1, int x2, int y2) = 0;
-  virtual void drawCircle (int handle, int x, int y, int radius, bool fill) = 0;
-  virtual void drawRectangle (int handle, int x1, int y1, int x2, int y2, bool fill) = 0;
-  virtual int drawColor (int handle, int r, int g, int b) = 0;
-  virtual int textureRGB (int handle, int x, int y, void *buffer, char *file) = 0;
-  virtual void scale (int handle, float x) = 0;
-  virtual void present (int handle) = 0;
+  virtual int drawLine (int x1, int y1, int x2, int y2) = 0;
+  virtual void drawCircle (int x, int y, int radius, bool fill) = 0;
+  virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
+  virtual int drawColor (int r, int g, int b) = 0;
+  virtual int textureRGB (int x, int y, void *buffer, char *file) = 0;
+  virtual void scale (float x) = 0;
+  virtual void present () = 0;
 private:
   int m_height;
   int m_width;

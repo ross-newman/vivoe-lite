@@ -127,17 +127,39 @@ Hmi::keyBMS(int key) {
   m_screen.functionLeft.active = 0;
   m_screen.functionRight.active = 0;
   switch (key){
+  case KEY_F3 :
+    // Shift UP
+    m_screen.functionLeft.active = 1 << 3;
+    xml.lat += 0.001;
+    break;
+  case KEY_F4 :
+    // Shift DOWN
+    m_screen.functionLeft.active = 1 << 2;
+    xml.lat -= 0.001;
+    break;
   case KEY_F5 :
+    // Zoom +
     m_screen.functionLeft.active = 1 << 1;
-    xml.zoom -= xml.zoom / 2;
+    xml.zoom += xml.zoom / 2;
+    break;
+  case KEY_F9 :
+    // Shift LEFT
+    m_screen.functionRight.active = 1 << 3;
+    xml.lon -= 0.001;
+    break;
+  case KEY_F10 :
+    // Shift RIGHT
+    m_screen.functionRight.active = 1 << 2;
+    xml.lon += 0.001;
     break;
   case KEY_F11 :
+    // Zoom -
     m_screen.functionRight.active = 1 << 1;
-    xml.zoom += xml.zoom * 2;
+    xml.zoom -= xml.zoom * 2;
     break;
   }
 //  cairo_surface_destroy(m_screen.canvas.surface);
-  m_map->project(xml.zoom, DUMMY_LON, DUMMY_LAT, &m_screen.canvas.surface);
+  m_map->project(xml.zoom, xml.lon, xml.lat, &m_screen.canvas.surface);
   m_screen.canvas.bufferType = SURFACE_CAIRO;  
 }
 
@@ -346,7 +368,7 @@ struct stateBMS : Hmi
         m_screen.statusBar->visible = true;
         m_screen.canvas.visible = true;
 
-        m_map->project(xml.zoom, DUMMY_LON, DUMMY_LAT, &m_screen.canvas.surface);
+        m_map->project(xml.zoom, xml.lon, xml.lat, &m_screen.canvas.surface);
         m_screen.canvas.bufferType = SURFACE_CAIRO;
 
         m_screen.functionTop->active = 0x1 << 0;
