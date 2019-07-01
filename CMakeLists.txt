@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8) 
-project(hmi-display) 
+cmake_minimum_required(VERSION 2.8)
+project(hmi-display)
 message(STATUS "PROJECT_NAME = ${PROJECT_NAME}")
 
 if(ENABLE_COVERAGE)
@@ -10,7 +10,7 @@ if(ENABLE_COVERAGE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif()
 
-execute_process(COMMAND ../update.sh) 
+execute_process(COMMAND ../update.sh)
 option(THIRDPARTY "Turn no third party modules" ON)
 set(THIRDPARTY ON CACHE BOOL "enable X functionality")
 add_subdirectory(dds)
@@ -34,11 +34,11 @@ ExternalProject_Add(
     GIT_TAG             #6a6f79c
     GIT_SHALLOW         1
     CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
-    PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/Fast-RTPS/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
+    PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS
+    TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS
+    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/Fast-RTPS
+    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS
+    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
@@ -151,7 +151,8 @@ add_library(test_catch STATIC test/test.cc)
 add_dependencies(test_catch catch)
 add_library(business_logic STATIC hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
-add_dependencies(business_logic libnmea hmi-video rtp_payloader osmscout osmscout_map osmscout_map_cairo)
+add_dependencies(business_logic libnmea hmi-video rtp_payloader)
+#add_dependencies(business_logic osmscout osmscout_map osmscout_map_cairo)
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
 target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib)
