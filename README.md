@@ -79,8 +79,8 @@ If a valid GPS source is present then an offline map will be available rendered 
 You can render maps using servers provided by [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) using my [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) for processing the data and depositing the results on to a Google Drive account. 
 
 Tutorial [documentation for libosmscout](http://libosmscout.sourceforge.net/tutorials/importing/) contains a full description on how to prepare the maps database.
-# Screensho
-See [screenshots](images/README.md) in the images directory. 
+# Screenshots
+See more example HMI [screenshots](images/README.md) in the images directory. 
 
 # Development
 See developer guidelines in [DEVELOPER.md](docs/DEVELOPER.md) which also contains the list of currently known issues.
