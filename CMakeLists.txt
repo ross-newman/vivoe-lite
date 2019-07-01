@@ -33,13 +33,9 @@ ExternalProject_Add(
     GIT_REPOSITORY      https://github.com/eProsima/Fast-RTPS
     GIT_TAG             #6a6f79c
     GIT_SHALLOW         1
+    GIT_CONFIG          ExternalProject_Add=true
     CMAKE_ARGS          ${CATCH_CMAKE_ARGS}
     PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/Fast-RTPS
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
 )
@@ -145,19 +141,20 @@ include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map/include
 include_directories(${PROJECT_SOURCE_DIR}/../libosmscout/libosmscout-map-cairo/include)
 include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
 
-
 add_library(test_catch STATIC test/test.cc)
-#target_link_libraries (test_catch rtp-payloader nmealib)
 add_dependencies(test_catch catch)
+
 add_library(business_logic STATIC hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
 add_dependencies(business_logic libnmea hmi-video rtp_payloader)
 #add_dependencies(business_logic osmscout osmscout_map osmscout_map_cairo)
 pkg_check_modules(CAIRO REQUIRED cairo)
+pkg_check_modules(PANGO REQUIRED pango)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
-target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib)
+link_directories(business_logic ${CMAKE_BINARY_DIR}/external/libnmea/build/src)
+target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib)
 target_compile_definitions(business_logic PRIVATE VIRTUAL=virtual MAIN=unittest_main)
-target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} catch nmealib rtp-payloader video hmi-display hmi-display/common )
+target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} catch nmealib rtp-payloader video hmi-display hmi-display/common )
 
 macro(do_test str)
     add_executable(test_${str} test/test_${str}.cc)
