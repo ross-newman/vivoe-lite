@@ -122,6 +122,25 @@ Hmi::key(int key) {
   }
 }
 
+void
+Hmi::keyBMS(int key) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  switch (key){
+  case KEY_F5 :
+    m_screen.functionLeft.active = 1 << 1;
+    xml.zoom -= xml.zoom / 2;
+    break;
+  case KEY_F11 :
+    m_screen.functionRight.active = 1 << 1;
+    xml.zoom += xml.zoom * 2;
+    break;
+  }
+//  cairo_surface_destroy(m_screen.canvas.surface);
+  m_map->project(xml.zoom, DUMMY_LON, DUMMY_LAT, &m_screen.canvas.surface);
+  m_screen.canvas.bufferType = SURFACE_CAIRO;  
+}
+
 struct stateSA : Hmi
 {
   void entry() override {
@@ -327,13 +346,9 @@ struct stateBMS : Hmi
         m_screen.statusBar->visible = true;
         m_screen.canvas.visible = true;
 
-#if 1
-        m_map->project(DEFAULT_ZOOM, DUMMY_LON, DUMMY_LAT, &m_screen.canvas.surface);
+        m_map->project(xml.zoom, DUMMY_LON, DUMMY_LAT, &m_screen.canvas.surface);
         m_screen.canvas.bufferType = SURFACE_CAIRO;
- //       cairo_surface_write_to_png(hmi::getScreen()->canvas.surface,"map_test.png");
-#else
-        SET_CANVAS_PNG("map.png");
-#endif
+
         m_screen.functionTop->active = 0x1 << 0;
       }
   };
@@ -346,7 +361,7 @@ struct stateBMS : Hmi
   void react(KeySTR const &) override { transit<stateSTR>(); };
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keyBMS(e.key); };
 };
 
 struct stateAlarms : Hmi
@@ -482,6 +497,7 @@ rendererMap* Hmi::m_map;
 int  Hmi::m_lastState;
 bool Hmi::m_labelsOn;
 bool Hmi::m_alarmsOn = false;
+xmlData Hmi::xml;
 
 // ----------------------------------------------------------------------------
 // Initial state definition

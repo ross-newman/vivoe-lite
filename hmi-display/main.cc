@@ -7,7 +7,6 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-//#include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include "gva.h"
 #include "renderer_map.h"

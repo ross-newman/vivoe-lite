@@ -1,10 +1,11 @@
 #ifndef HMI_GVA_H
 #define HMI_GVA_H
+#include <iostream>
 #include "tinyfsm.h"
 #include "renderer_map.h"
 #include "view_gva.h"
 #include "screen_gva.h"
-#include <iostream>
+#include "xml_reader.h"
 
 using namespace gva;
 
@@ -122,7 +123,9 @@ protected:
   static bool m_alarmsOn;
 public:
   static void key(int key);
+  static void keyBMS(int key);
   static void reset();
+  static xmlData xml;
   static screenGva* getRendrer() { return m_render; }
   static screenType* getScreen() { return &m_screen; }
   static void labelsOff();
