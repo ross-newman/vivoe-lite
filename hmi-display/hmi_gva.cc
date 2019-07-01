@@ -140,7 +140,7 @@ Hmi::keyBMS(int key) {
   case KEY_F5 :
     // Zoom +
     m_screen.functionLeft.active = 1 << 1;
-    xml.zoom += xml.zoom / 2;
+    xml.zoom += xml.zoom * 2;
     break;
   case KEY_F9 :
     // Shift LEFT
@@ -155,7 +155,7 @@ Hmi::keyBMS(int key) {
   case KEY_F11 :
     // Zoom -
     m_screen.functionRight.active = 1 << 1;
-    xml.zoom -= xml.zoom * 2;
+    xml.zoom -= xml.zoom / 2;
     break;
   }
 //  cairo_surface_destroy(m_screen.canvas.surface);
