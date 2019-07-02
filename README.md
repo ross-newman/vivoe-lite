@@ -95,7 +95,7 @@ See configuration setup in [CONFIG.md](docs/CONFIG.md)
 See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 
 # Standards and Referances
-## GVA
+## Land Open Systems Architecture (LOSA), Generic Vehicle Architecture (GVA)
 ### DEF STAN 23-09 Generic Veichcal Architecture
 This defence standard is currently split into the parts below:
 
