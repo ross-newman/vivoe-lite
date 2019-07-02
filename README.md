@@ -11,7 +11,7 @@ This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is cur
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-
 ```
 # HMI
-The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
+The project includes an referance implementation of a GVA like Human Machine Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with different video overlay options for sensing, monitoring and detection of systems events.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
