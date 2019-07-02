@@ -99,15 +99,15 @@ See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 ### DEF STAN 23-09 Generic Veichcal Architecture
 This defence standard is currently split into the parts below:
 
-* Generic Vehicle Architecture (GVA) Part 0 - GVA Approach
-* Generic Vehicle Architecture (GVA) Part 1 Infrastructure (Data and Power)
-* **Generic Vehicle Architecture (GVA) Part 2 Human Machine Interface**
-* Generic Vehicle Architecture (GVA) Part 3 Health and Usage Monitoring
-* Generic Vehicle Architecture (GVA) Part 4 Physical Interfaces (withdrawn)
-* Generic Vehicle Architecture (GVA) Part 5 GVA Data Model
-* Generic Vehicle Architecture (GVA) Part 6 Security (TBD)
-* Generic Vehicle Architecture (GVA) Part 7 Common Services (TBD)
-* Generic Vehicle Architecture (GVA) Part 8 Safety (TBD)
+* Generic Vehicle Architecture (GVA) Part 0 : - GVA Approach
+* Generic Vehicle Architecture (GVA) Part 1 : Infrastructure (Data and Power)
+* **Generic Vehicle Architecture (GVA) Part 2 : Human Machine Interface**
+* Generic Vehicle Architecture (GVA) Part 3 : Health and Usage Monitoring
+* Generic Vehicle Architecture (GVA) Part 4 : Physical Interfaces (withdrawn)
+* Generic Vehicle Architecture (GVA) Part 5 : GVA Data Model
+* Generic Vehicle Architecture (GVA) Part 6 : Security (TBD)
+* Generic Vehicle Architecture (GVA) Part 7 : Common Services (TBD)
+* Generic Vehicle Architecture (GVA) Part 8 : Safety (TBD)
 
 ![GVA HMI](images/GVA_HMI.png)<br>
 **Example of the Battle Management System (BMS) screen**
