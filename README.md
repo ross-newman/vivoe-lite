@@ -95,7 +95,8 @@ See configuration setup in [CONFIG.md](docs/CONFIG.md)
 See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 
 # Standards and Referances
-## DEF STAN 23-009 Generic Veichcal Architecture
+## GVA
+### DEF STAN 23-009 Generic Veichcal Architecture
 This defence standard is currently split into the parts below:
 
 * The GVA Approach Part 0
@@ -111,6 +112,12 @@ This defence standard is currently split into the parts below:
 ![GVA HMI](images/GVA_HMI.png)<br>
 **Example of the Battle Management System (BMS) screen**
 
+### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
+NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
+
+### DEF(AUST)11316 AS GVA
+Email asgva.office@defence.gov.au requesting access to the DEF(AUST) and AS GVA GovDex community
+
 ## Video
 ### DEF STAN 00-083 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
 For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
@@ -124,9 +131,6 @@ Defence Standard 00-083 is currently split into the parts below.
 
 This standard is also mandated in the NATO version of GVA (NGVA). 
 
-### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
-NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
-
 ### STANAG 4697 - Platform Extended Video Standard (PLEVID)
 AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
 
@@ -136,6 +140,8 @@ The HMI uses Cairo for rendering the GUI components.
 **GVA HMI Example layout**
 
 # Links
+* http://landopensystems.mod.uk/ UK MoD LOSA
+* https://www.natogva.org/ NATO GVA
 * https://www.vetronics.org/
 * https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture
 * https://www.cairographics.org/
