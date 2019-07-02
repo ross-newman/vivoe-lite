@@ -94,7 +94,25 @@ See configuration setup in [CONFIG.md](docs/CONFIG.md)
 # AI and ML Pipelines
 See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 
-## DEF STAN 00-83 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
+# Standards and Referances
+## DEF STAN 23-009 Generic Veichcal Architecture
+This defence standard is currently split into the parts below:
+
+* The GVA Approach Part 0
+* Infrastructure (Data and Power) Part 1
+* **Human Machine Interface Part 2**
+* Health and Usage Monitoring Part 3
+* Physical Interfaces (withdrawn) Part 4
+* GVA Data Model Part 5
+* Security (TBD) Part 6
+* Common Services (TBD) Part 7
+* Safety (TBD) Part 8
+
+![GVA HMI](images/GVA_HMI.png)<br>
+**Example of the Battle Management System (BMS) screen**
+
+## Video
+### DEF STAN 00-083 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
 For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
 for Video Over Ethernet Part 1: Standards and Protocols, Issue 2. Specifically Appendix B2 YCbCr 4:2:2 Encoded Uncompressed Video.
 
@@ -106,16 +124,14 @@ Defence Standard 00-083 is currently split into the parts below.
 
 This standard is also mandated in the NATO version of GVA (NGVA). 
 
-## STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
+### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
 NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
 
-## STANAG 4697 - Platform Extended Video Standard (PLEVID)
+### STANAG 4697 - Platform Extended Video Standard (PLEVID)
 AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
 
 # Rendering
 The HMI uses Cairo for rendering the GUI components.
-
-![GVA HMI](images/GVA_HMI.png)
 
 **GVA HMI Example layout**
 
