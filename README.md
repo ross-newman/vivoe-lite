@@ -18,7 +18,7 @@ The project includes an refferance implementation of the GVA Human Machin Interf
 
 Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
 
-![GVA Dataflow](images/GVA-DataFlow.PNG)
+![GVA Dataflow](images/Screenshot-OSMScout-Map.png)
 
 Touch screen inputs and bezel key inputs are sent back to the HMI to update the overlays in the RTP stream. The display can be 'dumb' with HMI / Video processing being done on a seperate LRU. RTP streams being recieved by the display have the overlays already rendered in the video stream.
 
