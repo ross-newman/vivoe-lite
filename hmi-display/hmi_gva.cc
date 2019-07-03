@@ -54,9 +54,7 @@ Hmi::labelsOn() {
 };
 
 void
-Hmi::key(int key) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
+Hmi::keySide(int key) {
   switch (key){
   case KEY_F1 :
     m_screen.functionLeft.active = 1 << 5;
@@ -94,6 +92,16 @@ Hmi::key(int key) {
   case KEY_F12 :
     m_screen.functionRight.active = 1;
     break;
+  }
+}  
+
+void
+Hmi::key(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  m_screen.control->active = 0;
+  keySide(keypress);
+  switch (keypress){
   case KEY_F13 :
     m_screen.control->active = 1 << 7;
     break;
@@ -118,6 +126,212 @@ Hmi::key(int key) {
     break;
   case KEY_F20 :
     m_screen.control->active = 1;
+    m_screen.message.visible = false;
+    break;
+  }
+}
+
+void
+Hmi::keySA(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
+    break;
+  }
+}
+
+
+void
+Hmi::keyWPN(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
+    break;
+  }
+}
+
+
+void
+Hmi::keyDEF(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
+    break;
+  }
+}
+
+void
+Hmi::keySYS(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
+    break;
+  }
+}
+
+void
+Hmi::keyDRV(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
+    break;
+  }
+}
+
+void
+Hmi::keySTR(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
+    break;
+  }
+}
+
+void
+Hmi::keyCOM(int keypress) {
+  m_screen.functionLeft.active = 0;
+  m_screen.functionRight.active = 0;
+  
+  keySide(keypress);
+  key(keypress);
+
+  switch (keypress) {
+  case KEY_F1:
+  case KEY_F2:
+  case KEY_F3:
+  case KEY_F4:
+  case KEY_F5:
+  case KEY_F6:
+  case KEY_F7:
+  case KEY_F8:
+  case KEY_F9:
+  case KEY_F10:
+  case KEY_F11:
+  case KEY_F12:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
     break;
   }
 }
@@ -126,36 +340,37 @@ void
 Hmi::keyBMS(int key) {
   m_screen.functionLeft.active = 0;
   m_screen.functionRight.active = 0;
+  keySide(key);
   switch (key){
   case KEY_F3 :
     // Shift UP
-    m_screen.functionLeft.active = 1 << 3;
     xml.lat += 0.001;
     break;
   case KEY_F4 :
     // Shift DOWN
-    m_screen.functionLeft.active = 1 << 2;
     xml.lat -= 0.001;
     break;
   case KEY_F5 :
     // Zoom +
-    m_screen.functionLeft.active = 1 << 1;
     xml.zoom += xml.zoom * 2;
     break;
   case KEY_F9 :
     // Shift LEFT
-    m_screen.functionRight.active = 1 << 3;
     xml.lon -= 0.001;
     break;
   case KEY_F10 :
     // Shift RIGHT
-    m_screen.functionRight.active = 1 << 2;
     xml.lon += 0.001;
     break;
   case KEY_F11 :
     // Zoom -
-    m_screen.functionRight.active = 1 << 1;
     xml.zoom -= xml.zoom / 2;
+    break;
+  default:
+    m_screen.message.visible = true;
+    m_screen.message.icon = ICON_NONE;
+    strcpy(m_screen.message.brief.text, "Function key");
+    strcpy(m_screen.message.detail.text, "Operation not implemented!");
     break;
   }
 //  cairo_surface_destroy(m_screen.canvas.surface);
@@ -189,7 +404,7 @@ struct stateSA : Hmi
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keySA(e.key); };
 };
 
 struct stateWPN : Hmi
@@ -218,7 +433,7 @@ struct stateWPN : Hmi
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keyWPN(e.key); };
 };
 
 struct stateDEF : Hmi
@@ -244,7 +459,7 @@ struct stateDEF : Hmi
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keyDEF(e.key); };
 };
                 
 struct stateSYS : Hmi
@@ -274,7 +489,7 @@ struct stateSYS : Hmi
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keySYS(e.key); };
 };
 
 struct stateDRV : Hmi
@@ -300,7 +515,7 @@ struct stateDRV : Hmi
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keyDRV(e.key); };
 };
 
 struct stateSTR : Hmi
@@ -326,7 +541,7 @@ struct stateSTR : Hmi
   void react(KeyCOM const &) override { transit<stateCOM>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keySTR(e.key); };
 };
 
 struct stateCOM : Hmi
@@ -352,7 +567,7 @@ struct stateCOM : Hmi
   void react(KeySTR const &) override { transit<stateSTR>(); };
   void react(KeyBMS const &) override { transit<stateBMS>(); };
   void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(KeyFunction const &e) { keyCOM(e.key); };
 };
 
 struct stateBMS : Hmi

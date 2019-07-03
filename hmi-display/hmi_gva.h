@@ -122,7 +122,15 @@ protected:
   static bool m_labelsOn;
   static bool m_alarmsOn;
 public:
+  static void keySide(int key);
   static void key(int key);
+  static void keySA(int key);
+  static void keyWPN(int key);
+  static void keyDEF(int key);
+  static void keySYS(int key);
+  static void keyDRV(int key);
+  static void keySTR(int key);
+  static void keyCOM(int key);
   static void keyBMS(int key);
   static void reset();
   static xmlData xml;

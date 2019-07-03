@@ -14,6 +14,18 @@ namespace gva
     LOCATION_FORMAT_MGRS
   };
   
+  enum screenMode {
+    MODE_MAINTINENCE = 0,
+    MODE_OPERATIONAL
+  };
+
+  enum iconEnum {
+    ICON_NONE = 0,
+    ICON_WARNING,
+    ICON_INFO,
+    ICON_ERROR 
+  };
+  
   typedef struct functionSelect {
     bool visible;
     int active;
@@ -85,10 +97,27 @@ namespace gva
     int y;
     int fontSize;
   } labelType;
+  
+  typedef struct message {
+    bool visible;
+    int width;
+    iconEnum icon;
+    struct {
+      char text[256];
+      int fontSize;
+    } brief;
+    struct {
+      char text[4096];
+      int fontSize;
+    } detail;
+  } messageType;
 
   typedef struct screen {
-    char name[100];
-    char gpsDevice[100];
+    struct {
+      char name[100];
+      screenMode mode;
+      char gpsDevice[100];
+    } info;
     gvaFunctionEnum currentFunction;
     canvasType canvas;
     functionSelectType *functionTop;
@@ -100,6 +129,7 @@ namespace gva
     keyboardType keyboard;
     alarmsType alarms;
     labelType label;
+    messageType message;
   } screenType;
 
   class screenGva;
