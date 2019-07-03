@@ -344,11 +344,11 @@ Hmi::keyBMS(int key) {
   switch (key){
   case KEY_F3 :
     // Shift UP
-    xml.lat += 0.001;
+    xml.lat += 0.005;
     break;
   case KEY_F4 :
     // Shift DOWN
-    xml.lat -= 0.001;
+    xml.lat -= 0.005;
     break;
   case KEY_F5 :
     // Zoom +
@@ -356,11 +356,11 @@ Hmi::keyBMS(int key) {
     break;
   case KEY_F9 :
     // Shift LEFT
-    xml.lon -= 0.001;
+    xml.lon -= 0.005;
     break;
   case KEY_F10 :
     // Shift RIGHT
-    xml.lon += 0.001;
+    xml.lon += 0.005;
     break;
   case KEY_F11 :
     // Zoom -

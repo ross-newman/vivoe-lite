@@ -32,6 +32,13 @@ rendererMap::rendererMap(string map, string style, int width, int height)
   } else {
     logGva::log("Cannot create libosmscout cairo surface", LOG_ERROR);
   }
+  
+  drawParameter.SetFontSize(3.0);
+  drawParameter.SetLabelLineMinCharCount(15);
+  drawParameter.SetLabelLineMaxCharCount(30);
+  drawParameter.SetLabelLineFitToArea(true);
+  drawParameter.SetLabelLineFitToWidth(std::min(projection.GetWidth(), projection.GetHeight()));
+  painter = new osmscout::MapPainterCairo(m_styleConfig);
 };
 
 rendererMap::~rendererMap()
@@ -39,6 +46,7 @@ rendererMap::~rendererMap()
 printf("ERROR\n");
   cairo_destroy(m_cairo);
   cairo_surface_destroy(m_surface);
+  free(painter);
 };
 
 int 
@@ -48,17 +56,6 @@ rendererMap::project(double zoom, double lon, double lat, cairo_surface_t **surf
   if (m_surface!=nullptr) {
 
     if (m_cairo!=nullptr) {
-      static osmscout::MercatorProjection  projection;
-      static osmscout::MapParameter        drawParameter;
-      static osmscout::AreaSearchParameter searchParameter;
-      static osmscout::MapData             data;
-      static osmscout::MapPainterCairo     painter(m_styleConfig);
-
-      drawParameter.SetFontSize(3.0);
-      drawParameter.SetLabelLineMinCharCount(15);
-      drawParameter.SetLabelLineMaxCharCount(30);
-      drawParameter.SetLabelLineFitToArea(true);
-      drawParameter.SetLabelLineFitToWidth(std::min(projection.GetWidth(), projection.GetHeight()));
 
       /*
       std::list<std::string> paths;
@@ -73,13 +70,12 @@ rendererMap::project(double zoom, double lon, double lat, cairo_surface_t **surf
                      m_width,
                      m_height);
 
-      std::list<osmscout::TileRef> tiles;
 
       m_mapService->LookupTiles(projection,tiles);
       m_mapService->LoadMissingTileData(searchParameter,*m_styleConfig,tiles);
       m_mapService->AddTileDataToMapData(tiles,data);
 
-      if (painter.DrawMap(projection,
+      if (painter->DrawMap(projection,
                           drawParameter,
                           data,
                           m_cairo)) {

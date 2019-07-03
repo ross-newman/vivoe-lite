@@ -24,6 +24,12 @@ private:
   osmscout::StyleConfigRef m_styleConfig;
   osmscout::DatabaseParameter m_databaseParameter;
   osmscout::DatabaseRef m_database;
+  osmscout::MercatorProjection  projection;
+  osmscout::MapParameter        drawParameter;
+  osmscout::AreaSearchParameter searchParameter;
+  osmscout::MapData             data;
+  std::list<osmscout::TileRef> tiles;
+  osmscout::MapPainterCairo *painter;  
   cairo_surface_t *m_surface;
   cairo_t *m_cairo;
 };
