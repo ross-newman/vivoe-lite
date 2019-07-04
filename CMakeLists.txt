@@ -32,7 +32,7 @@ set(BUILD_DOCUMENTATION OFF CACHE BOOL "Disable build documentation")
 ExternalProject_Add(
     Fast_RTPS
     GIT_REPOSITORY      https://github.com/eProsima/Fast-RTPS
-    GIT_TAG             #6a6f79c
+    GIT_TAG             v1.8.1
     GIT_SHALLOW         5
     GIT_CONFIG          fetch.recurseSubmodules=true
     CMAKE_ARGS          "-DTHIRDPARTY=ON"
