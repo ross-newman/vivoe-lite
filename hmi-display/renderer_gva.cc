@@ -1,3 +1,30 @@
+// MIT License
+// 
+// Copyright (c) 2019 Ross Newman (ross@rossnewman.com)
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// 
+// @file renderer_gva.cc
+// @author ross@rossnewman.com
+// @date 04 July 2019
+// @brief Rendering functions for all the complex widgets needed by the HMI. Widgets are reusable components of the HMI.
+//
 #include <math.h>               /* sqrt */
 #include "debug.h"
 #include "renderer_gva.h"
@@ -360,7 +387,7 @@ rendererGva::drawKeyboard (int hndl, keyboardModeType mode)
   setColourForground (hndl, MEDIUM_GREY);
   setColourBackground (hndl, MEDIUM_GREY);
   setLineThickness (hndl, 3, LINE_SOLID);
-  
+  // @todo hmi-display : Register the keyboard hotspots and raise appropriate event (touch input, virtual key)
   switch(mode) {
     case KEYBOARD_UPPER : 
       memcpy(keyboard, m_upperKeys, sizeof(keyboard));
@@ -404,23 +431,11 @@ rendererGva::drawKeyboard (int hndl, keyboardModeType mode)
                             yLocation + padding + (bSize + 5) * 1, bSize);
     }
 
-  /*
-   * Space Bar and Mode
-   */
+  //
+  // Space Bar and Mode
+  //
   drawButton (hndl, "123", fontSize, 144, yLocation + 5, bSize + 5, bSize, ALIGN_RIGHT);
   drawButton (hndl, "SPACE", fontSize, 185, yLocation + 5, bSize + 202, bSize, ALIGN_CENTRE);
   drawButton (hndl, "^", fontSize, 426, yLocation + 5, bSize, bSize, ALIGN_RIGHT);
   drawButton (hndl, "Mode", fontSize, 463, yLocation + 20, 50, 50, ALIGN_RIGHT);
-#if 0
-  drawRoundedRectangle (hndl, 144, yLocation + 5, bSize + 5, bSize, 6, true);
-  drawRoundedRectangle (hndl, 185, yLocation + 5, bSize + 202, bSize, 6,
-                        true);
-  drawRoundedRectangle (hndl, 426, yLocation + 5, bSize, bSize, 6, true);
-  drawRoundedRectangle (hndl, 463, yLocation + 20, 50, 50, 6, true);
-  setColourForground (hndl, WHITE);
-  drawText (hndl, 142 + 8, yLocation + 5 + 15, "123", fontSize);
-  drawText (hndl, 270, yLocation + 5 + 15, "SPACE", fontSize);
-  drawText (hndl, 426 + 8, yLocation + 5 + 15, "^", fontSize);
-  drawText (hndl, 463 + 8, yLocation + 50, "Mode", fontSize);
-#endif
 }
