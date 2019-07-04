@@ -1,9 +1,9 @@
-/**
- * @file gva_tool.c
- * @author ross.e.newman@lmco.com
- * @date 02 May 2019
- * @brief TBC
- */
+//
+// @file gva_tool.c
+// @author ross.e.newman@lmco.com
+// @date 02 May 2019
+// @brief TBC
+//
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -20,11 +20,11 @@
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 
-/** Default device name if not supplied on the command line */
+// Default device name if not supplied on the command line 
 #define DEFAULT_GPS_DEVICE_NAME "/dev/ttyUSB0"
-/** Console configuration file */
+// Console configuration file 
 #define XML_FILENAME "config.xml"
-/** Console application description */
+// Console application description 
 #define APP_DESCRIPTION "gva-tool"
 
 enum {
@@ -345,6 +345,11 @@ winMessageBox(nmessage str)
     winPopup(str, MESSAGE_INFO);
 }
 
+//
+// This function will display important information about the qva-tool setup
+// @todo Take add parameters to configuration 
+// @body Add parameters to and .xml file for more flexability
+//
 void
 gvaInfo()
 {
@@ -601,6 +606,8 @@ gvaOptions(int argc, char **argv)
             printf("Version %d.%d.%d\n\n", 0, 0, 1);
             return -1;
         case 'd':
+	    // @todo Add support for USB GPS devices in gva-tool.
+	    // @body GPC long/lat will be transmitted to GUI over DDS
             strcpy(xml.device, optarg); /* Overload the xml name */
             break;
         case 'n':
