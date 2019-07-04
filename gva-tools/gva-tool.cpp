@@ -536,6 +536,8 @@ winHelp()
     switch (c) {
     case 'b':
         winBezel(gva_keys, 0);
+	// @todo Add DDS topics and .idl to support sending of HMI inputs
+        // @body Need to create touch, keyboard and bezel inputs as a topic.
         break;
     case 'q':
     case 'Q':
