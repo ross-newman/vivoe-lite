@@ -1,4 +1,25 @@
-//
+// MIT License
+// 
+// Copyright (c) 2019 Ross Newman (ross@rossnewman.com)
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// 
 // @file gva_tool.c
 // @author ross.e.newman@lmco.com
 // @date 02 May 2019
@@ -347,7 +368,7 @@ winMessageBox(nmessage str)
 
 //
 // This function will display important information about the qva-tool setup
-// @todo Take add parameters to configuration 
+// @todo gva-tools : Take add parameters to configuration 
 // @body Add parameters to and .xml file for more flexability
 //
 void
@@ -536,7 +557,7 @@ winHelp()
     switch (c) {
     case 'b':
         winBezel(gva_keys, 0);
-	// @todo Add DDS topics and .idl to support sending of HMI inputs
+	// @todo gva-tools : Add DDS topics and .idl to support sending of HMI inputs
         // @body Need to create touch, keyboard and bezel inputs as a topic.
         break;
     case 'q':
@@ -608,7 +629,7 @@ gvaOptions(int argc, char **argv)
             printf("Version %d.%d.%d\n\n", 0, 0, 1);
             return -1;
         case 'd':
-	    // @todo Add support for USB GPS devices in gva-tool.
+	    // @todo gva-tools : Add support for USB GPS devices in gva-tool.
 	    // @body GPC long/lat will be transmitted to GUI over DDS
             strcpy(xml.device, optarg); /* Overload the xml name */
             break;
