@@ -4,7 +4,7 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2927/badge)](https://bestpractices.coreinfrastructure.org/projects/2927)
 [![codecov](https://codecov.io/gh/ross-newman/vivoe-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/ross-newman/vivoe-lite)
 ![Version](https://img.shields.io/badge/version-0.1.321-red.svg)
-<a href="https://zenhub.com"><img src="//dxssrr2j0sq4w.cloudfront.net/3.2.0/img/external/zenhub-badge.png" alt="ZenHub logo"></a>
+[![ZenHub](https://img.shields.io/badge/Shipping%20faster%20with-ZenHub-%2349569D.svg)](https://www.zenhub.com/)
 [![Support](https://img.shields.io/badge/communitybridge-donate-ff69b4.svg)](https://funding.communitybridge.org/projects/vivoe-lite)
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
