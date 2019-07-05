@@ -27,6 +27,8 @@ Current features being worked on.
 - [ ] Alarms class
 - [ ] Keyboard input working with touch input (mouse click)
 
+For a complete insite to current development then why not contribute and pick a task for our [Zenhub](http://zenhub.com) backlog to help out.
+
 ## Known Issues
 * Not all labels are implemented and touch (mouse click enabled)
 * Maps BMS currently mocked up
