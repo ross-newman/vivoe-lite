@@ -11,8 +11,6 @@ if(ENABLE_COVERAGE)
 endif()
 
 execute_process(COMMAND ../update.sh)
-option(THIRDPARTY "Turn no third party modules" ON)
-set(THIRDPARTY ON CACHE BOOL "enable X functionality")
 add_subdirectory(dds)
 add_subdirectory(hmi-display)
 add_subdirectory(gva-tools)
@@ -42,7 +40,6 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
-#    CONFIGURE_COMMAND   "cmake -DTHIRDPARTY=ON ../src"
     SOURCE_SUBDIR        "../src"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
@@ -58,7 +55,7 @@ list(APPEND CMAKE_MODULE_PATH ../libosmscout/cmake)
 ExternalProject_Add(
     libosmscout
     GIT_REPOSITORY      https://github.com/Framstag/libosmscout
-    GIT_TAG             #43c67e9
+    GIT_TAG             v1.1.0
     GIT_SHALLOW         1
     CMAKE_ARGS          ""
     PREFIX              ${CMAKE_BINARY_DIR}/external/libosmscout/prefix
