@@ -17,40 +17,47 @@ void
 Hmi::reset()
 {
   m_screen.canvas.visible = false;
-  m_screen.statusBar->visible = false;
-  if (m_labelsOn) {
-    labelsOn();
-  } else {
-    labelsOff();
-  }
+  m_screen.statusBar->visible = true;
+  labels(m_screen.labels);
   m_screen.canvas.visible = false;
   m_screen.canvas.bufferType = SURFACE_NONE;
-  m_screen.compass.visible = false;
-  m_screen.keyboard.visible = (m_screen.keyboard.visible) ? true : false;
+//  m_screen.compass.visible = false;
+  m_widgets.keyboard.visible = (m_widgets.keyboard.visible) ? true : false;
   m_screen.alarms.visible = false;
   m_screen.control->active = 0;
-  m_labelsOn = false;
   m_alarmsOn = false;
 }
 
 void 
-Hmi::labelsOff() {
-  m_screen.functionLeft.visible = false;
-  m_screen.functionRight.visible = false;
-  m_screen.control->visible = false;
-//  m_screen.statusBar->visible = false;
-//  m_screen.compass.visible = false;
-  m_labelsOn = false;
-};
-
-void 
-Hmi::labelsOn() {
-  m_screen.functionLeft.visible = true;
-  m_screen.functionRight.visible = true;
-  m_screen.control->visible = true;
-//  m_screen.statusBar->visible = true;
-//  m_screen.compass.visible = true;
-  m_labelsOn = true;
+Hmi::labels(labelModeEnum labels) {
+  switch(labels) {
+  case LABEL_ALL :
+    m_screen.functionLeft.visible = true;
+    m_screen.functionRight.visible = true;
+    m_screen.control->visible = true;
+    m_screen.functionTop->visible = true;
+    m_screen.statusBar->visible = true;
+    m_screen.statusBar->y = 443;
+    break;
+  case LABEL_STATUS_ONLY :
+    m_screen.functionLeft.visible = false;
+    m_screen.functionRight.visible = false;
+    m_screen.control->visible = false;
+    m_screen.functionTop->visible = false;
+    m_screen.statusBar->visible = true;
+    m_screen.statusBar->y = 459;
+    m_widgets.compass.x -= 90;
+    break;
+  case LABEL_MINIMAL :
+    m_screen.functionLeft.visible = false;
+    m_screen.functionRight.visible = false;
+    m_screen.control->visible = false;
+    m_screen.functionTop->visible = false;
+    m_screen.statusBar->visible = false;
+    m_widgets.compass.visible = false;
+    m_widgets.compass.x += 90;
+    break;
+  }
 };
 
 void
@@ -122,7 +129,18 @@ Hmi::key(int keypress) {
     break;
   case KEY_F19 :
     m_screen.control->active = 1 << 1;
-    m_labelsOn ? Hmi::labelsOff() : Hmi::labelsOn();
+    switch (m_screen.labels) {
+    case LABEL_ALL : 
+      m_screen.labels = LABEL_STATUS_ONLY;
+      break;
+    case LABEL_STATUS_ONLY : 
+      m_screen.labels = LABEL_MINIMAL;
+      break;
+    case LABEL_MINIMAL : 
+      m_screen.labels = LABEL_ALL;
+      break;
+    }
+    labels(m_screen.labels);
     break;
   case KEY_F20 :
     m_screen.control->active = 1;
@@ -336,6 +354,24 @@ Hmi::keyCOM(int keypress) {
   }
 }
 
+float 
+conv(int zoom) {
+  switch (zoom) {
+    case 1620000 : return 0.00006;
+    case 640000 : return 0.00012;
+    case 320000 : return 0.00025;
+    case 160000 : return 0.0005;
+    case 80000 : return 0.001;
+    case 40000 : return 0.002;
+    case 20000 : return 0.004;
+    case 10000 : return 0.008;
+    case 5000 : return 0.016;
+    case 2500 : return 0.048;
+    case 1250 : return 0.112;
+    case 625: return 0.2;
+  }
+}
+
 void
 Hmi::keyBMS(int key) {
   m_screen.functionLeft.active = 0;
@@ -344,23 +380,23 @@ Hmi::keyBMS(int key) {
   switch (key){
   case KEY_F3 :
     // Shift UP
-    xml.lat += 0.005;
+    xml.lat += conv(xml.zoom);
     break;
   case KEY_F4 :
     // Shift DOWN
-    xml.lat -= 0.005;
+    xml.lat -= conv(xml.zoom);
     break;
   case KEY_F5 :
     // Zoom +
-    xml.zoom += xml.zoom * 2;
+    xml.zoom += xml.zoom;
     break;
   case KEY_F9 :
     // Shift LEFT
-    xml.lon -= 0.005;
+    xml.lon -= conv(xml.zoom);
     break;
   case KEY_F10 :
     // Shift RIGHT
-    xml.lon += 0.005;
+    xml.lon += conv(xml.zoom);
     break;
   case KEY_F11 :
     // Zoom -
@@ -373,6 +409,7 @@ Hmi::keyBMS(int key) {
     strcpy(m_screen.message.detail.text, "Operation not implemented!");
     break;
   }
+printf("Zoom level %d lat %f, %f\n", xml.zoom, xml.lat, ((double)xml.zoom / 10000000) * ((double)xml.zoom / 10000));
 //  cairo_surface_destroy(m_screen.canvas.surface);
   m_map->project(xml.zoom, xml.lon, xml.lat, &m_screen.canvas.surface);
   m_screen.canvas.bufferType = SURFACE_CAIRO;  
@@ -383,13 +420,11 @@ struct stateSA : Hmi
   void entry() override {
     if (!BIT (7, m_screen.functionTop->hidden))
       {
-        reset();
-        m_lastState = SA;
         m_screen = m_manager->getScreen(SA);
+        m_lastState = SA;
+        reset();
                 
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
-        m_screen.compass.visible = true;
+        if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
         m_screen.canvas.visible = true;
         if (!m_screen.canvas.surface) SET_CANVAS_PNG("test2.png");
         m_screen.functionTop->active = 0x1 << 7;
@@ -412,13 +447,11 @@ struct stateWPN : Hmi
   void entry() override {
     if (!BIT (6, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(WPN);
         m_lastState = WPN;
         reset();
-        m_screen = m_manager->getScreen(WPN);
 
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
-        m_screen.compass.visible = true;
+        if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
         m_screen.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
         m_screen.functionTop->active = 0x1 << 6;
@@ -441,11 +474,10 @@ struct stateDEF : Hmi
   void entry() override {
     if (!BIT (5, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(DEF);
         m_lastState = DEF;
         reset();
-        m_screen = m_manager->getScreen(DEF);
 
-        m_screen.control->visible = true;
         m_screen.statusBar->visible = true;
         m_screen.functionTop->active = 0x1 << 5;
       }
@@ -467,13 +499,11 @@ struct stateSYS : Hmi
   void entry() override {
     if (!BIT (4, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(SYS);
         m_lastState = SYS;
         reset();
-        m_screen = m_manager->getScreen(SYS);
 
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
-        m_screen.compass.visible = true;
+        if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
         m_screen.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
 
@@ -497,11 +527,11 @@ struct stateDRV : Hmi
   void entry() override {
     if (!BIT (3, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(DRV);
         m_lastState = DRV;
         reset();
-        m_screen = m_manager->getScreen(DRV);
 
-        m_screen.control->visible = true;
+        if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
         m_screen.statusBar->visible = true;
         m_screen.functionTop->active = 0x1 << 3;
       }
@@ -523,12 +553,10 @@ struct stateSTR : Hmi
   void entry() override {
     if (!BIT (2, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(STR);
         m_lastState = STR;
         reset();
-        m_screen = m_manager->getScreen(STR);
 
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
         m_screen.functionTop->active = 0x1 << 2;
       }
   };
@@ -549,12 +577,10 @@ struct stateCOM : Hmi
   void entry() override {
     if (!BIT (1, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(COM);
         m_lastState = COM;
         reset();
-        m_screen = m_manager->getScreen(COM);
 
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
         m_screen.functionTop->active = 0x1 << 1;
       }
   };
@@ -575,12 +601,10 @@ struct stateBMS : Hmi
   void entry() override {
     if (!BIT (0, m_screen.functionTop->hidden))
       {
+        m_screen = m_manager->getScreen(BMS);
         m_lastState = BMS;
         reset();
-        m_screen = m_manager->getScreen(BMS);
 
-        m_screen.control->visible = true;
-        m_screen.statusBar->visible = true;
         m_screen.canvas.visible = true;
 
         m_map->project(xml.zoom, xml.lon, xml.lat, &m_screen.canvas.surface);
@@ -638,8 +662,6 @@ struct stateAlarms : Hmi
       m_alarmsOn = true;
       m_screen = m_manager->getScreen(ALARMSX);
 
-      m_screen.control->visible = true;
-      m_screen.statusBar->visible = true;
       m_screen.alarms.visible = true;
       m_screen.control->active = 0x1 << 6;
     }
@@ -664,7 +686,6 @@ struct stateOn : Hmi
     
     if(!m_manager)
       m_manager = new viewGvaManager(&m_status);
-    m_labelsOn = true;
     
     // Render a map for BMS
     m_map = new rendererMap("/opt/osmscout/maps/england-latest/", 
@@ -689,20 +710,25 @@ struct stateOn : Hmi
     m_manager->getNewView(ALARMSX, &m_top, &m_bottom, (functionKeys)ALARM_KEYS_LEFT,        (functionKeys)ALARM_KEYS_RIGHT);
 
     m_screen = m_manager->getScreen(SYS);
-    m_screen.compass.visible = true;
+    m_widgets.compass.bearingSight = 33;
+    m_widgets.compass.x = 165; 
+    m_widgets.compass.y = 370;
+    
+    m_widgets.compass.visible = true;
     m_screen.canvas = m_canvas;
     m_screen.canvas.visible = true;
     m_screen.alarms = m_alarms;
     m_screen.alarms.visible = false;
+    m_screen.labels = LABEL_ALL;
     SET_CANVAS_PNG("test2.png");
     
     /* These are comon to all screens */
-    m_render = new screenGva (&m_screen, m_view.width, m_view.height);
+    m_render = new screenGva (&m_screen, &m_widgets, m_view.width, m_view.height);
 
     /*
      * Draw the inital screen and start the Real Time Clock
      */
-    m_render->update (&m_screen);
+    m_render->update ();
     m_render->startClock (&m_status);
 
     transit<stateSA>(); 
@@ -729,10 +755,10 @@ canvasType Hmi::m_canvas;
 keyboardType Hmi::m_keyboard;
 alarmsType Hmi::m_alarms;
 screenType Hmi::m_screen;
+widgetsType Hmi::m_widgets;
 screenGva* Hmi::m_render;
 rendererMap* Hmi::m_map;
 int  Hmi::m_lastState;
-bool Hmi::m_labelsOn;
 bool Hmi::m_alarmsOn = false;
 xmlData Hmi::xml;
 

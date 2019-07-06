@@ -29,14 +29,15 @@ float toDegrees(float lon) {
 
 namespace gva
 {
-  screenGva::screenGva (screenType * screen, int width, int height)
+  screenGva::screenGva (screenType * screen, widgetsType * widgets, int width, int height)
   : rendererGva (width, height)
   {
     m_screen = screen;
+    m_widgets = widgets;
     m_width = width;
     m_height = height;
     m_hndl = init (m_width, m_height);
-    update (m_screen);
+    update ();
     char tmp[100];
     struct termios settings;
 
@@ -172,7 +173,7 @@ namespace gva
   }
 
   int
-  screenGva::update (screenType * screen)
+  screenGva::update ()
   {
     char *texture = 0;
 
@@ -204,36 +205,36 @@ namespace gva
     }
 
     // Draw the LEFT bezel labels
-    if (m_screen->functionLeft.visible)
-      {
-        drawFunctionLabels (1, m_screen->functionLeft.active,
-                          m_screen->functionLeft.hidden,
-                          m_screen->functionLeft.toggleActive,
-                          m_screen->functionLeft.toggleOn,
-                          m_screen->functionLeft.labels);
-      }
+    if (m_screen->functionLeft.visible) {
+      drawFunctionLabels (1, m_screen->functionLeft.active,
+                        m_screen->functionLeft.hidden,
+                        m_screen->functionLeft.toggleActive,
+                        m_screen->functionLeft.toggleOn,
+                        m_screen->functionLeft.labels);
+    }
 
     // Draw the RIGHT bezel labels
-    if (m_screen->functionRight.visible)
-      {
-        drawFunctionLabels (m_width - 100 - 1,
-                          m_screen->functionRight.active,
-                          m_screen->functionRight.hidden,
-                          m_screen->functionRight.toggleActive,
-                          m_screen->functionRight.toggleOn,
-                          m_screen->functionRight.labels);
-      }
+    if (m_screen->functionRight.visible) {
+      drawFunctionLabels (m_width - 100 - 1,
+                        m_screen->functionRight.active,
+                        m_screen->functionRight.hidden,
+                        m_screen->functionRight.toggleActive,
+                        m_screen->functionRight.toggleOn,
+                        m_screen->functionRight.labels);
+    }
 
     // Draw the TOP bezel labels     
-    drawTopLabels (m_height - 11, m_screen->functionTop->active,
-                m_screen->functionTop->hidden);
+    if (m_screen->functionTop->visible) {
+      drawTopLabels (m_screen->statusBar->y, m_screen->functionTop->active,
+                  m_screen->functionTop->hidden);
+    }
 
     // Draw the maintinance mode indicator 
-    if (screen->info.mode == MODE_MAINTINENCE) {
+    if (m_screen->info.mode == MODE_MAINTINENCE) {
       drawMode ();
     }
     
-    if (screen->message.visible) {
+    if (m_screen->message.visible) {
       char tmp[2][MAX_TEXT];
       gvaTable table(320-150, 260, 300);
       gvaRow newrow;
@@ -241,19 +242,19 @@ namespace gva
       
       table.m_border = 2;
 
-      strcpy(tmp[0], screen->message.brief.text);
+      strcpy(tmp[0], m_screen->message.brief.text);
       newrow.addCell({tmp[0], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD }, 100);
       table.addRow(newrow);      
 
-      strcpy(tmp[1], screen->message.detail.text);
+      strcpy(tmp[1], m_screen->message.detail.text);
       newrow1.addCell({tmp[1], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
       table.addRow(newrow1);
       drawTable (&table);
     }
     
     // Draw the onscreen KEYBOARD
-    if (m_screen->keyboard.visible) {
-      drawKeyboard(m_screen->keyboard.mode);
+    if (m_widgets->keyboard.visible) {
+      drawKeyboard(m_widgets->keyboard.mode);
     }
     
     // Setup and draw the status bar, one row table
@@ -261,7 +262,7 @@ namespace gva
       int i = 0;
       // Setup and draw the status bar, one row table
       int widths[6] = { 23, 45, 8, 8, 8, 8 };
-      gvaTable table(1, 443, 639);
+      gvaTable table(1, m_screen->statusBar->y , 639);
       gvaRow newrow;
 
       for (i=0;i<6;i++) {
@@ -364,8 +365,8 @@ namespace gva
       drawTable (&table);
     }
 
-    if (m_screen->compass.visible) {
-      drawPPI (165, 370, screen->compass.bearing, screen->compass.bearingSight);
+    if (m_widgets->compass.visible) {
+      drawPPI (m_widgets->compass.x, m_widgets->compass.y, m_widgets->compass.bearing, m_widgets->compass.bearingSight);
     }
 
     if (m_screen->control->visible) {
@@ -377,7 +378,7 @@ namespace gva
     // Refersh display
     //
     draw ();
-    m_last_screen = *screen;
+    m_last_screen = *m_screen;
   }
   
   char 

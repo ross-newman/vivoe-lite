@@ -8,7 +8,8 @@ namespace gva
   }
 
   viewGva *
-  viewGvaManager::getNewView(gvaFunctionEnum function, functionSelectType *top, commonTaskKeysType *bottom, functionKeysType left, functionKeysType right) { 
+  viewGvaManager::getNewView(gvaFunctionEnum function, functionSelectType *top, 
+      commonTaskKeysType *bottom, functionKeysType left, functionKeysType right) { 
     m_view[m_idLast] = new viewGva(function, top, bottom, left, right);
     return m_view[m_idLast++];
   }

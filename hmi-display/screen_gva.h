@@ -26,6 +26,18 @@ namespace gva
     ICON_ERROR 
   };
   
+  enum labelModeEnum {
+    LABEL_ALL,
+    LABEL_STATUS_ONLY,
+    LABEL_MINIMAL
+  };
+  
+  typedef struct  {
+    bool visible;
+    int x;
+    int y;
+  } widget;
+  
   typedef struct functionSelect {
     bool visible;
     int active;
@@ -56,12 +68,16 @@ namespace gva
 
   typedef struct statusBar {
     bool visible;
+    int x;
+    int y;
     locationType location;
     char labels[6][80];
   } statusBarType;
 
   typedef struct compass {
     bool visible;
+    int x;
+    int y;
     int bearing;
     int bearingSight;
   } compassType;
@@ -125,12 +141,16 @@ namespace gva
     statusBarType *statusBar;
     functionKeysType functionLeft;
     functionKeysType functionRight;
-    compassType compass;
-    keyboardType keyboard;
     alarmsType alarms;
     labelType label;
     messageType message;
+    labelModeEnum labels;
   } screenType;
+  
+  typedef struct {
+    compassType compass;
+    keyboardType keyboard;  
+  } widgetsType;
 
   class screenGva;
 
@@ -151,14 +171,15 @@ namespace gva
   class screenGva : public rendererGva
   {
   public:
-    screenGva(screenType *screen, int width, int height);
+    screenGva(screenType *screen, widgetsType *widgets, int width, int height);
     ~screenGva();
-    int update(screenType *screen);
+    int update();
     int refresh();
     void startClock(statusBarType *barData);
   private:
     char *posDegrees(float lon, float lat);
     screenType *m_screen;
+    widgetsType *m_widgets;
     args *m_args;
     int m_gps;
     int m_hndl;

@@ -18,8 +18,8 @@ using namespace gva;
 //                              Visible    Active    Hidden
 #define COMMON_KEYS              { true, 0b0010000,  0b00010000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
 #define COMMON_FUNCTION_KEYS_TOP { true, 0b01000000, 0b0000100 }
-#define COMMON_STATUS_BAR        { true, { LOCATION_FORMAT_MGRS, 51.500655, -0.124240 }, "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:5", "C:1", "O:2" }
-#define COMPASS { true, 0, 55 }
+#define COMMON_STATUS_BAR        { true, DEFAULT_HEIGHT-11, 0, { LOCATION_FORMAT_MGRS, 51.500655, -0.124240 }, "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:5", "C:1", "O:2" }
+#define COMPASS { true, 165, 370, 0, 55 }
 //                              Visible    Active    Hidden 
 #define TEST_FUNCTION_KEYS_LEFT  { true, 0b000001, 0b011100, { "F1", "F2", "F3", "F4", "F5", "F6" } }
 #define TEST_FUNCTION_KEYS_RIGHT { true, 0b100000, 0b001111, { "F7", "F8", "F9", "F10", "F11", "F12" } }
@@ -116,10 +116,10 @@ protected:
   static keyboardType m_keyboard;
   static alarmsType m_alarms;
   static screenType m_screen;
+  static widgetsType m_widgets;
   static screenGva *m_render;
   static rendererMap *m_map;
   static int m_lastState;
-  static bool m_labelsOn;
   static bool m_alarmsOn;
 public:
   static void keySide(int key);
@@ -136,8 +136,8 @@ public:
   static xmlData xml;
   static screenGva* getRendrer() { return m_render; }
   static screenType* getScreen() { return &m_screen; }
-  static void labelsOff();
-  static void labelsOn();
+  static widgetsType* getWidgets() { return &m_widgets; }
+  static void labels(labelModeEnum labels);
 };
 
 using hmi = Hmi;

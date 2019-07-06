@@ -258,7 +258,7 @@ main (int argc, char *argv[])
               {
                 KeyFunction input;
                 input.key = KEY_F17;
-                hmi::getScreen()->keyboard.mode = (hmi::getScreen()->keyboard.mode == KEYBOARD_UPPER) ?  KEYBOARD_LOWER :  KEYBOARD_UPPER; 
+                hmi::getWidgets()->keyboard.mode = (hmi::getWidgets()->keyboard.mode == KEYBOARD_UPPER) ?  KEYBOARD_LOWER :  KEYBOARD_UPPER; 
                 hmi::dispatch(input);
               }
               break;
@@ -267,7 +267,7 @@ main (int argc, char *argv[])
               {
                 KeyFunction input;
                 input.key = KEY_F18;
-                hmi::getScreen()->keyboard.mode = (hmi::getScreen()->keyboard.mode == KEYBOARD_NUMBERS) ?  KEYBOARD_UPPER :  KEYBOARD_NUMBERS; 
+                hmi::getWidgets()->keyboard.mode = (hmi::getWidgets()->keyboard.mode == KEYBOARD_NUMBERS) ?  KEYBOARD_UPPER :  KEYBOARD_NUMBERS; 
                 hmi::dispatch(input);
               }
               break;
@@ -304,20 +304,20 @@ main (int argc, char *argv[])
             case KEY_KEYBOARD:
               // k toggle keyboard 
               {
-                hmi::getScreen()->keyboard.visible = hmi::getScreen()->keyboard.visible ? false : true;
+                hmi::getWidgets()->keyboard.visible = hmi::getWidgets()->keyboard.visible ? false : true;
               }
               break;
             case KEY_PLUS:
-              hmi::getScreen()->compass.bearing+=2;
+              hmi::getWidgets()->compass.bearing+=2;
               break;
             case KEY_GREATER:
-              hmi::getScreen()->compass.bearingSight+=2;
+              hmi::getWidgets()->compass.bearingSight+=2;
               break;
             case KEY_MINUS: 
-              hmi::getScreen()->compass.bearing-=2;
+              hmi::getWidgets()->compass.bearing-=2;
               break;
             case KEY_LESS:
-              hmi::getScreen()->compass.bearingSight-=2;
+              hmi::getWidgets()->compass.bearingSight-=2;
               break;
             default:
               printf ("[GVA] KeyPress not defined 0x%x\n", event.key);
@@ -325,7 +325,7 @@ main (int argc, char *argv[])
               break;
             }
         }
-        if (update) hmi::getRendrer()->update (hmi::getScreen());
+        if (update) hmi::getRendrer()->update ();
         break;
       case RESIZE_EVENT:
         {
@@ -336,13 +336,13 @@ main (int argc, char *argv[])
               printf ("[GVA] WindowResize: %d x %d\n", event.resize.width, event.resize.height);
               hmi::getRendrer()->setWidth (event.resize.width);
               hmi::getRendrer()->setHeight (event.resize.height);
-              hmi::getRendrer()->update (hmi::getScreen());
+              hmi::getRendrer()->update ();
             }
         }
         break;
       case REDRAW_EVENT:
         {
-          hmi::getRendrer()->update (hmi::getScreen());
+          hmi::getRendrer()->update ();
         }
         break;
     }
