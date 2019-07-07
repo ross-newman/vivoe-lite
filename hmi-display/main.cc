@@ -34,6 +34,7 @@
 #include <X11/Xatom.h> // @todo hmi_display: drop X11 infavor or GTK 
 #include "gva.h"
 #include "renderer_map.h"
+#include "gva_video_rtp_yuv.h"
 #include "events_gva.h"
 #include "hmi_gva.h"
 #include "log_gva.h"
