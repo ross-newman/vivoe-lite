@@ -45,7 +45,7 @@ ExternalProject_Add(
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
     SOURCE_SUBDIR        "../src"
-    INSTALL_COMMAND     ""
+    INSTALL_COMMAND     "make install"
     TEST_COMMAND        ""
 )
 
@@ -68,7 +68,7 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/libosmscout/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/libosmscout/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/libosmscout/build
-    INSTALL_COMMAND     ""
+    INSTALL_COMMAND     "make install"
     TEST_COMMAND        ""
 )
 endif(QUICK)

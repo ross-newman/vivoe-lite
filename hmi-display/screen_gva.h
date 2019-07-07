@@ -74,19 +74,6 @@ namespace gva
     char labels[6][80];
   } statusBarType;
 
-  typedef struct compass {
-    bool visible;
-    int x;
-    int y;
-    int bearing;
-    int bearingSight;
-  } compassType;
-
-  typedef struct keyboard {
-    bool visible;
-    keyboardModeType mode;
-  } keyboardType;
-
   typedef struct {
     bool visible;
   } alarmsType;
@@ -147,16 +134,40 @@ namespace gva
     labelModeEnum labels;
   } screenType;
   
+  //
+  // Widgets
+  //
+  typedef struct compass {
+    bool visible;
+    int x;
+    int y;
+    int bearing;
+    int bearingSight;
+  } compassType;
+
+  typedef struct keyboard {
+    bool visible;
+    keyboardModeType mode;
+  } keyboardType;
+
+  typedef struct alarmIndicator {
+    bool visible;
+    int y;
+    char text[256];
+    gvaAlarmType type;
+  } alarmIndicatorType;
+  
   typedef struct {
     compassType compass;
-    keyboardType keyboard;  
+    keyboardType keyboard;
+    alarmIndicatorType alarmIndicator;
   } widgetsType;
 
   class screenGva;
 
-  /*
-   * These are used by the clock thread to update the time and refresh the screen 
-   */
+  //
+  // These are used by the clock thread to update the time and refresh the screen 
+  //
   typedef struct arg_struct {
       char* clockString;
       char* locationString;

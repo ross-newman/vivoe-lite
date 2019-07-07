@@ -11,8 +11,7 @@
 #define MIN_HEIGHT 480
 #define MIN_WIDTH 640
 
-enum gvaFunctionEnum 
-{
+enum gvaFunctionEnum {
   SA = 0,
   WPN,
   DEF,
@@ -24,8 +23,13 @@ enum gvaFunctionEnum
   ALARMSX,
 };
 
-enum gvaFunctionGroupEnum 
-{
+enum gvaAlarmType {
+  ALARM_WARNING,
+  ALARM_CRITICAL,
+  ALARM_ALERT
+};
+
+enum gvaFunctionGroupEnum {
   TOP,
   BOTTOM,
   LEFT,

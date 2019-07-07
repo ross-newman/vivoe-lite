@@ -21,7 +21,8 @@ Hmi::reset()
   labels(m_screen.labels);
   m_screen.canvas.visible = false;
   m_screen.canvas.bufferType = SURFACE_NONE;
-//  m_screen.compass.visible = false;
+  m_widgets.compass.visible = false;
+  m_widgets.compass.x = 165;
   m_widgets.keyboard.visible = (m_widgets.keyboard.visible) ? true : false;
   m_screen.alarms.visible = false;
   m_screen.control->active = 0;
@@ -32,12 +33,16 @@ void
 Hmi::labels(labelModeEnum labels) {
   switch(labels) {
   case LABEL_ALL :
+    if ( (m_screen.currentFunction == SA) || (m_screen.currentFunction == WPN) || (m_screen.currentFunction == SYS) || (m_screen.currentFunction == DRV) )
+      m_widgets.compass.visible = true;
     m_screen.functionLeft.visible = true;
     m_screen.functionRight.visible = true;
     m_screen.control->visible = true;
     m_screen.functionTop->visible = true;
     m_screen.statusBar->visible = true;
     m_screen.statusBar->y = 443;
+    m_widgets.alarmIndicator.visible = true;
+    m_widgets.alarmIndicator.y = 422;
     break;
   case LABEL_STATUS_ONLY :
     m_screen.functionLeft.visible = false;
@@ -46,7 +51,9 @@ Hmi::labels(labelModeEnum labels) {
     m_screen.functionTop->visible = false;
     m_screen.statusBar->visible = true;
     m_screen.statusBar->y = 459;
-    m_widgets.compass.x -= 90;
+    m_widgets.alarmIndicator.visible = true;
+    m_widgets.alarmIndicator.y = 438;
+    m_widgets.compass.x = 165-90;
     break;
   case LABEL_MINIMAL :
     m_screen.functionLeft.visible = false;
@@ -54,8 +61,9 @@ Hmi::labels(labelModeEnum labels) {
     m_screen.control->visible = false;
     m_screen.functionTop->visible = false;
     m_screen.statusBar->visible = false;
+    m_widgets.alarmIndicator.visible = false;
     m_widgets.compass.visible = false;
-    m_widgets.compass.x += 90;
+    m_widgets.compass.x = 165;
     break;
   }
 };
@@ -423,6 +431,7 @@ struct stateSA : Hmi
         m_screen = m_manager->getScreen(SA);
         m_lastState = SA;
         reset();
+        m_screen.functionTop->visible = true;
                 
         if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
         m_screen.canvas.visible = true;
@@ -713,8 +722,11 @@ struct stateOn : Hmi
     m_widgets.compass.bearingSight = 33;
     m_widgets.compass.x = 165; 
     m_widgets.compass.y = 370;
-    
     m_widgets.compass.visible = true;
+    m_widgets.alarmIndicator.visible = true;
+    m_widgets.alarmIndicator.y = 422;
+    strcpy(m_widgets.alarmIndicator.text,"Engine over tempreture");
+
     m_screen.canvas = m_canvas;
     m_screen.canvas.visible = true;
     m_screen.alarms = m_alarms;

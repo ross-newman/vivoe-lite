@@ -225,7 +225,7 @@ namespace gva
 
     // Draw the TOP bezel labels     
     if (m_screen->functionTop->visible) {
-      drawTopLabels (m_screen->statusBar->y, m_screen->functionTop->active,
+      drawTopLabels (m_height-11, m_screen->functionTop->active,
                   m_screen->functionTop->hidden);
     }
 
@@ -234,6 +234,7 @@ namespace gva
       drawMode ();
     }
     
+    // Generic message box
     if (m_screen->message.visible) {
       char tmp[2][MAX_TEXT];
       gvaTable table(320-150, 260, 300);
@@ -274,10 +275,10 @@ namespace gva
     }
 
     // TODO : Draw the alarms if any (Mock up)
-    {
-      gvaTable table(102, 422, 436);
+    if (m_widgets->alarmIndicator.visible) {
+      gvaTable table(102, m_widgets->alarmIndicator.y, 436);
       gvaRow alarmrow;
-      gvaCellType cell = {"Engine over tempreture", ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
+      gvaCellType cell = {m_widgets->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
       
       table.m_border = 0;
       alarmrow.addCell(cell, 100);
