@@ -42,7 +42,7 @@ using namespace gva;
 //                              Visible    Active    Hidden
 #define COMMON_KEYS              { true, 0b0010000,  0b00010000, "Up", "Alarms", "Threats", "Ack", "↑", "↓", "Labels", "Enter" }
 #define COMMON_FUNCTION_KEYS_TOP { true, 0b01000000, 0b0000100 }
-#define COMMON_STATUS_BAR        { true, DEFAULT_HEIGHT-11, 0, { LOCATION_FORMAT_MGRS, 51.500655, -0.124240 }, "12:30:00, 03/06/2019", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:5", "C:1", "O:2" }
+#define COMMON_STATUS_BAR        { true, DEFAULT_HEIGHT-11, 0, { LOCATION_FORMAT_MGRS, 51.500655, -0.124240 }, "12:30:00, 03/06/2019", "LON/LAT", "Lat:51.500655 Lon:-0.124240    [1,3]", "W:0", "A:5", "C:1", "O:2" }
 #define COMPASS { true, 165, 370, 0, 55 }
 //                              Visible    Active    Hidden 
 #define TEST_FUNCTION_KEYS_LEFT  { true, 0b000001, 0b011100, { "F1", "F2", "F3", "F4", "F5", "F6" } }

@@ -95,7 +95,7 @@ namespace gva
     int x;
     int y;
     locationType location;
-    char labels[6][80];
+    char labels[7][80];
   } statusBarType;
 
   typedef struct {
@@ -194,6 +194,7 @@ namespace gva
   //
   typedef struct arg_struct {
       char* clockString;
+      char* locationFormat;
       char* locationString;
       screenGva* screen;
       int *gps;

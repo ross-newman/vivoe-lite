@@ -152,6 +152,7 @@ namespace gva
         switch (a->location->locationFormat) {
         case LOCATION_FORMAT_LONG_LAT:
           break;
+          sprintf(a->locationFormat, "LONLAT");
           sprintf(a->locationString, "Lat:%05.06f Lon:%05.06f [%d,%d]", a->info->lat,
                 a->info->lon, a->info->sig, a->info->fix);
         case LOCATION_FORMAT_MGRS:
@@ -162,7 +163,8 @@ namespace gva
             UTMUPS::Forward(a->info->lat, a->info->lon, zone, northp, x, y);
             string mgrs;
             MGRS::Forward(zone, northp, x, y, a->info->lat, 5, mgrs);
-            sprintf(a->locationString, "MGRS: %s", mgrs.c_str());
+            sprintf(a->locationFormat, "MGRS");
+            sprintf(a->locationString, "%s", mgrs.c_str());
           }
           break;
         }
@@ -178,7 +180,8 @@ namespace gva
     m_args = (args *) malloc (sizeof (args));
     m_args->active = true;
     m_args->clockString = barData->labels[0];
-    m_args->locationString = barData->labels[1];
+    m_args->locationFormat = barData->labels[1];
+    m_args->locationString = barData->labels[2];
     m_args->parser = &m_parser;
     m_args->info = &m_info;
     m_args->gps = &m_gps;
@@ -286,11 +289,11 @@ namespace gva
     if (m_screen->statusBar->visible) {
       int i = 0;
       // Setup and draw the status bar, one row table
-      int widths[6] = { 23, 45, 8, 8, 8, 8 };
-      gvaTable table(1, m_screen->statusBar->y , 639);
+      int widths[7] = { 23, 8, 37, 8, 8, 8, 8 };
+      gvaTable table(1, m_screen->statusBar->y , 640);
       gvaRow newrow;
 
-      for (i=0;i<6;i++) {
+      for (i=0;i<7;i++) {
         gvaCellType cell = {m_screen->statusBar->labels[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
         newrow.addCell(cell, widths[i]);
       }
