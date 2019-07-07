@@ -1,7 +1,7 @@
 # Developer Notes
 Below are a few developer notes.
 
-# SemVer
+# Version and Release numbering
 Version numbering follows the semver standard fro MAJOR, MINOR and PATCH See https://semver.org/
 
 # Coding Standard
@@ -15,13 +15,19 @@ If you find an issue or problem with the code you can raise a bug detailing the 
 
 # Notes
 ## Features under development
+Current features being worked on.
 - [x] Live GPS (USB) source support
-- [ ] Display incomming live uncompressed RTP video streams
-- [ ] Display outgoing live uncompressed RTP video streams
-- [ ] DDS control in gva-tool
+- [x] Offline maps using libosmscout
+- [ ] Route planning libosmscout
+- [ ] Display incomming live uncompressed RTP(YUV) video streams
+- [ ] Display outgoing live uncompressed RTP(YUV) video streams
+- [ ] DDS control via gva-tool
+- [ ] GVA Display emulation via gva-tool
 - [ ] XML config files need implementing
-- [ ] Alarms class needs implementing
+- [ ] Alarms class
 - [ ] Keyboard input working with touch input (mouse click)
+
+For a complete insite to current development then why not contribute and pick a task for our [Zenhub](http://zenhub.com) backlog to help out.
 
 ## Known Issues
 * Not all labels are implemented and touch (mouse click enabled)

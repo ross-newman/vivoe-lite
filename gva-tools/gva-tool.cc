@@ -22,6 +22,7 @@
 // SOFTWARE.
 // 
 
+//
 // @file gva_tool.c
 // @author ross.e.newman@lmco.com
 // @date 02 May 2019
@@ -42,12 +43,13 @@
 #include <ctype.h>
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
+#include "gva-display.h"
 
-/** Default device name if not supplied on the command line */
+// Default device name if not supplied on the command line 
 #define DEFAULT_GPS_DEVICE_NAME "/dev/ttyUSB0"
-/** Console configuration file */
+// Console configuration file 
 #define XML_FILENAME "config.xml"
-/** Console application description */
+// Console application description 
 #define APP_DESCRIPTION "gva-tool"
 
 enum {
@@ -368,6 +370,11 @@ winMessageBox(nmessage str)
     winPopup(str, MESSAGE_INFO);
 }
 
+//
+// This function will display important information about the qva-tool setup
+// @todo gva-tools : Take add parameters to configuration 
+// @body Add parameters to and .xml file for more flexability
+//
 void
 gvaInfo()
 {
@@ -532,8 +539,8 @@ winHelp()
   width = COLS;
   starty = 0;
   startx = 0;
-  wattron(help_win, COLOR_PAIR(1));
   help_win = winCreate(height, width, starty, startx);
+  wattron(help_win, COLOR_PAIR(1));
   mvwprintw(help_win, 0, 3, "GVA Tool (Help)");
   wattron(help_win, COLOR_PAIR(3));    
   mvwprintw(help_win, 3, 5, " _____ _____ _____    _____         _ ");
@@ -544,16 +551,23 @@ winHelp()
   mvwprintw(help_win, 5, 44, "h - Help");
   mvwprintw(help_win, 6, 44, "Press 'q' to quit application.");
   mvwprintw(help_win, 10, 3, "Use these keys to switch to different helper screens:");
-  mvwprintw(help_win, 11, 3, "  b - Bezel key inputs     a - Alarm generator");
-  mvwprintw(help_win, 12, 3, "  g - GPS generation       ");
-
+  mvwprintw(help_win, 11, 3, "  a - Alarm generator     g - GPS generation");
+  mvwprintw(help_win, 12, 3, "  b - Bezel key inputs");
+  mvwprintw(help_win, 13, 3, "  d - Display Emulator");
   while (!done) {
     int key=0;
     int c = wgetch(help_win);
 
     switch (c) {
     case 'b':
+    case 'B':
         winBezel(gva_keys, 0);
+	      // @todo gva-tools : Add DDS topics and .idl to support sending of HMI inputs
+        // @body Need to create touch, keyboard and bezel inputs as a topic.
+        break;
+    case 'd':
+    case 'D':
+        gvaDisplay ();
         break;
     case 'q':
     case 'Q':
@@ -618,12 +632,14 @@ gvaOptions(int argc, char **argv)
         switch (c) {
         case 'h':
             printf
-                ("Options:\n\t-h = help\n\t-d = device (default '/dev/ttyUSB0')\n\t-n = no splash\n\t-f = configuration file\n\t-x = User Vector channel numbers\n\t-v = version\n\n");
+                ("Options:\n\t-h = help\n\t-d = device (default '/dev/ttyUSB0')\n\t-n = no splash\n\t-f = configuration file\n\t-v = version\n\n");
             return -1;
         case 'v':
             printf("Version %d.%d.%d\n\n", 0, 0, 1);
             return -1;
         case 'd':
+	    // @todo gva-tools : Add support for USB GPS devices in gva-tool.
+	    // @body GPC long/lat will be transmitted to GUI over DDS
             strcpy(xml.device, optarg); /* Overload the xml name */
             break;
         case 'n':
@@ -730,11 +746,10 @@ main(int argc, char **argv)
         winSplash();
     }
 #endif
-
 //    wtimeout(root_win, 1);
     noecho();
     cbreak();	//Line buffering disabled. pass on everything
-      
+
     winHelp();
 
     gvaLog("GVA finalized.", LOG_INFO);

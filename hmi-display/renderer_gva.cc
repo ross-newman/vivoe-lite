@@ -1,4 +1,3 @@
-// 
 // MIT License
 // 
 // Copyright (c) 2019 Ross Newman (ross@rossnewman.com)
@@ -22,6 +21,11 @@
 // SOFTWARE.
 // 
 
+// @file renderer_gva.cc
+// @author ross@rossnewman.com
+// @date 04 July 2019
+// @brief Rendering functions for all the complex widgets needed by the HMI. Widgets are reusable components of the HMI.
+//
 #include <math.h>               /* sqrt */
 #include "debug.h"
 #include "renderer_gva.h"
@@ -378,6 +382,7 @@ rendererGva::drawKeyboard (keyboardModeType mode)
   int fontSize = 14;
   char keyText[5];
   char keyboard[3][10];
+
   setColourForground (MEDIUM_GREY);
   setColourBackground (MEDIUM_GREY);
   setLineThickness (3, LINE_SOLID);
@@ -425,23 +430,11 @@ rendererGva::drawKeyboard (keyboardModeType mode)
                             yLocation + padding + (bSize + 5) * 1, bSize);
     }
 
-  /*
-   * Space Bar and Mode
-   */
+  //
+  // Space Bar and Mode
+  //
   drawButton ("123", fontSize, 144, yLocation + 5, bSize + 5, bSize, ALIGN_RIGHT);
   drawButton ("SPACE", fontSize, 185, yLocation + 5, bSize + 202, bSize, ALIGN_CENTRE);
   drawButton ("^", fontSize, 426, yLocation + 5, bSize, bSize, ALIGN_RIGHT);
   drawButton ("Mode", fontSize, 463, yLocation + 20, 50, 50, ALIGN_RIGHT);
-#if 0
-  drawRoundedRectangle (144, yLocation + 5, bSize + 5, bSize, 6, true);
-  drawRoundedRectangle (185, yLocation + 5, bSize + 202, bSize, 6,
-                        true);
-  drawRoundedRectangle (426, yLocation + 5, bSize, bSize, 6, true);
-  drawRoundedRectangle (463, yLocation + 20, 50, 50, 6, true);
-  setColourForground (WHITE);
-  drawText (142 + 8, yLocation + 5 + 15, "123", fontSize);
-  drawText (270, yLocation + 5 + 15, "SPACE", fontSize);
-  drawText (426 + 8, yLocation + 5 + 15, "^", fontSize);
-  drawText (463 + 8, yLocation + 50, "Mode", fontSize);
-#endif
 }

@@ -3,14 +3,16 @@
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2927/badge)](https://bestpractices.coreinfrastructure.org/projects/2927)
 [![codecov](https://codecov.io/gh/ross-newman/vivoe-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/ross-newman/vivoe-lite)
-![Version](https://img.shields.io/badge/version-0.1.384-red.svg)
+![Version](https://img.shields.io/badge/version-0.1.321-red.svg)
+[![ZenHub](https://img.shields.io/badge/plan-ZenHub-%2349569D.svg)](https://www.zenhub.com/)
+[![Support](https://img.shields.io/badge/communitybridge-donate-ff69b4.svg)](https://funding.communitybridge.org/projects/vivoe-lite)
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-
 ```
 # HMI
-The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
+The project includes an referance implementation of a GVA like Human Machine Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with different video overlay options for sensing, monitoring and detection of systems events.
 
 ![GVA HMI](images/GVA-HMI-Cairo.png)
 
@@ -76,6 +78,8 @@ Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NME
 # Offline Maps
 If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. OpenStreetMap database is required plus some additional processing prior to use. An regularly updated collection of global maps can be downloaded from [Geofabrik](https://download.geofabrik.de/). Entire world comes in at 77Gb before processing.
 
+![GVA Dataflow](images/Screenshot-OSMScout-Map.png)
+
 You can render maps using servers provided by [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) using my [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) for processing the data and depositing the results on to a Google Drive account. 
 
 Tutorial [documentation for libosmscout](http://libosmscout.sourceforge.net/tutorials/importing/) contains a full description on how to prepare the maps database.
@@ -91,7 +95,32 @@ See configuration setup in [CONFIG.md](docs/CONFIG.md)
 # AI and ML Pipelines
 See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 
-## DEF STAN 00-83 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
+# Standards and Referances
+## Land Open Systems Architecture (LOSA), Generic Vehicle Architecture (GVA)
+### DEF STAN 23-09 Generic Veichcal Architecture
+This defence standard is currently split into the parts below:
+
+* Generic Vehicle Architecture (GVA) Part 0 : - GVA Approach
+* Generic Vehicle Architecture (GVA) Part 1 : Infrastructure (Data and Power)
+* **Generic Vehicle Architecture (GVA) Part 2 : Human Machine Interface**
+* Generic Vehicle Architecture (GVA) Part 3 : Health and Usage Monitoring
+* Generic Vehicle Architecture (GVA) Part 4 : Physical Interfaces (withdrawn)
+* Generic Vehicle Architecture (GVA) Part 5 : GVA Data Model
+* Generic Vehicle Architecture (GVA) Part 6 : Security (TBD)
+* Generic Vehicle Architecture (GVA) Part 7 : Common Services (TBD)
+* Generic Vehicle Architecture (GVA) Part 8 : Safety (TBD)
+
+![GVA HMI](images/GVA_HMI.png)<br>
+**Example of the Battle Management System (BMS) screen**
+
+### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
+NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
+
+### DEF(AUST)11316 AS GVA
+Email asgva.office@defence.gov.au requesting access to the DEF(AUST) and AS GVA GovDex community
+
+## Video
+### DEF STAN 00-083 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
 For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
 for Video Over Ethernet Part 1: Standards and Protocols, Issue 2. Specifically Appendix B2 YCbCr 4:2:2 Encoded Uncompressed Video.
 
@@ -103,20 +132,17 @@ Defence Standard 00-083 is currently split into the parts below.
 
 This standard is also mandated in the NATO version of GVA (NGVA). 
 
-## STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
-NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
-
-## STANAG 4697 - Platform Extended Video Standard (PLEVID)
+### STANAG 4697 - Platform Extended Video Standard (PLEVID)
 AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
 
 # Rendering
 The HMI uses Cairo for rendering the GUI components.
 
-![GVA HMI](images/GVA_HMI.png)
-
 **GVA HMI Example layout**
 
 # Links
+* http://landopensystems.mod.uk/ UK MoD LOSA
+* https://www.natogva.org/ NATO GVA
 * https://www.vetronics.org/
 * https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture
 * https://www.cairographics.org/

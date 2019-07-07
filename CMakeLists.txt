@@ -11,8 +11,6 @@ if(ENABLE_COVERAGE)
 endif()
 
 execute_process(COMMAND ../update.sh)
-option(THIRDPARTY "Turn no third party modules" ON)
-set(THIRDPARTY ON CACHE BOOL "enable X functionality")
 add_subdirectory(dds)
 add_subdirectory(video)
 add_subdirectory(hmi-display)
@@ -24,9 +22,16 @@ file(COPY images/test2.png images/map.png
 
 include(ExternalProject)
 
-option(HMI_ONLY "only build HMI and Tools" ON)
+option(HMI_ONLY "only build HMI and Tools" OFF)
 
-if (!HMI_ONLY)
+if (HMI_ONLY)
+# Dummy the targets our for quicker build
+add_custom_target(Fast_RTPS)
+add_custom_target(libosmscout)
+add_custom_target(libnmea)
+add_custom_target(rtp_payloader)
+else (HMI_ONLY)
+
 # ------------------------------------------------------------------------------
 # Fast-RTPS
 # ------------------------------------------------------------------------------
@@ -36,7 +41,7 @@ set(BUILD_DOCUMENTATION OFF CACHE BOOL "Disable build documentation")
 ExternalProject_Add(
     Fast_RTPS
     GIT_REPOSITORY      https://github.com/eProsima/Fast-RTPS
-    GIT_TAG             v1.8.0
+    GIT_TAG             v1.8.1
     GIT_SHALLOW         5
     GIT_CONFIG          fetch.recurseSubmodules=true
     CMAKE_ARGS          "-DTHIRDPARTY=ON -DCMAKE_BUILD_TYPE=Release"
@@ -46,7 +51,7 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
-    SOURCE_SUBDIR       "../src"
+    SOURCE_SUBDIR        "../src"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
     UPDATE_DISCONNECTED 1
@@ -71,8 +76,9 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/libosmscout/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/libosmscout/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/libosmscout/build
-    CONFIGURE_COMMAND   cmake ../src -DCMAKE_BUILD_TYPE=Release -DOSMSCOUT_BUILD_DOC_API=OFF -DOSMSCOUT_BUILD_TESTS=OFF -D=OSMSCOUT_BUILD_TOOL_OSMSCOUT2=ON -DOSMSCOUT_BUILD_GPX=ON -DOSMSCOUT_BUILD_MAP_AGG=OFF -DOSMSCOUT_BUILD_MAP_SVG=OFF -DOSMSCOUT_BUILD_MAP_OPENGL=OFF -DOSMSCOUT_BUILD_MAP_QT=ON -D=OSMSCOUT_BUILD_CLIENT_QT=ON -DOSMSCOUT_BUILD_MAP_SVG=OFF -DOSMSCOUT_BUILD_WEBPAGE=OFF
-    BUILD_COMMAND       make
+#    CONFIGURE_COMMAND   cmake ../src -DOSMSCOUT_BUILD_DOC_API=OFF -DOSMSCOUT_BUILD_TESTS=ON -D=OSMSCOUT_BUILD_TOOL_OSMSCOUT2=ON -DOSMSCOUT_BUILD_GPX=ON -DOSMSCOUT_BUILD_MAP_AGG=OFF -DOSMSCOUT_BUILD_MAP_SVG=OFF -DOSMSCOUT_BUILD_MAP_OPENGL=OFF -DOSMSCOUT_BUILD_MAP_QT=ON -D=OSMSCOUT_BUILD_CLIENT_QT=ON -DOSMSCOUT_BUILD_MAP_SVG=OFF -DOSMSCOUT_BUILD_WEBPAGE=OFF
+    CONFIGURE_COMMAND   cmake ../src 
+    BUILD_COMMAND       ${MAKE}
     SOURCE_SUBDIR       "../src"
     INSTALL_COMMAND     ""
     TEST_COMMAND        ""
@@ -95,10 +101,10 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/protobuf/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/protobuf/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/protobuf/src
-    CONFIGURE_COMMAND   "./autogen.sh"
-    BUILD_COMMAND       "./configure"
+    CONFIGURE_COMMAND   "./autogen.sh" COMMAND "./configure"
+    BUILD_COMMAND       ${MAKE}
     SOURCE_SUBDIR       ""
-    INSTALL_COMMAND     "make"
+    INSTALL_COMMAND     ""
     UPDATE_DISCONNECTED 1
 )
 
@@ -162,14 +168,7 @@ ExternalProject_Add(
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/catch/build
     UPDATE_DISCONNECTED 1
 )
-else (!HMI_ONLY)
-# Dummy the targets our for quicker build
-add_custom_target(Fast_RTPS)
-add_custom_target(libosmscout)
-add_custom_target(libnmea)
-add_custom_target(rtp_payloader)
-
-endif (!HMI_ONLY)
+endif (HMI_ONLY)
 
 option(BUILD_TESTS "Build the tests" OFF)
 
@@ -207,7 +206,13 @@ add_dependencies(business_logic libnmea hmi-video rtp_payloader libosmscout)
 pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(PANGO REQUIRED pango)
 pkg_check_modules(SWSCALE REQUIRED libswscale)
-link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src external/libosmscout/build/libosmscout external/libosmscout/build/libosmscout-map external/libosmscout/build/libosmscout-map-cairo)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/src/libosmscout/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/src/libosmscout-map/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/src/libosmscout-map-cairo/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map/include)
+include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map-cairo/include)
+link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src ${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout ${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map ${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map-cairo)
 target_link_libraries(business_logic ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib osmscout osmscout_map osmscout_map_cairo)
 target_compile_definitions(business_logic PRIVATE VIRTUAL=virtual MAIN=unittest_main)
 target_include_directories(business_logic PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} catch nmealib rtp-payloader video hmi-display hmi-display/common )

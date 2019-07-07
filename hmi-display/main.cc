@@ -22,16 +22,16 @@
 // SOFTWARE.
 // 
 
-//
-// @file main.c
+// @file main.cc
 // @author ross@rossnewman.com
-// @date 04 June 2019
+// @date 04 July 2019
 // @brief The example HMI application.
 //
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <X11/Xatom.h>
+//#include <X11/Xlib.h>
+#include <X11/Xatom.h> // @todo hmi_display: drop X11 infavor or GTK 
 #include "gva.h"
 #include "renderer_map.h"
 #include "events_gva.h"
@@ -125,7 +125,8 @@ main (int argc, char *argv[])
   
   //
   // Setup video sources (default size will be 640 x 480 unless specified)
-  //
+  // @todo hmi_display: Fix issue with stream blocking execution on RTP input
+  // @body The RTP stream blocks for a whole frame slowing down the HMI. 
   gvaVideoRtpYuv *rtpStream1 = new gvaVideoRtpYuv(ipaddr, port);
   cout << "Resolution " << rtpStream1->getHeight() << "x" << rtpStream1->getWidth() << "\n";
   rtpBuffer = (char*)malloc(rtpStream1->getHeight() * rtpStream1->getWidth() * 4); 
@@ -141,6 +142,8 @@ main (int argc, char *argv[])
       if (hmi::getScreen()->currentFunction == DRV) {
         rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
         io.flush();
+      // @todo hmi_display: Add RTP HMI streaming output to display.
+      // @body The HMI window is only a preview. Add RTP output and headless mode.
       }
     }
     
@@ -313,6 +316,7 @@ main (int argc, char *argv[])
               break;
             case KEY_FULLSCREEN:
               // f toggle fullscreen TODO: Does not work 
+              // @todo hmi_display: Add support for full screen (GTK)
 #if 0
               {
                 Atom wm_state = XInternAtom (d, "_NET_WM_STATE", true);
