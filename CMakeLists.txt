@@ -14,39 +14,42 @@ execute_process(COMMAND ../update.sh)
 option(THIRDPARTY "Turn no third party modules" ON)
 set(THIRDPARTY ON CACHE BOOL "enable X functionality")
 add_subdirectory(dds)
+add_subdirectory(video)
 add_subdirectory(hmi-display)
 add_subdirectory(gva-tools)
 configure_file(gva-tools/config.xml ${CMAKE_CURRENT_BINARY_DIR}/build/gva-tools/. COPYONLY)
-add_subdirectory(video)
 
 file(COPY images/test2.png images/map.png
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME})
 
 include(ExternalProject)
+
+option(HMI_ONLY "only build HMI and Tools" ON)
+
+if (!HMI_ONLY)
 # ------------------------------------------------------------------------------
 # Fast-RTPS
 # ------------------------------------------------------------------------------
-option(QUICK "Skip libosmscout as its installed" OFF)
-if(!QUICK)
-message(STATUS "SUBPROJECT_NAME = FAST_RTPS")
+message(STATUS "SUBPROJECT_NAME = fastrtps")
 set(BUILD_DOCUMENTATION OFF CACHE BOOL "Disable build documentation")
 
 ExternalProject_Add(
     Fast_RTPS
     GIT_REPOSITORY      https://github.com/eProsima/Fast-RTPS
-    GIT_TAG             #6a6f79c
+    GIT_TAG             v1.8.0
     GIT_SHALLOW         5
     GIT_CONFIG          fetch.recurseSubmodules=true
-    CMAKE_ARGS          "-DTHIRDPARTY=ON"
+    CMAKE_ARGS          "-DTHIRDPARTY=ON -DCMAKE_BUILD_TYPE=Release"
     PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS/tmp
     STAMP_DIR           ${CMAKE_BINARY_DIR}/external/Fast-RTPS/stamp
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/Fast-RTPS/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/Fast-RTPS/build
-    SOURCE_SUBDIR        "../src"
-    INSTALL_COMMAND     "make install"
+    SOURCE_SUBDIR       "../src"
+    INSTALL_COMMAND     ""
     TEST_COMMAND        ""
+    UPDATE_DISCONNECTED 1
 )
 
 # ------------------------------------------------------------------------------
@@ -59,19 +62,45 @@ list(APPEND CMAKE_MODULE_PATH ../libosmscout/cmake)
 ExternalProject_Add(
     libosmscout
     GIT_REPOSITORY      https://github.com/Framstag/libosmscout
-    GIT_TAG             #43c67e9
+    GIT_TAG             1.1.0
     GIT_SHALLOW         1
-    CMAKE_ARGS          ""
+    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=Release -DOSMSCOUT_BUILD_DOC_API=Off -DOSMSCOUT_BUILD_TESTS=Off -DOSMSCOUT_BUILD_GPX=Off -DOSMSCOUT_BUILD_MAP_AGG=Off -DOSMSCOUT_BUILD_MAP_SVG=Off -DOSMSCOUT_BUILD_MAP_OPENGL=Off -DOSMSCOUT_BUILD_MAP_QT=Off -D=OSMSCOUT_BUILD_CLIENT_QT=Off -DOSMSCOUT_BUILD_MAP_SVG=Off -DOSMSCOUT_BUILD_WEBPAGE=Off"
     PREFIX              ${CMAKE_BINARY_DIR}/external/libosmscout/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/libosmscout/tmp
     STAMP_DIR           ${CMAKE_BINARY_DIR}/external/libosmscout/stamp
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/libosmscout/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/libosmscout/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/libosmscout/build
-    INSTALL_COMMAND     "make install"
+    CONFIGURE_COMMAND   cmake ../src -DCMAKE_BUILD_TYPE=Release -DOSMSCOUT_BUILD_DOC_API=OFF -DOSMSCOUT_BUILD_TESTS=OFF -D=OSMSCOUT_BUILD_TOOL_OSMSCOUT2=ON -DOSMSCOUT_BUILD_GPX=ON -DOSMSCOUT_BUILD_MAP_AGG=OFF -DOSMSCOUT_BUILD_MAP_SVG=OFF -DOSMSCOUT_BUILD_MAP_OPENGL=OFF -DOSMSCOUT_BUILD_MAP_QT=ON -D=OSMSCOUT_BUILD_CLIENT_QT=ON -DOSMSCOUT_BUILD_MAP_SVG=OFF -DOSMSCOUT_BUILD_WEBPAGE=OFF
+    BUILD_COMMAND       make
+    SOURCE_SUBDIR       "../src"
+    INSTALL_COMMAND     ""
     TEST_COMMAND        ""
+    UPDATE_DISCONNECTED 1
 )
-endif(QUICK)
+
+# ------------------------------------------------------------------------------
+# protobuf
+# ------------------------------------------------------------------------------
+message(STATUS "SUBPROJECT_NAME = protobuf")
+ExternalProject_Add(
+    protobuf
+    GIT_REPOSITORY      https://github.com/protocolbuffers/protobuf
+    GIT_TAG             v3.8.0
+    GIT_SHALLOW         1
+    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=Release"
+    PREFIX              ${CMAKE_BINARY_DIR}/external/protobuf/prefix
+    TMP_DIR             ${CMAKE_BINARY_DIR}/external/protobuf/tmp
+    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/protobuf/stamp
+    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/protobuf/download
+    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/protobuf/src
+    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/protobuf/src
+    CONFIGURE_COMMAND   "./autogen.sh"
+    BUILD_COMMAND       "./configure"
+    SOURCE_SUBDIR       ""
+    INSTALL_COMMAND     "make"
+    UPDATE_DISCONNECTED 1
+)
 
 # ------------------------------------------------------------------------------
 # rtp-payloader
@@ -89,6 +118,7 @@ ExternalProject_Add(
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/rtp-payloader/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/rtp-payloader/build
     INSTALL_COMMAND     ""
+    UPDATE_DISCONNECTED 1
 )
 
 # ------------------------------------------------------------------------------
@@ -107,6 +137,7 @@ ExternalProject_Add(
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/libnmea/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/libnmea/build
     INSTALL_COMMAND     ""
+    UPDATE_DISCONNECTED 1
 )
 
 # ------------------------------------------------------------------------------
@@ -129,7 +160,16 @@ ExternalProject_Add(
     DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/catch/download
     SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/catch/src
     BINARY_DIR          ${CMAKE_BINARY_DIR}/external/catch/build
+    UPDATE_DISCONNECTED 1
 )
+else (!HMI_ONLY)
+# Dummy the targets our for quicker build
+add_custom_target(Fast_RTPS)
+add_custom_target(libosmscout)
+add_custom_target(libnmea)
+add_custom_target(rtp_payloader)
+
+endif (!HMI_ONLY)
 
 option(BUILD_TESTS "Build the tests" OFF)
 
