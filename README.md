@@ -35,6 +35,7 @@ The following keys can be used to interact with the display:
 * < Rotate Sight anti-clockwise
 * [1-8] Function SA,WPN...
 * ESC Quit
+* L Toggle labels
 * A Alarms
 * K Keyboard
   * CAPS-LOCK toggle upper case
