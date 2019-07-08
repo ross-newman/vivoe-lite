@@ -5,7 +5,7 @@
 **SYS Screen**
 
 ![BMS Screen](Screenshot-OSMScout-Map.png)<br>
-**BMS Screen (offline maps rendered with OSMScout)**
+**BMS Screen (offline maps © OpenStreetMap contributor rendered with OSMScout)**
 
 ![Alarms Screen](Screenshot-Alarms.png)<br>
 **Alarms Screen**
