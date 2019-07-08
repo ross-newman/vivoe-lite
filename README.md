@@ -135,6 +135,12 @@ This standard is also mandated in the NATO version of GVA (NGVA).
 ### STANAG 4697 - Platform Extended Video Standard (PLEVID)
 AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
 
+### RFC
+* [RFC 4175](https://tools.ietf.org/html/rfc4175) RTP Payload Format for Uncompressed Video
+* [RFC 4566](https://tools.ietf.org/html/rfc4566) SDP: Session Description Protocol
+* [RFC 4856](https://tools.ietf.org/html/rfc4856) Media Type Registration of Payload Formats in the RTP Profile for Audio and Video Conferences
+* [RFC 6340](https://tools.ietf.org/html/rfc6340) Textual Conventions for the Representation of Floating-Point Numbers
+
 # Rendering
 The HMI uses Cairo for rendering the GUI components.
 
