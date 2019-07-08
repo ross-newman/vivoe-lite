@@ -133,7 +133,7 @@ Defence Standard 00-083 is currently split into the parts below.
 This standard is also mandated in the NATO version of GVA (NGVA). 
 
 ### STANAG 4697 - Platform Extended Video Standard (PLEVID)
-AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
+AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for [GigE Vision](https://www.visiononline.org/vision-standards-details.cfm?type=5).
 
 ### RFC
 * [RFC 4175](https://tools.ietf.org/html/rfc4175) RTP Payload Format for Uncompressed Video
@@ -156,3 +156,4 @@ The HMI uses Cairo for rendering the GUI components.
 * https://download.geofabrik.de/
 * https://geographiclib.sourceforge.io/
 * https://index.ros.org/doc/ros2/
+* https://www.visiononline.org/vision-standards-details.cfm?type=5
