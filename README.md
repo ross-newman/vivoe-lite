@@ -110,6 +110,9 @@ This defence standard is currently split into the parts below:
 * Generic Vehicle Architecture (GVA) Part 7 : Common Services (TBD)
 * Generic Vehicle Architecture (GVA) Part 8 : Safety (TBD)
 
+The HMI uses Cairo for rendering the GUI components.
+
+##### Rendering
 ![GVA HMI](images/GVA_HMI.png)<br>
 **Example of the Battle Management System (BMS) screen**
 
@@ -140,9 +143,6 @@ AIM The aim of this NATO standardization agreement (STANAG) is to respond to the
 * [RFC 4566](https://tools.ietf.org/html/rfc4566) SDP: Session Description Protocol
 * [RFC 4856](https://tools.ietf.org/html/rfc4856) Media Type Registration of Payload Formats in the RTP Profile for Audio and Video Conferences
 * [RFC 6340](https://tools.ietf.org/html/rfc6340) Textual Conventions for the Representation of Floating-Point Numbers
-
-# Rendering
-The HMI uses Cairo for rendering the GUI components.
 
 **GVA HMI Example layout**
 
