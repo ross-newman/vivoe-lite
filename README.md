@@ -145,8 +145,6 @@ AIM The aim of this NATO standardization agreement (STANAG) is to respond to the
 * [RFC 4856](https://tools.ietf.org/html/rfc4856) Media Type Registration of Payload Formats in the RTP Profile for Audio and Video Conferences
 * [RFC 6340](https://tools.ietf.org/html/rfc6340) Textual Conventions for the Representation of Floating-Point Numbers
 
-**GVA HMI Example layout**
-
 # Links
 * http://landopensystems.mod.uk/ UK MoD LOSA
 * https://www.natogva.org/ NATO GVA
