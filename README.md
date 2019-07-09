@@ -35,6 +35,7 @@ The following keys can be used to interact with the display:
 * < Rotate Sight anti-clockwise
 * [1-8] Function SA,WPN...
 * ESC Quit
+* L Toggle labels
 * A Alarms
 * K Keyboard
   * CAPS-LOCK toggle upper case
@@ -78,7 +79,8 @@ Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NME
 # Offline Maps
 If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. OpenStreetMap database is required plus some additional processing prior to use. An regularly updated collection of global maps can be downloaded from [Geofabrik](https://download.geofabrik.de/). Entire world comes in at 77Gb before processing.
 
-![GVA Dataflow](images/Screenshot-OSMScout-Map.png)
+![GVA Dataflow](images/Screenshot-OSMScout-Map.png)<br>
+**Example of the Battle Management System (BMS) screen**
 
 You can render maps using servers provided by [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) using my [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) for processing the data and depositing the results on to a Google Drive account. 
 
@@ -110,8 +112,11 @@ This defence standard is currently split into the parts below:
 * Generic Vehicle Architecture (GVA) Part 7 : Common Services (TBD)
 * Generic Vehicle Architecture (GVA) Part 8 : Safety (TBD)
 
+The HMI uses Cairo for rendering the GUI components.
+
+##### Rendering
 ![GVA HMI](images/GVA_HMI.png)<br>
-**Example of the Battle Management System (BMS) screen**
+Basic HMI layout as illustrated in the GVA standard.
 
 ### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
 NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
@@ -133,12 +138,13 @@ Defence Standard 00-083 is currently split into the parts below.
 This standard is also mandated in the NATO version of GVA (NGVA). 
 
 ### STANAG 4697 - Platform Extended Video Standard (PLEVID)
-AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
+AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for [GigE Vision](https://www.visiononline.org/vision-standards-details.cfm?type=5).
 
-# Rendering
-The HMI uses Cairo for rendering the GUI components.
-
-**GVA HMI Example layout**
+### RFC
+* [RFC 4175](https://tools.ietf.org/html/rfc4175) RTP Payload Format for Uncompressed Video
+* [RFC 4566](https://tools.ietf.org/html/rfc4566) SDP: Session Description Protocol
+* [RFC 4856](https://tools.ietf.org/html/rfc4856) Media Type Registration of Payload Formats in the RTP Profile for Audio and Video Conferences
+* [RFC 6340](https://tools.ietf.org/html/rfc6340) Textual Conventions for the Representation of Floating-Point Numbers
 
 # Links
 * http://landopensystems.mod.uk/ UK MoD LOSA
@@ -150,3 +156,4 @@ The HMI uses Cairo for rendering the GUI components.
 * https://download.geofabrik.de/
 * https://geographiclib.sourceforge.io/
 * https://index.ros.org/doc/ros2/
+* https://www.visiononline.org/vision-standards-details.cfm?type=5
