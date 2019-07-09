@@ -79,7 +79,8 @@ Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NME
 # Offline Maps
 If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. OpenStreetMap database is required plus some additional processing prior to use. An regularly updated collection of global maps can be downloaded from [Geofabrik](https://download.geofabrik.de/). Entire world comes in at 77Gb before processing.
 
-![GVA Dataflow](images/Screenshot-OSMScout-Map.png)
+![GVA Dataflow](images/Screenshot-OSMScout-Map.png)<br>
+**Example of the Battle Management System (BMS) screen**
 
 You can render maps using servers provided by [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) using my [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) for processing the data and depositing the results on to a Google Drive account. 
 
@@ -115,7 +116,7 @@ The HMI uses Cairo for rendering the GUI components.
 
 ##### Rendering
 ![GVA HMI](images/GVA_HMI.png)<br>
-**Example of the Battle Management System (BMS) screen**
+Basic HMI layout as illustrated in the GVA standard.
 
 ### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
 NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
