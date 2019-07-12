@@ -56,7 +56,7 @@ link_directories(${CMAKE_BINARY_DIR}/external/rtp-payloader/build)
 link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src)
 target_link_libraries(hmi-display X11 png pthread hmi-video rtp-payloader nmealib dds)
 target_link_libraries(hmi-display ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} ${GTK3_LIBRARIES})
-target_include_directories(hmi-display PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} common dds dds/location display)
+target_include_directories(hmi-display PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS} common dds dds/location display)
 target_compile_options(hmi-display PUBLIC ${CAIRO_CFLAGS_OTHER})
 install(TARGETS hmi-display DESTINATION bin)
 

@@ -35,10 +35,11 @@
 #include <gtk/gtk.h>
 typedef struct  { 
   GtkApplication * app; 
-  GtkWidget * win; 
+  GtkWidget * win;
   GtkWidget * draw; 
+  int height;
+  int width;
 } gtkType; 
-
 
 #define MAX_COMMANDS 1000
 #define MAX_IMAGES 100
@@ -156,8 +157,6 @@ public:
   int textureRGB (int x, int y, void *buffer, char *file);
   int textureRGB (int x, int y, void *buffer);
   int textureRGB (int x, int y, cairo_surface_t *surface);
-  void scale (float x);
-  void present ();
   
   // Cairo specific functions
   void draw ();
@@ -171,10 +170,10 @@ public:
   int getHeight() { return render_.win.height; }
   int getWidth() { return render_.win.width; }
 #else
-  void setHeight(int height) { height_ = height; gtk_widget_set_size_request(render_.win.win, (gint)width_, (gint)height_); }
-  void setWidth(int width) { width_ = width; gtk_widget_set_size_request(render_.win.win, (gint)width_, (gint)height_); }
-  int getHeight() { gint h,w; gtk_widget_get_size_request(render_.win.win, &w, &h); return (int)w; }
-  int getWidth() { gint h,w; gtk_widget_get_size_request(render_.win.win, &w, &h); return (int)h; }
+  void setHeight(int height) { height_ = height; gtk_widget_set_size_request(render_.win.draw, (gint)width_, (gint)height_); }
+  void setWidth(int width) { width_ = width; gtk_widget_set_size_request(render_.win.draw, (gint)width_, (gint)height_); }
+  int getHeight() { gint h,w; gtk_widget_get_size_request(render_.win.draw, &w, &h); return (int)w; }
+  int getWidth() { gint h,w; gtk_widget_get_size_request(render_.win.draw, &w, &h); return (int)h; }
 #endif
 private:
   unsigned char* texture_;

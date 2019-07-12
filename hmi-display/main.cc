@@ -120,7 +120,9 @@ Update(void * arg) {
           {
           case KEY_ESC:
             // exit on ESC key press 
-            gtk_main_quit ();
+            if (render_.surface)
+              cairo_surface_destroy (render_.surface);
+            g_application_quit(G_APPLICATION (render_.win.win));
             break;
           case KEY_SA:
             // 1 maps to F1 
@@ -283,17 +285,8 @@ Update(void * arg) {
           case KEY_FULLSCREEN:
             // f toggle fullscreen TODO: Does not work 
             // @todo hmi_display: Add support for full screen (GTK)
-#if 0
-            {
-              Atom wm_state = XInternAtom (d, "_NET_WM_STATE", true);
-              Atom wm_fullscreen =
-                XInternAtom (d, "_NET_WM_STATE_FULLSCREEN", true);
-
-              XChangeProperty (d, *w, wm_state, XA_ATOM, 32,
-                               PropModeReplace,
-                               (unsigned char *) &wm_fullscreen, 1);
-            }
-#endif
+            
+            gtk_window_fullscreen (GTK_WINDOW(gtk_widget_get_root_window (render_.win.win)));
             break;
           case KEY_KEYBOARD:
             // k toggle keyboard 

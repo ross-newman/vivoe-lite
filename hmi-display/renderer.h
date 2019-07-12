@@ -80,13 +80,13 @@ public:
   virtual void setColourBackground (int red, int green, int blue) = 0;
   int getWidth () { return width_; };
   int getHeight () { return height_; };
+  void setWidth (int width) { width_ = width; };
+  void setHeight (int height) { height_ = height; };
   virtual int drawLine (int x1, int y1, int x2, int y2) = 0;
   virtual void drawCircle (int x, int y, int radius, bool fill) = 0;
   virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
   virtual int drawColor (int r, int g, int b) = 0;
   virtual int textureRGB (int x, int y, void *buffer, char *file) = 0;
-  virtual void scale (float x) = 0;
-  virtual void present () = 0;
 private:
   int height_;
   int width_;

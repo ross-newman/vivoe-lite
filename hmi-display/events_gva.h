@@ -71,6 +71,7 @@ namespace gva
     int NextGvaEvent(EventGvaType *event); // Use for X11/DDS/Touch events
     static gboolean ButtonPressEventCb (GtkWidget *widget, GdkEventButton *event, gpointer data);
     static gboolean KeyPressEventCb (GtkWidget *widget, GdkEventKey *event);
+    gtkType * GetWindow() { return window_; }; 
   private:
     gtkType *window_;
   };

@@ -292,15 +292,18 @@ rendererCairo::init (int width, int height, CallbackType cb, void *arg)
   callback_ = cb;
   arg_ = arg;
 
-  int status;
-
   render_.surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
                             width, height);
-
+                            
   render_.win.app = gtk_application_new ("org.gtk.vivoe-lite-hmi", G_APPLICATION_FLAGS_NONE);
+  
+//  const gchar *quit_accels[2] = { "F11", NULL };
+//  gtk_application_set_accels_for_action (GTK_APPLICATION (render_.win.app),
+//                                  "win.fullscreen",quit_accels);
+                                       
   g_signal_connect (render_.win.app, "activate", G_CALLBACK (Activate), NULL);
   g_timeout_add (40, Callback, NULL);
-  status = g_application_run (G_APPLICATION (render_.win.app), 0, 0);
+  int status = g_application_run (G_APPLICATION (render_.win.app), 0, 0);
   g_object_unref (render_.win.app);
 
   return 0;
@@ -583,17 +586,6 @@ rendererCairo::textureRGB (int x, int y, cairo_surface_t *surface) {
   return 0;
 }
 
-
-void
-rendererCairo::scale (float x)
-{
-}
-
-void
-rendererCairo::present ()
-{
-}
-
 //
 // Redraw the screen from the surface. Note that the ::draw
 // signal receives a ready-to-be-used cairo_t that is already
@@ -601,10 +593,10 @@ rendererCairo::present ()
 //
 gboolean
 rendererCairo::DrawCb (GtkWidget *widget, cairo_t   *cr, gpointer   data) {
+  
   cairo_set_source_surface (cr, render_.surface, 0, 0);
   cairo_paint (cr);
 
-// printf("File %s, Function %s, Line %d\n", __FILE__, __FUNCTION__, __LINE__); 
   gtk_widget_queue_draw(widget) ;
   return FALSE;
 }
@@ -613,27 +605,19 @@ rendererCairo::DrawCb (GtkWidget *widget, cairo_t   *cr, gpointer   data) {
 gboolean
 rendererCairo::ConfigureEventCb (GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
-  if (render_.surface)
-    cairo_surface_destroy (render_.surface);
-
   render_.surface = gdk_window_create_similar_surface (gtk_widget_get_window (widget),
                                                CAIRO_CONTENT_COLOR,
                                                gtk_widget_get_allocated_width (widget),
                                                gtk_widget_get_allocated_height (widget));
- printf("File %s, Function %s, Line %d\n", __FILE__, __FUNCTION__, __LINE__); 
+
   render_.cr = cairo_create (render_.surface);
+
+  gint height,width;
+  width =  gtk_widget_get_allocated_width (widget);
+  height =  gtk_widget_get_allocated_height (widget);  
+
+  cairo_scale(render_.cr, (double)width / DEFAULT_WIDTH, (double)height / DEFAULT_HEIGHT);  
   gtk_widget_queue_draw(widget) ;
-
-#if 0
-  cairo_t *cr;
-
-  cr = cairo_create (render_.surface);
-
-  cairo_set_source_rgb (cr, 0, 1, 1);
-  cairo_paint (cr);
-
-  cairo_destroy (cr);
-#endif
 
   // We've handled the configure event, no need for further processing. 
   return TRUE;
@@ -673,7 +657,7 @@ rendererCairo::Activate (GtkApplication *app, gpointer user_data)
   gtk_widget_set_events (render_.win.draw, gtk_widget_get_events (render_.win.draw)
                                      | GDK_BUTTON_PRESS_MASK
                                      | GDK_POINTER_MOTION_MASK);
-                                       
+
   //
   // Signals used to handle the backing surface 
   //
