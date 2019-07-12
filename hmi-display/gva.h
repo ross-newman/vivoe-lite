@@ -64,7 +64,8 @@ enum gvaFunctionGroupEnum {
 enum gvaKeyEnum 
 {
   /* These are physical GVA keys around the display */
-  KEY_SA = 1,
+  KEY_NONE = 0,
+  KEY_SA,
   KEY_WPN,
   KEY_DEF,
   KEY_SYS,

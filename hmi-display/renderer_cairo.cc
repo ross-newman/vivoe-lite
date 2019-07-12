@@ -642,8 +642,6 @@ rendererCairo::ConfigureEventCb (GtkWidget *widget, GdkEventConfigure *event, gp
 void
 rendererCairo::Activate (GtkApplication *app, gpointer user_data)
 {
-  GtkWidget *frame;
-
   render_.win.win = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (render_.win.win), "HMI vivoe-lite");
 
@@ -651,15 +649,12 @@ rendererCairo::Activate (GtkApplication *app, gpointer user_data)
 
   gtk_container_set_border_width (GTK_CONTAINER (render_.win.win), 0);
 
-  frame = gtk_frame_new (NULL);
-//  gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
-  gtk_container_add (GTK_CONTAINER (render_.win.win), frame);
-
   render_.win.draw = gtk_drawing_area_new ();
+  gtk_container_add (GTK_CONTAINER (render_.win.win), render_.win.draw);
   // set a minimum size 
   gtk_widget_set_size_request (render_.win.draw, MIN_WIDTH, MIN_HEIGHT );
 
-  gtk_container_add (GTK_CONTAINER (frame), render_.win.draw);
+  gtk_container_add (GTK_CONTAINER (render_.win.win), render_.win.draw);
 
   //
   // Event signals 
@@ -677,8 +672,6 @@ rendererCairo::Activate (GtkApplication *app, gpointer user_data)
   //
   gtk_widget_set_events (render_.win.draw, gtk_widget_get_events (render_.win.draw)
                                      | GDK_BUTTON_PRESS_MASK
-                                     | GDK_KEY_PRESS_MASK
-                                     | GDK_KEY_RELEASE_MASK
                                      | GDK_POINTER_MOTION_MASK);
                                        
   //

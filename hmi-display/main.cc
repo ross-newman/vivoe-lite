@@ -107,7 +107,6 @@ Update(void * arg) {
     // Get the live video frame if Driver (DRV)
     if (hmi::getScreen()->currentFunction == DRV) {
 //      rtpStream1->gvaRecieveFrame(rtpBuffer, RGBA_COLOUR);
-      io->Flush();
     // @todo hmi_display: Add RTP HMI streaming output to display.
     // @body The HMI window is only a preview. Add RTP output and headless mode.
     }

@@ -24,12 +24,7 @@
 
 #ifndef EVENTS_GVA_H
 #define EVENTS_GVA_H
-#if X11
-#include <X11/Xatom.h> // @todo hmi_display: drop X11 infavor or GTK 
-#include <X11/Xlib.h>
-#else
 #include <gtk/gtk.h>
-#endif
 #include <vector> 
 #include <cairo-xlib.h>
 #include "gva.h"
@@ -68,17 +63,16 @@ namespace gva
   };
   
   static std::vector<EventGvaType> eventqueue_;
+  static touchGva *touch_;
 
   class EventsGva {
   public:
     EventsGva(gtkType *window, touchGva *touch); 
     int NextGvaEvent(EventGvaType *event); // Use for X11/DDS/Touch events
-    void Flush();
     static gboolean ButtonPressEventCb (GtkWidget *widget, GdkEventButton *event, gpointer data);
     static gboolean KeyPressEventCb (GtkWidget *widget, GdkEventKey *event);
   private:
     gtkType *window_;
-    touchGva *touch_;
   };
 };
 
