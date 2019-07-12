@@ -22,45 +22,73 @@
 // SOFTWARE.
 // 
 
-#include <cairo-xlib.h>
 #include "gva.h"
 #include "renderer_gva.h"
 #include "events_gva.h"
 
 namespace gva
 {
-  eventsGva::eventsGva(Display *display, Window *window, touchGva *touch) { 
-    m_display = display;
-    m_window = window;
-    m_touch = touch;
-    
-    /* 
-     * select kind of events we are interested in 
-     */
-    XSelectInput (m_display, *m_window,
-                  KeyPressMask | 
-                  ButtonPressMask |
-                  ExposureMask  | StructureNotifyMask);
+  EventsGva::EventsGva(gtkType *window, touchGva *touch) { 
+    window_ = window;
+    touch_ = touch;
+  }
+
+  // Handle button press events by either drawing a rectangle
+  // or clearing the surface, depending on which button was pressed.
+  // The ::button-press signal handler receives a GdkEventButton
+  // struct which contains this information.
+  //
+  gboolean 
+  EventsGva::ButtonPressEventCb (GtkWidget      *widget,
+                         GdkEventButton *event,
+                         gpointer        data)
+  {
+    printf("[GVA] Mouse event %d\n", event->button);
+    if (event->button == GDK_BUTTON_PRIMARY)
+      {
+        eventqueue_.push_back(EventGvaType((int)event->x, (int)event->y));
+      }
+    else if (event->button == GDK_BUTTON_SECONDARY)
+      {
+         // Not much to do here now
+      }
+
+    /* We've handled the event, stop processing */
+    return TRUE;
+  }
+
+  gboolean 
+  EventsGva::KeyPressEventCb (GtkWidget *widget, GdkEventKey *event) {
+    GdkModifierType modifiers;
+
+    modifiers = gtk_accelerator_get_default_mod_mask ();
+    printf("[GVA] Key event %d\n", event->keyval);
+    g_print ("send_event=%d, state=%u, keyval=%u, length=%d, string='%s', hardware_keycode=%u, group=%u\n", 
+event->send_event, event->state, event->keyval, event->length, event->string, event->hardware_keycode, 
+event->group);
+    /* The event was handled, and the emission should stop */
+    return TRUE;
   }
 
   int 
-  eventsGva::nextGvaEvent(eventGvaType *event) {
+  EventsGva::NextGvaEvent(EventGvaType *event) {
+#if X11
     XEvent e;
     int binding = 0;
 
-    XNextEvent (m_display, &e);
+    XNextEvent (window_->dpy, &e);
     
     event->type == NO_EVENT;
 
     switch (e.type) {
       case ButtonPressMask :
-        m_touch->check(TOP, &binding, e.xbutton.x, e.xbutton.y);
-        if (!binding) m_touch->check(BOTTOM, &binding, e.xbutton.x, e.xbutton.y);
-        if (!binding) m_touch->check(RIGHT, &binding, e.xbutton.x, e.xbutton.y);
-        if (!binding) m_touch->check(LEFT, &binding, e.xbutton.x, e.xbutton.y);
+        touch_->check(TOP, &binding, e.xbutton.x, e.xbutton.y);
+        if (!binding) touch_->check(BOTTOM, &binding, e.xbutton.x, e.xbutton.y);
+        if (!binding) touch_->check(RIGHT, &binding, e.xbutton.x, e.xbutton.y);
+        if (!binding) touch_->check(LEFT, &binding, e.xbutton.x, e.xbutton.y);
         if (binding) {
           event->type = KEY_EVENT;
-          event->key = (gvaKeyEnum)binding;
+          event->key_ = (gvaKeyEnum)binding;
         }
         break;
       case ButtonReleaseMask :
@@ -72,79 +100,79 @@ namespace gva
           {
           case 0x09:
             /* exit on ESC key press */
-            event->key = KEY_ESC;
+            event->key_ = KEY_ESC;
             break;
           case 0xa:
             /* 1 maps to SA */
-            event->key = KEY_SA;
+            event->key_ = KEY_SA;
             break;
           case 0xb:
             /* 2 maps to WPN */
-            event->key = KEY_WPN;
+            event->key_ = KEY_WPN;
             break;
           case 0xc:
             /* 3 maps to DEF */
-            event->key = KEY_DEF;
+            event->key_ = KEY_DEF;
             break;
           case 0xd:
             /* 4 maps to SYS */
-            event->key = KEY_SYS;
+            event->key_ = KEY_SYS;
             break;
           case 0xe:
             /* 5 maps to DRV */
-            event->key = KEY_DRV;
+            event->key_ = KEY_DRV;
             break;
           case 0xf:
             /* 6 maps to STR */
-            event->key = KEY_STR;
+            event->key_ = KEY_STR;
             break;
           case 0x10:
             /* 7 maps to COM */
-            event->key = KEY_COM;
+            event->key_ = KEY_COM;
             break;
           case 0x11:
             /* 8 maps to BMS */
-            event->key = KEY_BMS;
+            event->key_ = KEY_BMS;
             break;
           case 0x26:
             /* a maps to ALARMS */
-            event->key = KEY_F14;
+            event->key_ = KEY_F14;
             break;
           case 0x29:
             /* f toggle fullscreen TODO: Does not work */
-            event->key = KEY_FULLSCREEN;
+            event->key_ = KEY_FULLSCREEN;
             break;
           case 0x2d:
             /* k toggle keyboard */
-            event->key = KEY_KEYBOARD;
+            event->key_ = KEY_KEYBOARD;
             break;
           case 0x42:
             /* caps_lock keyboard */
-            event->key = KEY_F17;
+            event->key_ = KEY_F17;
             break;
           case 0x4D:
             /* num_lock keyboard */
-            event->key = KEY_F18;
+            event->key_ = KEY_F18;
             break;
           case 0x2e:
             /* l show / hide labels */
-            event->key = KEY_F19;
+            event->key_ = KEY_F19;
             break;
           case 0x15:
             /* + keyboard */
-            event->key = KEY_PLUS;
+            event->key_ = KEY_PLUS;
             break;
           case 0x14:
             /* - show / hide labels */
-            event->key = KEY_MINUS;
+            event->key_ = KEY_MINUS;
             break;
           case 0x3c:
             /* > keyboard */
-            event->key = KEY_GREATER;
+            event->key_ = KEY_GREATER;
             break;
           case 0x3b:
             /* < show / hide labels */
-            event->key = KEY_LESS;
+            event->key_ = KEY_LESS;
             break;
           default:
             printf ("KeyPress not defined 0x%x\n", e.xkey.keycode);
@@ -162,8 +190,8 @@ namespace gva
         {
           XConfigureEvent *cev = &e.xconfigure;
           event->type = RESIZE_EVENT;
-          event->resize.width = cev->width;
-          event->resize.height = cev->height;
+          event->resize_.width = cev->width;
+          event->resize_.height = cev->height;
           printf("Resize %d %d %d\n", ConfigureNotify,  cev->width,  cev->height);
         }
         break;
@@ -180,27 +208,31 @@ namespace gva
         break;
     }
 
-  #if 0
+#if 0
     while ( nextGvaEvent(event) == GVA_SUCCESS ) {
       /* Process other events */
     }
-  #endif
+#endif
+#endif
     return GVA_SUCCESS;
   }
 
   void
-  eventsGva::flush() {
-    if (m_display) {
+  EventsGva::Flush() {
+#if X11
+    if (window_->dpy) {
       XClientMessageEvent dummyEvent;
 
-      XSync (m_display, true);
+      XSync (window_->dpy, true);
 
       dummyEvent.type = Expose;
-      dummyEvent.window = *m_window;
+      dummyEvent.window = window_->win;
       dummyEvent.format = 32;
 
-      XSendEvent (m_display, *m_window, False, StructureNotifyMask, (XEvent *) & dummyEvent);
-      XFlush (m_display);
+      XSendEvent (window_->dpy, window_->win, False, StructureNotifyMask, (XEvent *) & dummyEvent);
+      XFlush (window_->dpy);
     }
+#else
+#endif
   }
 }

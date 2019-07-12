@@ -44,6 +44,7 @@ ExternalProject_Add(
     GIT_TAG             v1.8.1
     GIT_SHALLOW         5
     GIT_CONFIG          fetch.recurseSubmodules=true
+#    URL                 https://github.com/protocolbuffers/protobuf/releases/download/v3.8.0/protobuf-cpp-3.8.0.zip
     CMAKE_ARGS          "-DTHIRDPARTY=ON -DCMAKE_BUILD_TYPE=Release"
     PREFIX              ${CMAKE_BINARY_DIR}/external/Fast-RTPS/prefix
     TMP_DIR             ${CMAKE_BINARY_DIR}/external/Fast-RTPS/tmp

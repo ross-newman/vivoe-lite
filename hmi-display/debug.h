@@ -25,6 +25,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#define X11 0
 #define DUMMY_LON -0.124240 
 #define DUMMY_LAT 51.500655
 #define DEFAULT_ZOOM 20000

@@ -22,14 +22,23 @@
 // SOFTWARE.
 // 
 
-#ifndef RENDERER_SDL_H
-#define RENDERER_SDL_H
+#ifndef RENDERER_CAIRO_H
+#define RENDERER_CAIRO_H
 
 #include <iostream>
 #include <stdio.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
+#include "gva.h"
 #include "renderer.h"
+
+#include <gtk/gtk.h>
+typedef struct  { 
+  GtkApplication * app; 
+  GtkWidget * win; 
+  GtkWidget * draw; 
+} gtkType; 
+
 
 #define MAX_COMMANDS 1000
 #define MAX_IMAGES 100
@@ -52,7 +61,7 @@ struct handle_type
   int handle;
   bool inUse;
   resolution_type size;
-  win_t win;
+  gtkType win;
   cairo_surface_t *surface;
   cairo_t * cr;  
 };
@@ -114,12 +123,15 @@ typedef enum {
   LINE_DASHED_LARGE,
 } lineType;
 
-class rendererCairo : public renderer
-{
+static handle_type render_;
+
+typedef void (*CallbackType)(void * io);
+
+class rendererCairo : public renderer {
 public:
   rendererCairo (int width, int height);
   ~rendererCairo ();
-  int init (int width, int height);   
+  int init (int width, int height, CallbackType cb, void *arg);   
   // Pure Virtual functions
   void setPixel (int x, int y);
   void setColour (int red, int green, int blue);
@@ -149,40 +161,51 @@ public:
   
   // Cairo specific functions
   void draw ();
-  void reset () { m_draw_tail = 0; m_image_tail = 0;}
-  win_t* getWin() { return &m_render.win; }
-  Window* getWindow() { return &m_render.win.win; }
-  Display* getDisplay() { return m_render.win.dpy; }
-  void setHeight(int height) { cairo_xlib_surface_set_size(m_render.surface, m_render.win.width, height); 
-      cairo_scale(m_render.cr, 1.0, (double)height / m_render.win.height);  m_render.win.height = height; }
-  void setWidth(int width) { cairo_xlib_surface_set_size(m_render.surface, width, m_render.win.height); 
-      cairo_scale(m_render.cr, (double)width / m_render.win.width, 1.0);  m_render.win.width = width; }
-  int getHeight() { return m_render.win.height; }
-  int getWidth() { return m_render.win.width; }
+  void reset () { draw_tail_ = 0; image_tail_ = 0;}
+  gtkType* getWindow() { return &render_.win; }
+#if X11
+  void setHeight(int height) { cairo_xlib_surface_set_size(render_.surface, render_.win.width, height); 
+      cairo_scale(render_.cr, 1.0, (double)height / render_.win.height);  render_.win.height = height; }
+  void setWidth(int width) { cairo_xlib_surface_set_size(render_.surface, width, render_.win.height); 
+      cairo_scale(render_.cr, (double)width / render_.win.width, 1.0);  render_.win.width = width; }
+  int getHeight() { return render_.win.height; }
+  int getWidth() { return render_.win.width; }
+#else
+  void setHeight(int height) { height_ = height; gtk_widget_set_size_request(render_.win.win, (gint)width_, (gint)height_); }
+  void setWidth(int width) { width_ = width; gtk_widget_set_size_request(render_.win.win, (gint)width_, (gint)height_); }
+  int getHeight() { gint h,w; gtk_widget_get_size_request(render_.win.win, &w, &h); return (int)w; }
+  int getWidth() { gint h,w; gtk_widget_get_size_request(render_.win.win, &w, &h); return (int)h; }
+#endif
 private:
-  unsigned char* m_texture;
-  int m_current_handle;
-  double m_scale;
-  handle_type m_render;
-  Window m_root;
+  unsigned char* texture_;
+  int current_handle_;
+  double scale_;
+  Window root_;
 
-  /*
-   *  Helper Functions
-   */
+  //
+  // Helper Functions
+  //
   double intToFloat(int c) { return (double)1/255 * c; };
-  void win_init (win_t * win, int width, int height);
 
-  /*
-   * Render List
-   */
-  command_type m_draw_commands[MAX_COMMANDS];
-  int m_draw_tail = 0;
+  //
+  //Render List
+  //
+  command_type draw_commands_[MAX_COMMANDS];
+  int draw_tail_ = 0;
 
-  /*
-   *  Image List
-   */
-  image_type m_image_list[MAX_IMAGES];
-  int m_image_tail = 0;
+  //
+  // Image List
+  //
+  image_type image_list_[MAX_IMAGES];
+  int image_tail_ = 0;
+  
+private:
+  static gboolean DrawCb (GtkWidget *widget, cairo_t *cr, gpointer   data);
+  static gboolean ConfigureEventCb (GtkWidget *widget, 
+    GdkEventConfigure *event, gpointer data);
+  static void Activate (GtkApplication *app, gpointer user_data);
+  static gboolean Callback (gpointer user_data);
+  static void CloseWindow (void);
 };
 
 #endif

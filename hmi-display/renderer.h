@@ -78,8 +78,8 @@ public:
   virtual void setColour (int red, int green, int blue) = 0;
   virtual void setColourForground (int red, int green, int blue) = 0;
   virtual void setColourBackground (int red, int green, int blue) = 0;
-  int getWidth () { return m_width; };
-  int getHeight () { return m_height; };
+  int getWidth () { return width_; };
+  int getHeight () { return height_; };
   virtual int drawLine (int x1, int y1, int x2, int y2) = 0;
   virtual void drawCircle (int x, int y, int radius, bool fill) = 0;
   virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
@@ -88,10 +88,10 @@ public:
   virtual void scale (float x) = 0;
   virtual void present () = 0;
 private:
-  int m_height;
-  int m_width;
-  colour_type m_forground_colour;
-  colour_type m_background_colour;
+  int height_;
+  int width_;
+  colour_type forground_colour_;
+  colour_type background_colour_;
   friend class rendererSdl;
   friend class rendererCairo;
 };

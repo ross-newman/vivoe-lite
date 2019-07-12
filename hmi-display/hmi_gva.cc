@@ -761,12 +761,6 @@ struct stateOn : Hmi
     /* These are comon to all screens */
     m_render = new screenGva (&m_screen, &m_widgets, m_view.width, m_view.height);
 
-    /*
-     * Draw the inital screen and start the Real Time Clock
-     */
-    m_render->update ();
-    m_render->startClock (&m_status);
-
     transit<stateSA>(); 
   };
 };

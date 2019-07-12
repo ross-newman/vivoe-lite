@@ -24,13 +24,20 @@
 
 #ifndef EVENTS_GVA_H
 #define EVENTS_GVA_H
+#if X11
+#include <X11/Xatom.h> // @todo hmi_display: drop X11 infavor or GTK 
 #include <X11/Xlib.h>
-#include "renderer_gva.h"
+#else
+#include <gtk/gtk.h>
+#endif
+#include <vector> 
+#include <cairo-xlib.h>
 #include "gva.h"
+#include "renderer_gva.h"
 
 namespace gva
 {
-  enum eventEnumType {
+  enum EventEnumType {
     NO_EVENT = 0,
     KEY_EVENT,
     TOUCH_EVENT,
@@ -39,34 +46,39 @@ namespace gva
     REDRAW_EVENT
   };
 
-  struct touchType {
+  struct TouchType {
     int x;
     int y;
   };
 
-  struct resolutionType {
+  struct ResolutionType {
     int width;
     int height;
   };
 
-  class eventGvaType {
+  class EventGvaType {
   public:
-    eventEnumType type;
-    gvaKeyEnum key;
-    touchType toutch;
-    resolutionType resize;
+    EventGvaType() { type = NO_EVENT; };  
+    EventGvaType(int x, int y) { touch_.x=x; touch_.y=y; type = TOUCH_EVENT; };  
+    EventGvaType(gvaKeyEnum key) : key_(key) { type = KEY_EVENT; };  
+    EventEnumType type;
+    gvaKeyEnum key_;
+    TouchType touch_;
+    ResolutionType resize_;
   };
+  
+  static std::vector<EventGvaType> eventqueue_;
 
-  class eventsGva {
+  class EventsGva {
   public:
-    eventsGva() { m_display = 0; };
-    eventsGva(Display *display, Window *window, touchGva *touch); 
-    int nextGvaEvent(eventGvaType *event); // Use for X11/DDS/Touch events
-    void flush();
+    EventsGva(gtkType *window, touchGva *touch); 
+    int NextGvaEvent(EventGvaType *event); // Use for X11/DDS/Touch events
+    void Flush();
+    static gboolean ButtonPressEventCb (GtkWidget *widget, GdkEventButton *event, gpointer data);
+    static gboolean KeyPressEventCb (GtkWidget *widget, GdkEventKey *event);
   private:
-   Display *m_display;
-   Window *m_window;
-   touchGva *m_touch;
+    gtkType *window_;
+    touchGva *touch_;
   };
 };
 

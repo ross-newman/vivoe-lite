@@ -8,8 +8,8 @@ find_package(PkgConfig REQUIRED)
 PKG_CHECK_MODULES(GTK3 REQUIRED gtk+-3.0)
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
-INCLUDE_DIRECTORIES(${GTK3_INCLUDE_DIRS})
-LINK_DIRECTORIES(${GTK3_LIBRARY_DIRS})
+include_directories(${GTK3_INCLUDE_DIRS})
+link_directories(${GTK3_LIBRARY_DIRS})
 
 include_directories(${LIBXML2_INCLUDE_DIR})
 include_directories(${CMAKE_BINARY_DIR}/external/)

@@ -147,8 +147,7 @@ public:
   std::vector<hotspot> m_hotspots;
 };
 
-class rendererGva : public rendererCairo
-{
+class rendererGva : public rendererCairo {
 public:  
   rendererGva(int width, int height);
   void drawLabels(char * text, int fontSize, int x, int y);

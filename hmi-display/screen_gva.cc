@@ -60,8 +60,7 @@ namespace gva
     m_widgets = widgets;
     m_width = width;
     m_height = height;
-    m_hndl = init (m_width, m_height);
-    update ();
+
     char tmp[100];
     struct termios settings;
 
@@ -83,9 +82,16 @@ namespace gva
     }
     tcgetattr(m_gps, &settings);
 
+    //
     // Set Baud Rate
+    //
     cfsetospeed(&settings, B4800); // baud rate 
     tcsetattr(m_gps, TCSANOW, &settings); // apply the settings
+
+    //
+    // Start the Real Time Clock
+    // 
+    startClock (m_screen->statusBar);
   }
 
   screenGva::~screenGva ()
@@ -294,7 +300,9 @@ namespace gva
       gvaRow newrow;
 
       for (i=0;i<7;i++) {
-        gvaCellType cell = {m_screen->statusBar->labels[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
+        cellAlignType align = ALIGN_LEFT;
+        if (i==1) align = ALIGN_CENTRE;
+        gvaCellType cell = {m_screen->statusBar->labels[i], align, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
         newrow.addCell(cell, widths[i]);
       }
       table.addRow(newrow);
@@ -418,6 +426,7 @@ namespace gva
   int
   screenGva::refresh ()
   {
+#if X11
     XClientMessageEvent dummyEvent;
 
     //
@@ -425,10 +434,11 @@ namespace gva
     //
     memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
     dummyEvent.type = Expose;
-    dummyEvent.window = *getWindow ();
+    dummyEvent.window = getWindow ()->win;
     dummyEvent.format = 32;
-    XSendEvent (getDisplay (), *getWindow (), False, ExposureMask,
+    XSendEvent (getWindow()->dpy, getWindow()->win, False, ExposureMask,
                 (XEvent *) & dummyEvent);
-    XFlush (getDisplay ());
+    XFlush (getWindow()->dpy);
+#endif
   }
 }
