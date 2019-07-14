@@ -35,14 +35,6 @@ link_directories(${CMAKE_BINARY_DIR}/external/rtp-payloader/build)
 link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src)
 
 add_executable(hmi-display main.cc renderer_cairo.cc renderer_gva.cc screen_gva.cc events_gva.cc ./common/debug.cc ./common/log_gva.cc hmi_gva.cc view_gva.cc renderer_map.cc)
-
-# Use the package PkgConfig to detect GTK+ headers/library files
-#find_package(PkgConfig REQUIRED)
-# Setup CMake to use GTK+, tell the compiler where to look for headers
-# and to the linker where to look for libraries
-#include_directories(${GTK3_INCLUDE_DIRS})
-#link_directories(${GTK3_LIBRARY_DIRS})
-
 add_dependencies(hmi-display libosmscout hmi-video)
 target_link_libraries (hmi-display Geographic osmscout osmscout_map osmscout_map_cairo)
 add_subdirectory(common)
@@ -56,7 +48,7 @@ link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src)
 target_link_libraries(hmi-display png pthPUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} common dds dds/location display)
 target_compile_options(hmi-display PUBLIC ${CAIRO_CFLAGS_OTHER})read hmi-video rtp-payloader nmealib dds)
 target_link_libraries(hmi-display ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} ${GTK3_LIBRARIES})
-target_include_directories(hmi-display PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} common dds dds/location display)
+target_include_directories(hmi-display PUBLIC ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS} common dds dds/location display)
 target_compile_options(hmi-display PUBLIC ${CAIRO_CFLAGS_OTHER} ${GTK3_CFLAGS_OTHER})
 install(TARGETS hmi-display DESTINATION bin)
 
