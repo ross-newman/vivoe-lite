@@ -251,7 +251,9 @@ RendererCairo::draw ()
                                     currentCmd->points[0].x,
                                     currentCmd->points[0].y);
           cairo_paint (cr);
-          cairo_surface_destroy(image_list_[currentCmd->arg1].image);
+          // Only free the imageis it wasnt from cache. i.e. video
+          if (!image_list_[currentCmd->arg1].from_cache) 
+            cairo_surface_destroy(image_list_[currentCmd->arg1].image);
           break;
         case COMMAND_IMAGE_TEXTURE_PERSIST:
           cairo_set_source_surface (cr, image_list_[currentCmd->arg1].image,
@@ -539,10 +541,30 @@ RendererCairo::drawTextCentre (int x, char *text, int size)
 int
 RendererCairo::textureRGB (int x, int y, void *buffer, char *file)
 {
+  bool found_in_cache=false;
+  int i=0;
   strcpy (image_list_[image_tail_].name, file);
 
-  image_list_[image_tail_].image =
-    cairo_image_surface_create_from_png (file);
+  for (i; i<cache_image_tail_; i++) {
+    if (strcmp(file, cache_image_list_[i].name) == 0) {
+      // Found in cache
+      found_in_cache = true;
+      break;
+    }
+  }
+    
+  if (found_in_cache) {
+    // Copy from cache
+    image_list_[image_tail_].image = cache_image_list_[i].image;
+    image_list_[image_tail_].from_cache = true;
+  } else {
+    // Add to cache
+    cache_image_list_[cache_image_tail_].image =
+      cairo_image_surface_create_from_png (file);
+    strcpy (cache_image_list_[cache_image_tail_].name, file);
+    image_list_[image_tail_].from_cache = true;
+    image_list_[image_tail_].image = cache_image_list_[cache_image_tail_++].image;
+  }
 
   draw_commands_[draw_tail_].command = COMMAND_IMAGE_TEXTURE;
   draw_commands_[draw_tail_].points[0].x = x;

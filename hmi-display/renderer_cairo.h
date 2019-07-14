@@ -104,6 +104,7 @@ struct image_type
 {
   char name[255];
   cairo_surface_t *image;
+  bool from_cache;
 };
 
 static void triangle(cairo_t *cr);
@@ -194,6 +195,12 @@ private:
   //
   image_type image_list_[MAX_IMAGES];
   int image_tail_ = 0;
+  
+  //
+  // Image Cache
+  //
+  image_type cache_image_list_[MAX_IMAGES];
+  int cache_image_tail_ = 0;
   
 private:
   static gboolean DrawCb (GtkWidget *Widget, cairo_t *cr, gpointer   data);
