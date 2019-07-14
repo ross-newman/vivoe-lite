@@ -456,7 +456,7 @@ struct StateSA : Hmi
       {
         screen_ = manager_->GetScreen(SA);
         lastState_ = SA;
-        reset();
+        Reset();
         screen_.functionTop->visible = true;
                 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
@@ -484,7 +484,7 @@ struct StateWPN : Hmi
       {
         screen_ = manager_->GetScreen(WPN);
         lastState_ = WPN;
-        reset();
+        Reset();
 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
         screen_.canvas.visible = true;
@@ -511,7 +511,7 @@ struct StateDEF : Hmi
       {
         screen_ = manager_->GetScreen(DEF);
         lastState_ = DEF;
-        reset();
+        Reset();
 
         screen_.StatusBar->visible = true;
         screen_.functionTop->active = 0x1 << 5;
@@ -536,8 +536,10 @@ struct StateSYS : Hmi
       {
         screen_ = manager_->GetScreen(SYS);
         lastState_ = SYS;
-        reset();
+        Reset();
 
+        screen_.StatusBar->visible = true;
+        screen_.functionTop->visible = true;
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
@@ -564,7 +566,7 @@ struct StateDRV : Hmi
       {
         screen_ = manager_->GetScreen(DRV);
         lastState_ = DRV;
-        reset();
+        Reset();
 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
         screen_.StatusBar->visible = true;
@@ -590,7 +592,7 @@ struct StateSTR : Hmi
       {
         screen_ = manager_->GetScreen(STR);
         lastState_ = STR;
-        reset();
+        Reset();
 
         screen_.functionTop->active = 0x1 << 2;
       }
@@ -614,7 +616,7 @@ struct StateCOM : Hmi
       {
         screen_ = manager_->GetScreen(COM);
         lastState_ = COM;
-        reset();
+        Reset();
 
         screen_.functionTop->active = 0x1 << 1;
       }
@@ -638,7 +640,7 @@ struct StateBMS : Hmi
       {
         screen_ = manager_->GetScreen(BMS);
         lastState_ = BMS;
-        reset();
+        Reset();
 
         screen_.canvas.visible = true;
 
@@ -695,7 +697,7 @@ struct StateAlarms : Hmi
           return; 
         }
       }
-      reset();
+      Reset();
       alarmson_ = true;
       screen_ = manager_->GetScreen(ALARMSX);
 
