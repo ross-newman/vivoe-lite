@@ -111,7 +111,7 @@ Update(void * arg, gpointer user_data) {
     // @body The HMI window is only a preview. Add RTP output and headless mode.
     }
   }
-  
+
   hmi::GetRendrer()->Update ();  
   switch (event.type) {
     case KEY_EVENT :
@@ -320,6 +320,7 @@ Update(void * arg, gpointer user_data) {
       break;
   }
 }
+
 // printf("File %s, Function %s, Line %d\n", __FILE__, __FUNCTION__, __LINE__); 
 int
 main (int argc, char *argv[])
@@ -361,8 +362,6 @@ main (int argc, char *argv[])
   sprintf(tmp, "GVA Incomming RTP stream initalised %s:%d", ipaddr, port);
   logGva::log (tmp, LOG_INFO);
   
-  
-  
   //
   // Start the render and event loop
   //
@@ -372,5 +371,5 @@ main (int argc, char *argv[])
   // Clean up code goes here
   //
   free(rtpStream1);
-  cout << "Exiting hmi_display...\n";
+  logGva::log ("Exiting hmi_display...\n", LOG_INFO);
 }

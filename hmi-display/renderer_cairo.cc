@@ -687,6 +687,7 @@ RendererCairo::Activate (GtkApplication *app, gpointer user_data)
 gboolean 
 RendererCairo::Callback (gpointer user_data) {
   callback_(arg_, user_data);
+  return TRUE;
 }
 
 void
