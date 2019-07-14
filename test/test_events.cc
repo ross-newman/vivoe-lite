@@ -8,16 +8,16 @@
 
 using namespace gva;
 
-static eventsGva *events = 0;
+static EventsGva *events = 0;
 
 TEST_CASE( "eventsGva Constructor1", "Constructor test" ){  
-  events = new eventsGva();
+  events = new EventsGva(hmi::GetRendrer()->getWindow(), hmi::GetRendrer()->getTouch());
 
   REQUIRE( events !=0 );
 }
 
 TEST_CASE( "eventsGva", "flush" ){
-  events->flush();
+//  events->flush();
   
   REQUIRE( events !=0 );
   free(events);
@@ -25,15 +25,14 @@ TEST_CASE( "eventsGva", "flush" ){
 
 TEST_CASE( "eventsGva Constructor2", "Constructor test2" ){
   // instantiate events
-  KeyPowerOn on;
+  EventKeyPowerOn on;
 
   hmi::start();
   hmi::dispatch(on);    
 
-  eventsGva io(hmi::getRendrer()->getDisplay(), hmi::getRendrer()->getWindow(), hmi::getRendrer()->getTouch());
+  EventsGva io(hmi::GetRendrer()->getWindow(), hmi::GetRendrer()->getTouch());
   
-  REQUIRE( hmi::getRendrer()->getDisplay() !=0 );
-  REQUIRE( hmi::getRendrer()->getWindow() !=0 );
+  REQUIRE( hmi::GetRendrer()->getWindow() !=0 );
   REQUIRE( events !=0 );
 }
 

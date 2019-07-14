@@ -11,7 +11,7 @@
 
 using namespace gva;
 
-static eventsGva *events;
+static EventsGva *events;
 
 TEST_CASE( "Log", "Logging tests" ){
   std::string test1 = "This is a string test";
