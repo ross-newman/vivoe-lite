@@ -8,7 +8,7 @@ script:
   - sudo apt-get --no-install-recommends install doxygen catch libgtk-3-dev valgrind libcairo2-dev libpango1.0-dev libxt-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-c-dev geographiclib-doc libgeographic-dev libasio-dev libtinyxml2-dev gradle libgeographic-dev 
   - sudo apt-get --no-install-recommends install autoconf automake libtool curl make g++ unzip
   - pkg-config gtk+-3.0  --libs --cflags
-  - mkdir build && cd build && cmake -DENABLE_COVERAGE=ON -DBUILD_TESTS=ON ..  
+  - mkdir build && cd build && cmake .. -DENABLE_COVERAGE=ON -DBUILD_TESTS=ON ..  
   - make
   - xvfb-run --server-args="-screen 0 1024x768x24" ctest -T memcheck
 after_success:
