@@ -38,23 +38,25 @@ class rendererMap {
 public:
   rendererMap(string map, string style, int width, int height);
   ~rendererMap();
-  int project(double zoom, double lon, double lat, cairo_surface_t **surface);
+  int Project(double zoom, double lon, double lat, cairo_surface_t **surface);
+  int SetHeight(int height) { height_ = height_; printf("height %d\n", height); };
+  int SetWidth(int width) { width_ = width_;  printf("width %d\n", width); };
 private:
-  int m_width;
-  int m_height;
-  string m_map;
-  string m_style;
-  osmscout::MapServiceRef m_mapService;
-  osmscout::StyleConfigRef m_styleConfig;
-  osmscout::DatabaseParameter m_databaseParameter;
-  osmscout::DatabaseRef m_database;
-  osmscout::MercatorProjection  projection;
-  osmscout::MapParameter        drawParameter;
-  osmscout::AreaSearchParameter searchParameter;
-  osmscout::MapData             data;
-  std::list<osmscout::TileRef> tiles;
-  osmscout::MapPainterCairo *painter;  
-  cairo_surface_t *m_surface;
-  cairo_t *m_cairo;
+  int width_;
+  int height_;
+  string map_;
+  string style_;
+  osmscout::MapServiceRef mapService_;
+  osmscout::StyleConfigRef styleConfig_;
+  osmscout::DatabaseParameter databaseParameter_;
+  osmscout::DatabaseRef database_;
+  osmscout::MercatorProjection  projection_;
+  osmscout::MapParameter        drawParameter_;
+  osmscout::AreaSearchParameter searchParameter_;
+  osmscout::MapData             data_;
+  std::list<osmscout::TileRef> tiles_;
+  osmscout::MapPainterCairo *painter_;  
+  cairo_surface_t *surface_;
+  cairo_t *cairo_;
 };
 #endif

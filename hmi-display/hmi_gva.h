@@ -79,89 +79,89 @@ using namespace gva;
 // 
 // forward declarations
 // 
-struct stateOff;
-struct stateSA;
-struct stateWPN;
-struct stateDEF;
-struct stateDRV;
-struct stateSYS;
-struct stateSTR;
-struct stateCOM; 
-struct stateBMS;
-struct stateAlarms;
+struct StateOff;
+struct StateSA;
+struct StateWPN;
+struct StateDEF;
+struct StateDRV;
+struct StateSYS;
+struct StateSTR;
+struct StateCOM; 
+struct StateBMS;
+struct StateAlarms;
 
 // 
 // Event Declarations
 //
-struct KeyPowerOn : tinyfsm::Event { };
-struct KeySA : tinyfsm::Event { };
-struct KeyWPN : tinyfsm::Event { };
-struct KeyDEF : tinyfsm::Event { };
-struct KeySYS : tinyfsm::Event { };
-struct KeyDRV : tinyfsm::Event { };
-struct KeySTR : tinyfsm::Event { };
-struct KeyCOM : tinyfsm::Event { };
-struct KeyBMS : tinyfsm::Event { };
-struct KeyAlarms : tinyfsm::Event { };
-struct KeyFunction : tinyfsm::Event { int key; };
+struct EventKeyPowerOn : tinyfsm::Event { };
+struct EventKeySA : tinyfsm::Event { };
+struct EventKeyWPN : tinyfsm::Event { };
+struct EventKeyDEF : tinyfsm::Event { };
+struct EventKeySYS : tinyfsm::Event { };
+struct EventKeyDRV : tinyfsm::Event { };
+struct EventKeySTR : tinyfsm::Event { };
+struct EventKeyCOM : tinyfsm::Event { };
+struct EventKeyBMS : tinyfsm::Event { };
+struct EventKeyAlarms : tinyfsm::Event { };
+struct EventKeyFunction : tinyfsm::Event { int key; };
 
 //
-// 2. State Machine Base Class Declaration
+// State Machine Base Class Declaration
 //
 struct Hmi : tinyfsm::Fsm<Hmi>
 {
-  virtual void react(KeyPowerOn const &) { };
-  virtual void react(KeySA const &) { };
-  virtual void react(KeyWPN const &) { };
-  virtual void react(KeyDEF const &) { };
-  virtual void react(KeySYS const &) { };
-  virtual void react(KeyDRV const &) { };
-  virtual void react(KeySTR const &) { };
-  virtual void react(KeyCOM const &) { };
-  virtual void react(KeyBMS const &) { };
-  virtual void react(KeyAlarms const &) { };
-  virtual void react(KeyFunction const &) { };
+  virtual void react(EventKeyPowerOn const &) { };
+  virtual void react(EventKeySA const &) { };
+  virtual void react(EventKeyWPN const &) { };
+  virtual void react(EventKeyDEF const &) { };
+  virtual void react(EventKeySYS const &) { };
+  virtual void react(EventKeyDRV const &) { };
+  virtual void react(EventKeySTR const &) { };
+  virtual void react(EventKeyCOM const &) { };
+  virtual void react(EventKeyBMS const &) { };
+  virtual void react(EventKeyAlarms const &) { };
+  virtual void react(EventKeyFunction const &) { };
 
-  // alternative: enforce handling of Toggle in all states (pure virtual)
-  //virtual void react(Toggle const &) = 0;
+  // alternative: enforce handling of Toggle in all States (pure virtual)
+  //virtual void react(EventToggle const &) = 0;
 
-  virtual void entry(void) { };  /* entry actions in some states */
+  virtual void entry(void) { };  /* entry actions in some States */
   void         exit(void)  { };  /* no exit actions */
 
-  // alternative: enforce entry actions in all states (pure virtual)
+  // alternative: enforce entry actions in all States (pure virtual)
   //virtual void entry(void) = 0;
 protected:
-  static viewGvaManager *m_manager;
-  static resolution_type m_view;
-  static statusBarType m_status;
-  static functionSelectType m_top;
-  static commonTaskKeysType m_bottom;
-  static canvasType m_canvas;
-  static keyboardType m_keyboard;
-  static alarmsType m_alarms;
-  static screenType m_screen;
-  static widgetsType m_widgets;
-  static screenGva *m_render;
-  static rendererMap *m_map;
-  static int m_lastState;
-  static bool m_alarmsOn;
+  static ViewGvaManager *manager_;
+  static ResolutionType view_;
+  static StatusBarType status_;
+  static FunctionSelectType top_;
+  static CommonTaskKeysType bottom_;
+  static CanvasType canvas_;
+  static KeyboardType keyboard_;
+  static AlarmsType alarms_;
+  static ScreenType screen_;
+  static WidgetsType widgets_;
+  static ScreenGva *render_;
+  static rendererMap *map_;
+  static int lastState_;
+  static bool alarmson_;
 public:
-  static void keySide(int key);
-  static void key(int key);
-  static void keySA(int key);
-  static void keyWPN(int key);
-  static void keyDEF(int key);
-  static void keySYS(int key);
-  static void keyDRV(int key);
-  static void keySTR(int key);
-  static void keyCOM(int key);
-  static void keyBMS(int key);
-  static void reset();
-  static xmlData xml;
-  static screenGva* getRendrer() { return m_render; }
-  static screenType* getScreen() { return &m_screen; }
-  static widgetsType* getWidgets() { return &m_widgets; }
-  static void labels(labelModeEnum labels);
+  static void KeySide(int key);
+  static void Key(int key);
+  static void KeySA(int key);
+  static void KeyWPN(int key);
+  static void KeyDEF(int key);
+  static void KeySYS(int key);
+  static void KeyDRV(int key);
+  static void KeySTR(int key);
+  static void KeyCOM(int key);
+  static void KeyBMS(int key);
+  static void Reset();
+  static xmlData xml_;
+  static ScreenGva* GetRendrer() { return render_; }
+  static ScreenType* GetScreen() { return &screen_; }
+  static WidgetsType* GetWidgets() { return &widgets_; }
+  static void Labels(LabelModeEnum labels);
 };
 
 using hmi = Hmi;

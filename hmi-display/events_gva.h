@@ -46,18 +46,13 @@ namespace gva
     int y;
   };
 
-  struct ResolutionType {
-    int width;
-    int height;
-  };
-
   class EventGvaType {
   public:
     EventGvaType() { type = NO_EVENT; };  
     EventGvaType(int x, int y) { touch_.x=x; touch_.y=y; type = TOUCH_EVENT; };  
-    EventGvaType(gvaKeyEnum key) : key_(key) { type = KEY_EVENT; };  
+    EventGvaType(GvaKeyEnum key) : key_(key) { type = KEY_EVENT; };  
     EventEnumType type;
-    gvaKeyEnum key_;
+    GvaKeyEnum key_;
     TouchType touch_;
     ResolutionType resize_;
   };
@@ -68,9 +63,9 @@ namespace gva
   class EventsGva {
   public:
     EventsGva(gtkType *window, touchGva *touch); 
-    int NextGvaEvent(EventGvaType *event); // Use for X11/DDS/Touch events
-    static gboolean ButtonPressEventCb (GtkWidget *widget, GdkEventButton *event, gpointer data);
-    static gboolean KeyPressEventCb (GtkWidget *widget, GdkEventKey *event);
+    int NextGvaEvent(EventGvaType *event); // Use for GTK/DDS/Touch events
+    static gboolean ButtonPressEventCb (GtkWidget *Widget, GdkEventButton *event, gpointer data);
+    static gboolean KeyPressEventCb (GtkWidget *Widget, GdkEventKey *event);
     gtkType * GetWindow() { return window_; }; 
   private:
     gtkType *window_;

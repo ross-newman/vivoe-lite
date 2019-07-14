@@ -53,61 +53,59 @@ float toDegrees(float lon) {
 
 namespace gva
 {
-  screenGva::screenGva (screenType * screen, widgetsType * widgets, int width, int height)
-  : rendererGva (width, height)
+  ScreenGva::ScreenGva (ScreenType * screen, WidgetsType * Widgets, int width, int height)
+  : RendererGva (width, height)
   {
-    m_screen = screen;
-    m_widgets = widgets;
-    m_width = width;
-    m_height = height;
+    screen_ = screen;
+    widgets_ = Widgets;
 
     char tmp[100];
     struct termios settings;
 
-    sprintf(tmp, "GVA screen initalised (%dx%d)", m_width, m_height);
+    sprintf(tmp, "GVA screen initalised (%dx%d)", width_, height_);
     logGva::log (tmp, LOG_INFO);
 
     // Initalise the pasert for NMEA
-    nmea_zero_INFO(&m_info);
-    nmea_parser_init(&m_parser);
+    nmea_zero_INFO(&info_);
+    nmea_parser_init(&parser_);
     
     // Open File Descriptor
-    m_gps = open( screen->info.gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
-    if (m_gps > 0) {
+    gps_ = open( screen->info.gpsDevice, O_RDWR| O_NONBLOCK | O_NDELAY );
+    if (gps_ > 0) {
       sprintf(tmp, "GPS Opened %s", screen->info.gpsDevice);
       logGva::log (tmp, LOG_INFO); 
     } else {
       sprintf(tmp, "GPS Error Opening device %s", screen->info.gpsDevice);
       logGva::log (tmp, LOG_ERROR); 
     }
-    tcgetattr(m_gps, &settings);
+    tcgetattr(gps_, &settings);
 
     //
     // Set Baud Rate
     //
     cfsetospeed(&settings, B4800); // baud rate 
-    tcsetattr(m_gps, TCSANOW, &settings); // apply the settings
+    tcsetattr(gps_, TCSANOW, &settings); // apply the settings
 
     //
     // Start the Real Time Clock
     // 
-    startClock (m_screen->statusBar);
+    StartClock (screen_->StatusBar);
   }
 
-  screenGva::~screenGva ()
+  ScreenGva::~ScreenGva ()
   {
-    m_args->active = false;
-    pthread_join (m_clock_thread, 0);
-    free (m_args);
-    nmea_parser_destroy(&m_parser);
-    close(m_gps);
-    if (m_gps) logGva::log ("GPS closed", LOG_INFO);
+    args_->active = false;
+    pthread_join (clock_thread_, 0);
+    free (args_);
+    nmea_parser_destroy(&parser_);
+    close(gps_);
+    if (gps_) logGva::log ("GPS closed", LOG_INFO);
     logGva::log ("GVA screen finalized.", LOG_INFO);
     logGva::finish ();
   }
 
   void *
-  clockUpdate (void *arg)
+  ClockUpdate (void *arg)
   {
     args *a = (args *) arg;
     time_t t;
@@ -124,7 +122,6 @@ namespace gva
       sprintf (a->clockString, "%02d/%02d/%02d %02d:%02d:%02d", tm->tm_mday,
                tm->tm_mon + 1, tm->tm_year + 1900, tm->tm_hour, tm->tm_min,
                tm->tm_sec);
-      a->screen->refresh ();
       if (*a->gps > 0) 
       {
         i=0;
@@ -180,24 +177,24 @@ namespace gva
   }
 
   void
-  screenGva::startClock (statusBarType * barData)
+  ScreenGva::StartClock (StatusBarType * barData)
   {
-    pthread_t m_clock_thread;
-    m_args = (args *) malloc (sizeof (args));
-    m_args->active = true;
-    m_args->clockString = barData->labels[0];
-    m_args->locationFormat = barData->labels[1];
-    m_args->locationString = barData->labels[2];
-    m_args->parser = &m_parser;
-    m_args->info = &m_info;
-    m_args->gps = &m_gps;
-    m_args->screen = this;
-    m_args->location = &barData->location;
-    m_args->info->lon = DUMMY_LON;
-    m_args->info->lat = DUMMY_LAT;
+    pthread_t clock_thread_;
+    args_ = (args *) malloc (sizeof (args));
+    args_->active = true;
+    args_->clockString = barData->labels[0];
+    args_->locationFormat = barData->labels[1];
+    args_->locationString = barData->labels[2];
+    args_->parser = &parser_;
+    args_->info = &info_;
+    args_->gps = &gps_;
+    args_->screen = this;
+    args_->location = &barData->location;
+    args_->info->lon = DUMMY_LON;
+    args_->info->lat = DUMMY_LAT;
     
     /* Launch clock thread */
-    if (pthread_create (&m_clock_thread, NULL, clockUpdate, (void *) m_args))
+    if (pthread_create (&clock_thread_, NULL, ClockUpdate, (void *) args_))
       {
         logGva::log ("Error creating thread", LOG_ERROR);
         return;
@@ -206,103 +203,103 @@ namespace gva
   }
 
   int
-  screenGva::update ()
+  ScreenGva::Update ()
   {
     char *texture = 0;
 
     // Reset the drawing context, must be reset before redrawing the screen
-    reset ();
+    reset();
     getTouch()->reset();
 
     // Draw the background canvas first
-    switch (m_screen->canvas.bufferType) {
+    switch (screen_->canvas.bufferType) {
       case SURFACE_CAIRO:
-        textureRGB (0, 0, m_screen->canvas.surface);
+        textureRGB (0, 0, screen_->canvas.surface);
         break;
       case SURFACE_FILE:
-        textureRGB (0, 0, m_screen->canvas.buffer);
-        textureRGB (0, 0, texture, m_screen->canvas.filename);
+        textureRGB (0, 0, screen_->canvas.buffer);
+        textureRGB (0, 0, texture, screen_->canvas.filename);
         break;
       default:
       case SURFACE_NONE:
         // Set background green
         setColourForground (GREEN);
         setColourBackground (GREEN);
-        drawRectangle (0, 0, m_width, m_height, true);
+        drawRectangle (0, 0, width_, height_, true);
         break;
     }
 
     // Draw label
-    if (m_screen->label.visible) {
-      drawLabel (m_screen->label.x, m_screen->label.y, m_screen->label.text, m_screen->label.fontSize);
+    if (screen_->label.visible) {
+      drawLabel (screen_->label.x, screen_->label.y, screen_->label.text, screen_->label.fontSize);
     }
 
     // Draw the LEFT bezel labels
-    if (m_screen->functionLeft.visible) {
-      drawFunctionLabels (1, m_screen->functionLeft.active,
-                        m_screen->functionLeft.hidden,
-                        m_screen->functionLeft.toggleActive,
-                        m_screen->functionLeft.toggleOn,
-                        m_screen->functionLeft.labels);
+    if (screen_->functionLeft.visible) {
+      drawFunctionLabels (1, screen_->functionLeft.active,
+                        screen_->functionLeft.hidden,
+                        screen_->functionLeft.toggleActive,
+                        screen_->functionLeft.toggleOn,
+                        screen_->functionLeft.labels);
     }
 
     // Draw the RIGHT bezel labels
-    if (m_screen->functionRight.visible) {
-      drawFunctionLabels (m_width - 100 - 1,
-                        m_screen->functionRight.active,
-                        m_screen->functionRight.hidden,
-                        m_screen->functionRight.toggleActive,
-                        m_screen->functionRight.toggleOn,
-                        m_screen->functionRight.labels);
+    if (screen_->functionRight.visible) {
+      drawFunctionLabels (width_ - 100 - 1,
+                        screen_->functionRight.active,
+                        screen_->functionRight.hidden,
+                        screen_->functionRight.toggleActive,
+                        screen_->functionRight.toggleOn,
+                        screen_->functionRight.labels);
     }
 
     // Draw the TOP bezel labels     
-    if (m_screen->functionTop->visible) {
-      drawTopLabels (m_height-11, m_screen->functionTop->active,
-                  m_screen->functionTop->hidden);
+    if (screen_->functionTop->visible) {
+      drawTopLabels (height_-11, screen_->functionTop->active,
+                  screen_->functionTop->hidden);
     }
 
     // Draw the maintinance mode indicator 
-    if (m_screen->info.mode == MODE_MAINTINENCE) {
+    if (screen_->info.mode == MODE_MAINTINENCE) {
       drawMode ();
     }
     
     // Generic message box
-    if (m_screen->message.visible) {
+    if (screen_->message.visible) {
       char tmp[2][MAX_TEXT];
-      gvaTable table(320-150, 260, 300);
+      GvaTable table(320-150, 260, 300);
       gvaRow newrow;
       gvaRow newrow1;
       
       table.m_border = 2;
 
-      strcpy(tmp[0], m_screen->message.brief.text);
+      strcpy(tmp[0], screen_->message.brief.text);
       newrow.addCell({tmp[0], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD }, 100);
       table.addRow(newrow);      
 
-      strcpy(tmp[1], m_screen->message.detail.text);
+      strcpy(tmp[1], screen_->message.detail.text);
       newrow1.addCell({tmp[1], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
       table.addRow(newrow1);
       drawTable (&table);
     }
     
     // Draw the onscreen KEYBOARD
-    if (m_widgets->keyboard.visible) {
-      drawKeyboard(m_widgets->keyboard.mode);
+    if (widgets_->keyboard.visible) {
+      drawKeyboard(widgets_->keyboard.mode);
     }
     
     // Setup and draw the status bar, one row table
-    if (m_screen->statusBar->visible) {
+    if (screen_->StatusBar->visible) {
       int i = 0;
       // Setup and draw the status bar, one row table
       int widths[7] = { 23, 8, 37, 8, 8, 8, 8 };
-      gvaTable table(1, m_screen->statusBar->y , 640);
+      GvaTable table(1, screen_->StatusBar->y , 640);
       gvaRow newrow;
 
       for (i=0;i<7;i++) {
         cellAlignType align = ALIGN_LEFT;
         if (i==1) align = ALIGN_CENTRE;
-        gvaCellType cell = {m_screen->statusBar->labels[i], align, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
+        gvaCellType cell = {screen_->StatusBar->labels[i], align, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
         newrow.addCell(cell, widths[i]);
       }
       table.addRow(newrow);
@@ -310,10 +307,10 @@ namespace gva
     }
 
     // TODO : Draw the alarms if any (Mock up)
-    if (m_widgets->alarmIndicator.visible) {
-      gvaTable table(102, m_widgets->alarmIndicator.y, 436);
+    if (widgets_->alarmIndicator.visible) {
+      GvaTable table(102, widgets_->alarmIndicator.y, 436);
       gvaRow alarmrow;
-      gvaCellType cell = {m_widgets->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
+      gvaCellType cell = {widgets_->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
       
       table.m_border = 0;
       alarmrow.addCell(cell, 100);
@@ -322,7 +319,7 @@ namespace gva
     }
 
     // Setup and draw the alarms
-    if (m_screen->alarms.visible) {
+    if (screen_->alarms.visible) {
       int i = 0;
       int widths[6] = { 20, 50, 10, 20 };
       char row1[4][MAX_TEXT] = { "Time", "Alarm Text", "Cat", "Status"};
@@ -333,7 +330,7 @@ namespace gva
       char row6[4][MAX_TEXT] = { "15/6 18:16", "Air con fault", "A", "ACT"};
       char row7[4][MAX_TEXT] = { "15/6 19:03", "Gun barrel over tempreture", "C", "(OVR)ACT"};
       char row8[4][MAX_TEXT] = { "15/6 19:04", "LRU fault", "C", "ACT"};
-      gvaTable table(110, 390, 420);
+      GvaTable table(110, 390, 420);
       gvaRow newrow;
       gvaRow newrow1;
       gvaRow newrow2;
@@ -401,44 +398,25 @@ namespace gva
       drawTable (&table);
     }
 
-    if (m_widgets->compass.visible) {
-      drawPPI (m_widgets->compass.x, m_widgets->compass.y, m_widgets->compass.bearing, m_widgets->compass.bearingSight);
+    if (widgets_->compass.visible) {
+      drawPPI (widgets_->compass.x, widgets_->compass.y, widgets_->compass.bearing, widgets_->compass.bearingSight);
     }
 
-    if (m_screen->control->visible) {
-      drawControlLabels (0, m_screen->control->active,
-                       m_screen->control->hidden);
+    if (screen_->control->visible) {
+      drawControlLabels (0, screen_->control->active,
+                       screen_->control->hidden);
     }
 
     //
     // Refersh display
     //
     draw ();
-    m_last_screen = *m_screen;
+    last_screen_ = *screen_;
   }
   
   char 
-  *posDegrees(float lon, float lat)
+  *PosDegrees(float lon, float lat)
   {
     
-  }
-
-  int
-  screenGva::refresh ()
-  {
-#if X11
-    XClientMessageEvent dummyEvent;
-
-    //
-    // Send a dummy event to force screen update 
-    //
-    memset (&dummyEvent, 0, sizeof (XClientMessageEvent));
-    dummyEvent.type = Expose;
-    dummyEvent.window = getWindow ()->win;
-    dummyEvent.format = 32;
-    XSendEvent (getWindow()->dpy, getWindow()->win, False, ExposureMask,
-                (XEvent *) & dummyEvent);
-    XFlush (getWindow()->dpy);
-#endif
   }
 }

@@ -44,17 +44,17 @@ clear_surface (void)
 
 /* Create a new surface of the appropriate size to store our scribbles */
 static gboolean
-configure_event_cb (GtkWidget         *widget,
+configure_event_cb (GtkWidget         *Widget,
                     GdkEventConfigure *event,
                     gpointer           data)
 {
   if (surface)
     cairo_surface_destroy (surface);
 
-  surface = gdk_window_create_similar_surface (gtk_widget_get_window (widget),
+  surface = gdk_window_create_similar_surface (gtk_widget_get_window (Widget),
                                                CAIRO_CONTENT_COLOR,
-                                               gtk_widget_get_allocated_width (widget),
-                                               gtk_widget_get_allocated_height (widget));
+                                               gtk_widget_get_allocated_width (Widget),
+                                               gtk_widget_get_allocated_height (Widget));
 
   /* Initialize the surface to white */
   clear_surface ();
@@ -65,10 +65,10 @@ configure_event_cb (GtkWidget         *widget,
 
 /* Redraw the screen from the surface. Note that the ::draw
  * signal receives a ready-to-be-used cairo_t that is already
- * clipped to only draw the exposed areas of the widget
+ * clipped to only draw the exposed areas of the Widget
  */
 static gboolean
-draw_cb (GtkWidget *widget,
+draw_cb (GtkWidget *Widget,
          cairo_t   *cr,
          gpointer   data)
 {
@@ -80,7 +80,7 @@ draw_cb (GtkWidget *widget,
 
 /* Draw a rectangle on the surface at the given position */
 static void
-draw_brush (GtkWidget *widget,
+draw_brush (GtkWidget *Widget,
             gdouble    x,
             gdouble    y)
 {
@@ -95,7 +95,7 @@ draw_brush (GtkWidget *widget,
   cairo_destroy (cr);
 
   /* Now invalidate the affected region of the drawing area. */
-  gtk_widget_queue_draw_area (widget, x - 3, y - 3, 6, 6);
+  gtk_widget_queue_draw_area (Widget, x - 3, y - 3, 6, 6);
 }
 
 /* Handle button press events by either drawing a rectangle
@@ -104,7 +104,7 @@ draw_brush (GtkWidget *widget,
  * struct which contains this information.
  */
 static gboolean
-button_press_event_cb (GtkWidget      *widget,
+button_press_event_cb (GtkWidget      *Widget,
                        GdkEventButton *event,
                        gpointer        data)
 {
@@ -114,12 +114,12 @@ button_press_event_cb (GtkWidget      *widget,
 
   if (event->button == GDK_BUTTON_PRIMARY)
     {
-      draw_brush (widget, event->x, event->y);
+      draw_brush (Widget, event->x, event->y);
     }
   else if (event->button == GDK_BUTTON_SECONDARY)
     {
       clear_surface ();
-      gtk_widget_queue_draw (widget);
+      gtk_widget_queue_draw (Widget);
     }
 
   /* We've handled the event, stop processing */
@@ -131,7 +131,7 @@ button_press_event_cb (GtkWidget      *widget,
  * a GdkEventMotion struct which contains this information.
  */
 static gboolean
-motion_notify_event_cb (GtkWidget      *widget,
+motion_notify_event_cb (GtkWidget      *Widget,
                         GdkEventMotion *event,
                         gpointer        data)
 {
@@ -140,7 +140,7 @@ motion_notify_event_cb (GtkWidget      *widget,
     return FALSE;
 
   if (event->state & GDK_BUTTON1_MASK)
-    draw_brush (widget, event->x, event->y);
+    draw_brush (Widget, event->x, event->y);
 
   /* We've handled it, stop processing */
   return TRUE;

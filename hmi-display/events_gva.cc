@@ -39,7 +39,7 @@ namespace gva
   // struct which contains this information.
   //
   gboolean 
-  EventsGva::ButtonPressEventCb (GtkWidget      *widget,
+  EventsGva::ButtonPressEventCb (GtkWidget      *Widget,
                          GdkEventButton *event,
                          gpointer        data)
   {
@@ -53,7 +53,7 @@ namespace gva
       if (!binding) touch_->check(LEFT, &binding, event->x, event->y);
       if (binding) {
         gvaEvent.type = KEY_EVENT;
-        gvaEvent.key_ = (gvaKeyEnum)binding;
+        gvaEvent.key_ = (GvaKeyEnum)binding;
         eventqueue_.push_back(gvaEvent);
       }
     }
@@ -66,7 +66,7 @@ namespace gva
   }
 
   gboolean 
-  EventsGva::KeyPressEventCb (GtkWidget *widget, GdkEventKey *event) {
+  EventsGva::KeyPressEventCb (GtkWidget *Widget, GdkEventKey *event) {
     GdkModifierType modifiers;
     EventGvaType gvaEvent;
     

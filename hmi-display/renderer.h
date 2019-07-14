@@ -46,54 +46,51 @@
 #define ORANGE 255,165,0
 #define NONE -1, -1, -1
 
-
-struct colour_type
-{
+struct colour_type {
   int red;
   int green;
   int blue;
 };
 
-struct point_type
-{
+struct point_type {
   int x;
   int y;
 };
 
-struct resolution_type
-{
+struct ResolutionType {
   int width;
   int height;
   int depth;
 };
 
-class rendererSdl;
-class rendererCairo;
+class RendererCairo;
 
 class renderer
 {
 public:
+  renderer(int width, int height) : width_(width), height_(height) {};
   int init (int width, int height);
   virtual void setPixel (int x, int y) = 0;
   virtual void setColour (int red, int green, int blue) = 0;
   virtual void setColourForground (int red, int green, int blue) = 0;
   virtual void setColourBackground (int red, int green, int blue) = 0;
-  int getWidth () { return width_; };
-  int getHeight () { return height_; };
-  void setWidth (int width) { width_ = width; };
-  void setHeight (int height) { height_ = height; };
+  int GetWidth () { return width_; };
+  int GetHeight () { return height_; };
+  void SetWidth (int width) { width_ = width; };
+  void SetHeight (int height) { height_ = height; };
   virtual int drawLine (int x1, int y1, int x2, int y2) = 0;
   virtual void drawCircle (int x, int y, int radius, bool fill) = 0;
   virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
   virtual int drawColor (int r, int g, int b) = 0;
   virtual int textureRGB (int x, int y, void *buffer, char *file) = 0;
-private:
+protected:
   int height_;
   int width_;
+private:
   colour_type forground_colour_;
   colour_type background_colour_;
   friend class rendererSdl;
-  friend class rendererCairo;
+  friend class RendererCairo;
 };
 
 #endif

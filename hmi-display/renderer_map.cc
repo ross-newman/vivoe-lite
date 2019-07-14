@@ -34,52 +34,52 @@
 #define DPI 96.0
 
 rendererMap::rendererMap(string map, string style, int width, int height)
-: m_width(width), m_height(height), m_map(map), m_style(style)
+: width_(width), height_(height), map_(map), style_(style)
 {
-  m_database = (osmscout::DatabaseRef)(new osmscout::Database(m_databaseParameter));
-  m_mapService = (osmscout::MapServiceRef)(new osmscout::MapService(m_database));
+  database_ = (osmscout::DatabaseRef)(new osmscout::Database(databaseParameter_));
+  mapService_ = (osmscout::MapServiceRef)(new osmscout::MapService(database_));
 
-  if (!m_database->Open(map.c_str())) {
+  if (!database_->Open(map_.c_str())) {
     logGva::log("Cannot open libosmscout database", LOG_ERROR);
   }
 
-  m_styleConfig = (osmscout::StyleConfigRef)new osmscout::StyleConfig(m_database->GetTypeConfig());
+  styleConfig_ = (osmscout::StyleConfigRef)new osmscout::StyleConfig(database_->GetTypeConfig());
 
-  if (!m_styleConfig->Load(style)) {
+  if (!styleConfig_->Load(style_)) {
     logGva::log("Cannot open libosmscout style", LOG_ERROR);
   }
 
-  m_surface=cairo_image_surface_create(CAIRO_FORMAT_RGB24, m_width, m_height);
-  if (m_surface!=nullptr) {
-    m_cairo=cairo_create(m_surface);
+  surface_=cairo_image_surface_create(CAIRO_FORMAT_RGB24, width_, height_);
+  if (surface_!=nullptr) {
+    cairo_=cairo_create(surface_);
     logGva::log("Created libosmscout cairo surface", LOG_INFO);
   } else {
     logGva::log("Cannot create libosmscout cairo surface", LOG_ERROR);
   }
   
-  drawParameter.SetFontSize(3.0);
-  drawParameter.SetLabelLineMinCharCount(15);
-  drawParameter.SetLabelLineMaxCharCount(30);
-  drawParameter.SetLabelLineFitToArea(true);
-  drawParameter.SetLabelLineFitToWidth(std::min(projection.GetWidth(), projection.GetHeight()));
-  painter = new osmscout::MapPainterCairo(m_styleConfig);
+  drawParameter_.SetFontSize(3.0);
+  drawParameter_.SetLabelLineMinCharCount(15);
+  drawParameter_.SetLabelLineMaxCharCount(30);
+  drawParameter_.SetLabelLineFitToArea(true);
+  drawParameter_.SetLabelLineFitToWidth(std::min(projection_.GetWidth(), projection_.GetHeight()));
+  painter_ = new osmscout::MapPainterCairo(styleConfig_);
 };
 
 rendererMap::~rendererMap()
 {
 printf("ERROR\n");
-  cairo_destroy(m_cairo);
-  cairo_surface_destroy(m_surface);
-  free(painter);
+  cairo_destroy(cairo_);
+  cairo_surface_destroy(surface_);
+  free(painter_);
 };
 
 int 
-rendererMap::project(double zoom, double lon, double lat, cairo_surface_t **surface)
+rendererMap::Project(double zoom, double lon, double lat, cairo_surface_t **surface)
 {
 
-  if (m_surface!=nullptr) {
+  if (surface_!=nullptr) {
 
-    if (m_cairo!=nullptr) {
+    if (cairo_!=nullptr) {
 
       /*
       std::list<std::string> paths;
@@ -88,21 +88,21 @@ rendererMap::project(double zoom, double lon, double lat, cairo_surface_t **surf
       drawParameter.SetIconPaths(paths);
       */
 
-      projection.Set(osmscout::GeoCoord(lat,lon),
+      projection_.Set(osmscout::GeoCoord(lat,lon),
                      osmscout::Magnification(zoom),
                      DPI,
-                     m_width,
-                     m_height);
+                     width_,
+                     height_);
 
 
-      m_mapService->LookupTiles(projection,tiles);
-      m_mapService->LoadMissingTileData(searchParameter,*m_styleConfig,tiles);
-      m_mapService->AddTileDataToMapData(tiles,data);
+      mapService_->LookupTiles(projection_,tiles_);
+      mapService_->LoadMissingTileData(searchParameter_,*styleConfig_, tiles_);
+      mapService_->AddTileDataToMapData(tiles_,data_);
 
-      if (painter->DrawMap(projection,
-                          drawParameter,
-                          data,
-                          m_cairo)) {
+      if (painter_->DrawMap(projection_,
+                          drawParameter_,
+                          data_,
+                          cairo_)) {
         // Map rendered
       }
     }
@@ -110,6 +110,6 @@ rendererMap::project(double zoom, double lon, double lat, cairo_surface_t **surf
     return GVA_ERROR;
   }
 
-  *surface = m_surface;
+  *surface = surface_;
   return GVA_SUCCESS;
 };

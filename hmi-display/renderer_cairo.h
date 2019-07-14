@@ -47,21 +47,18 @@ typedef struct  {
 #define DEFAULT_HEIGHT 480
 
 typedef struct win {
-    Display *dpy;
     int scr;
-
+    int width;
+    int height;
     Window win;
-    GC gc;
-
-    int width, height;
-    KeyCode quit_code;
 } win_t;
 
 struct handle_type
 {
   int handle;
   bool inUse;
-  resolution_type size;
+  bool fullscreen;
+  ResolutionType size;
   gtkType win;
   cairo_surface_t *surface;
   cairo_t * cr;  
@@ -126,12 +123,12 @@ typedef enum {
 
 static handle_type render_;
 
-typedef void (*CallbackType)(void * io);
+typedef void (*CallbackType)(void * io, gpointer user_data);
 
-class rendererCairo : public renderer {
+class RendererCairo : public renderer {
 public:
-  rendererCairo (int width, int height);
-  ~rendererCairo ();
+  RendererCairo (int width, int height);
+  ~RendererCairo ();
   int init (int width, int height, CallbackType cb, void *arg);   
   // Pure Virtual functions
   void setPixel (int x, int y);
@@ -199,8 +196,8 @@ private:
   int image_tail_ = 0;
   
 private:
-  static gboolean DrawCb (GtkWidget *widget, cairo_t *cr, gpointer   data);
-  static gboolean ConfigureEventCb (GtkWidget *widget, 
+  static gboolean DrawCb (GtkWidget *Widget, cairo_t *cr, gpointer   data);
+  static gboolean ConfigureEventCb (GtkWidget *Widget, 
     GdkEventConfigure *event, gpointer data);
   static void Activate (GtkApplication *app, gpointer user_data);
   static gboolean Callback (gpointer user_data);

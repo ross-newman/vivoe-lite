@@ -32,66 +32,66 @@
 #define MAX_LABEL 50
 namespace gva
 {
-  struct toggleInfo {
+  struct ToggleInfo {
     bool visable;
-    bool rightActive;
-    char rightLabel[MAX_LABEL];
-    bool leftActive;
-    char leftLabel[MAX_LABEL];
+    bool right_active;
+    char right_label[MAX_LABEL];
+    bool left_active;
+    char left_label[MAX_LABEL];
   };
 
   class labelAction {
   public:
-    void bind(std::function<int(int parentId, gvaKeyEnum key)> fn) {
+    void Bind(std::function<int(int parentId, GvaKeyEnum key)> fn) {
       privateCallback = std::bind(fn, std::placeholders::_1, std::placeholders::_2);
     }
-    toggleInfo toggle;
+    ToggleInfo toggle_;
   private:
-    std::function<int(int parentId, gvaKeyEnum key)> privateCallback; // Callback
+    std::function<int(int parentId, GvaKeyEnum key)> privateCallback; // Callback
   };
 
-  class viewGva 
+  class ViewGva 
   {
   public:
-    viewGva(gvaFunctionEnum function, functionSelectType *top, commonTaskKeysType *bottom, functionKeysType left, functionKeysType right) :
-      m_function(function), m_functionTop(top), m_commonBottom(bottom), m_functionLeft(left), m_functionRight(right) { m_valid = true; };
-    bool valid() { return m_valid; };
-    bool release() { m_valid = false; };
-    void addToggle(gvaKeyEnum key, bool rightActive, char* rightText, bool leftActive, char* leftText) { };
-    functionSelectType* getTop() { return m_functionTop; };
-    commonTaskKeysType* getBottom() { return m_commonBottom; };
-    functionKeysType* getLeft() { return &m_functionLeft; };
-    functionKeysType* getRight() { return &m_functionRight; };
-    gvaFunctionEnum getFunction() { return m_function; };
+    ViewGva(GvaFunctionEnum function, FunctionSelectType *top, CommonTaskKeysType *bottom, FunctionKeysType left, FunctionKeysType right) :
+      function_(function), function_top_(top), common_bottom_(bottom), function_left_(left), function_right_(right) { valid_ = true; };
+    bool Valid() { return valid_; };
+    bool Release() { valid_ = false; };
+    void AddToggle(GvaKeyEnum key, bool rightActive, char* rightText, bool leftActive, char* leftText) { };
+    FunctionSelectType* GetTop() { return function_top_; };
+    CommonTaskKeysType* GetBottom() { return common_bottom_; };
+    FunctionKeysType* GetLeft() { return &function_left_; };
+    FunctionKeysType* GetRight() { return &function_right_; };
+    GvaFunctionEnum GetFunction() { return function_; };
   private:
-    bool m_valid = false;
-    gvaFunctionEnum m_function;
+    bool valid_ = false;
+    GvaFunctionEnum function_;
     // Screen top
-    functionSelectType *m_functionTop;
+    FunctionSelectType *function_top_;
     // Screen bottom
-    commonTaskKeysType *m_commonBottom;
+    CommonTaskKeysType *common_bottom_;
     // Screen left
-    functionKeysType m_functionLeft;
-    labelAction *m_functionLeftAction[6] = { 0 };
+    FunctionKeysType function_left_;
+    labelAction *function_left_action_[6] = { 0 };
     // Screen right
-    functionKeysType m_functionRight;
-    labelAction *m_functionRightAction[6] = { 0 };
+    FunctionKeysType function_right_;
+    labelAction *function_right_action_[6] = { 0 };
   };
   
-  typedef viewGva viewGva;
+  typedef ViewGva ViewGva;
   
-  class viewGvaManager  
+  class ViewGvaManager  
   {
   public:
-    viewGvaManager(statusBarType *statusBar);
-    viewGva *getNewView(gvaFunctionEnum function, functionSelectType *top, commonTaskKeysType *bottom, functionKeysType left, functionKeysType right);
-    screenType getScreen(gvaFunctionEnum function);
-    viewGva *getView(gvaFunctionEnum function);
+    ViewGvaManager(StatusBarType *StatusBar);
+    ViewGva *GetNewView(GvaFunctionEnum function, FunctionSelectType *top, CommonTaskKeysType *bottom, FunctionKeysType left, FunctionKeysType right);
+    ScreenType GetScreen(GvaFunctionEnum function);
+    ViewGva *GetView(GvaFunctionEnum function);
   private:
-    viewGva *m_view[20];
-    statusBarType *m_statusBar;
-    int m_idLast;
-    int m_id = 0;
+    ViewGva *view_[20];
+    StatusBarType *status_bar_;
+    int idLast_;
+    int id_ = 0;
   };
 }
 

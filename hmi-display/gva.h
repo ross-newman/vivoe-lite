@@ -29,12 +29,12 @@
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 433
+#define PATCH 434
 
 #define MIN_HEIGHT 480
 #define MIN_WIDTH 640
 
-enum gvaFunctionEnum {
+enum GvaFunctionEnum {
   SA = 0,
   WPN,
   DEF,
@@ -46,13 +46,13 @@ enum gvaFunctionEnum {
   ALARMSX,
 };
 
-enum gvaAlarmType {
+enum GvaAlarmType {
   ALARM_WARNING,
   ALARM_CRITICAL,
   ALARM_ALERT
 };
 
-enum gvaFunctionGroupEnum {
+enum GvaFunctionGroupEnum {
   TOP,
   BOTTOM,
   LEFT,
@@ -61,7 +61,7 @@ enum gvaFunctionGroupEnum {
   KEYBOARD
 };
 
-enum gvaKeyEnum 
+enum GvaKeyEnum 
 {
   /* These are physical GVA keys around the display */
   KEY_NONE = 0,
@@ -109,7 +109,7 @@ enum gvaKeyEnum
   KEY_KEYBOARD
 };
 
-enum gvaStatusTypes {
+enum GvaStatusTypes {
   GVA_SUCCESS = 0,
   GVA_ERROR,
   GVA_NETWORK_ERROR,

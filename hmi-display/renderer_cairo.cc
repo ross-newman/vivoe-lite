@@ -37,18 +37,17 @@ using namespace gva;
 static CallbackType callback_;
 static void *arg_;
 
-rendererCairo::rendererCairo (int width, int height)
+RendererCairo::RendererCairo (int width, int height) 
+: renderer(width, height)
 {
   scale_ = 1.0;
   forground_colour_ = { 255, 255, 255};
   background_colour_ = {0, 0, 0};
-  height_ = height;
-  width_ = width;
   texture_ = 0;
   image_tail_ = 0;
 }
 
-rendererCairo::~rendererCairo ()
+RendererCairo::~RendererCairo ()
 {
   if (texture_) {
     free(texture_);
@@ -60,7 +59,7 @@ rendererCairo::~rendererCairo ()
 }
 
 void
-rendererCairo::draw ()
+RendererCairo::draw ()
 {
   int count = 0;
   cairo_surface_t *surface;
@@ -283,7 +282,7 @@ rendererCairo::draw ()
 }
 
 int
-rendererCairo::init (int width, int height, CallbackType cb, void *arg)
+RendererCairo::init (int width, int height, CallbackType cb, void *arg)
 {
   render_.size.width = width;
   render_.size.height = height;
@@ -302,7 +301,7 @@ rendererCairo::init (int width, int height, CallbackType cb, void *arg)
 //                                  "win.fullscreen",quit_accels);
                                        
   g_signal_connect (render_.win.app, "activate", G_CALLBACK (Activate), NULL);
-  g_timeout_add (40, Callback, NULL);
+  g_timeout_add (40, Callback, &render_);
   int status = g_application_run (G_APPLICATION (render_.win.app), 0, 0);
   g_object_unref (render_.win.app);
 
@@ -310,19 +309,19 @@ rendererCairo::init (int width, int height, CallbackType cb, void *arg)
 }
 
 void
-rendererCairo::setPixel (int x, int y)
+RendererCairo::setPixel (int x, int y)
 {
 }
 
 void
-rendererCairo::setColour (int red, int green, int blue)
+RendererCairo::setColour (int red, int green, int blue)
 {
   setColourForground (red, green, blue);
   setColourBackground (red, green, blue);
 }
 
 void
-rendererCairo::setColourForground (int red, int green, int blue)
+RendererCairo::setColourForground (int red, int green, int blue)
 {
   draw_commands_[draw_tail_].command = COMMAND_COLOUR_FG;
   draw_commands_[draw_tail_].arg1 = red;
@@ -332,7 +331,7 @@ rendererCairo::setColourForground (int red, int green, int blue)
 }
 
 void
-rendererCairo::setColourBackground (int red, int green, int blue)
+RendererCairo::setColourBackground (int red, int green, int blue)
 {
   draw_commands_[draw_tail_].command = COMMAND_COLOUR_BG;
   draw_commands_[draw_tail_].arg1 = red;
@@ -342,7 +341,7 @@ rendererCairo::setColourBackground (int red, int green, int blue)
 }
 
 void
-rendererCairo::setLineType (int type)
+RendererCairo::setLineType (int type)
 {
   draw_commands_[draw_tail_].command = COMMAND_LINE_JOIN;
   draw_commands_[draw_tail_].arg1 = type;
@@ -350,7 +349,7 @@ rendererCairo::setLineType (int type)
 }
 
 void
-rendererCairo::setLineThickness (int thickness, lineType fill)
+RendererCairo::setLineThickness (int thickness, lineType fill)
 {
   draw_commands_[draw_tail_].command = COMMAND_PEN_THICKNESS;
   draw_commands_[draw_tail_].arg1 = thickness;
@@ -359,7 +358,7 @@ rendererCairo::setLineThickness (int thickness, lineType fill)
 }
 
 int
-rendererCairo::movePen (int x, int y)
+RendererCairo::movePen (int x, int y)
 {
   y = render_.size.height - y;
 
@@ -371,7 +370,7 @@ rendererCairo::movePen (int x, int y)
 }
 
 int
-rendererCairo::drawPen (int x, int y, bool close)
+RendererCairo::drawPen (int x, int y, bool close)
 {
   y = render_.size.height - y;
 
@@ -385,7 +384,7 @@ rendererCairo::drawPen (int x, int y, bool close)
 }
 
 int
-rendererCairo::drawLine (int x1, int y1, int x2, int y2)
+RendererCairo::drawLine (int x1, int y1, int x2, int y2)
 {
   y1 = render_.size.height - y1;
   y2 = render_.size.height - y2;
@@ -397,7 +396,7 @@ rendererCairo::drawLine (int x1, int y1, int x2, int y2)
 }
 
 void
-rendererCairo::drawCircle (int x, int y, int radius, bool fill)
+RendererCairo::drawCircle (int x, int y, int radius, bool fill)
 {
   y = render_.size.height - y;
   draw_commands_[draw_tail_].command = COMMAND_CIRCLE;
@@ -411,7 +410,7 @@ rendererCairo::drawCircle (int x, int y, int radius, bool fill)
 }
 
 void
-rendererCairo::drawRectangle (int x1, int y1, int x2, int y2,
+RendererCairo::drawRectangle (int x1, int y1, int x2, int y2,
                               bool fill)
 {
   y1 = render_.size.height - y1;
@@ -427,7 +426,7 @@ rendererCairo::drawRectangle (int x1, int y1, int x2, int y2,
 }
 
 void
-rendererCairo::drawRoundedRectangle (int x, int y, int width,
+RendererCairo::drawRoundedRectangle (int x, int y, int width,
                                      int height, int courner, bool fill)
 {
   y = render_.size.height - y;
@@ -443,7 +442,7 @@ rendererCairo::drawRoundedRectangle (int x, int y, int width,
 }
 
 void
-rendererCairo::drawTriangle (int x1, int y1, int x2, int y2,
+RendererCairo::drawTriangle (int x1, int y1, int x2, int y2,
                              int x3, int y3, bool fill)
 {
   y1 = render_.size.height - y1;
@@ -462,7 +461,7 @@ rendererCairo::drawTriangle (int x1, int y1, int x2, int y2,
 }
 
 int
-rendererCairo::drawColor (int r, int g, int b)
+RendererCairo::drawColor (int r, int g, int b)
 {
   draw_commands_[draw_tail_].command = COMMAND_PEN_COLOUR;
   draw_commands_[draw_tail_].colour.red = r;
@@ -473,7 +472,7 @@ rendererCairo::drawColor (int r, int g, int b)
 }
 
 void
-rendererCairo::setTextFont (int slope, int weight, char *fontName)
+RendererCairo::setTextFont (int slope, int weight, char *fontName)
 {
   draw_commands_[draw_tail_].command = COMMAND_TEXT_FONT;
   draw_commands_[draw_tail_].arg1 = slope;
@@ -483,7 +482,7 @@ rendererCairo::setTextFont (int slope, int weight, char *fontName)
 }
 
 int
-rendererCairo::getTextWidth (char *str, int fontSize)
+RendererCairo::getTextWidth (char *str, int fontSize)
 {
   cairo_t *cr = render_.cr;
   cairo_text_extents_t extents;
@@ -495,7 +494,7 @@ rendererCairo::getTextWidth (char *str, int fontSize)
 }
 
 int
-rendererCairo::getTextHeight (char *str, int fontSize)
+RendererCairo::getTextHeight (char *str, int fontSize)
 {
   cairo_t *cr = render_.cr;
   cairo_text_extents_t extents;
@@ -506,7 +505,7 @@ rendererCairo::getTextHeight (char *str, int fontSize)
 }
 
 void
-rendererCairo::drawText (int x, int y, char *text, int size)
+RendererCairo::drawText (int x, int y, char *text, int size)
 {
   y = render_.size.height - y;
 
@@ -519,7 +518,7 @@ rendererCairo::drawText (int x, int y, char *text, int size)
 }
 
 void
-rendererCairo::drawLabel (int x, int y, char *text, int size)
+RendererCairo::drawLabel (int x, int y, char *text, int size)
 {
   y = render_.size.height - y;
 
@@ -532,13 +531,13 @@ rendererCairo::drawLabel (int x, int y, char *text, int size)
 }
 
 void
-rendererCairo::drawTextCentre (int x, char *text, int size)
+RendererCairo::drawTextCentre (int x, char *text, int size)
 {
   drawText (x, 200, text, size);
 }
 
 int
-rendererCairo::textureRGB (int x, int y, void *buffer, char *file)
+RendererCairo::textureRGB (int x, int y, void *buffer, char *file)
 {
   strcpy (image_list_[image_tail_].name, file);
 
@@ -556,7 +555,7 @@ rendererCairo::textureRGB (int x, int y, void *buffer, char *file)
 }
 
 int
-rendererCairo::textureRGB (int x, int y, void *buffer)
+RendererCairo::textureRGB (int x, int y, void *buffer)
 {
   image_list_[image_tail_].image =
     cairo_image_surface_create_for_data ((unsigned char*)buffer, CAIRO_FORMAT_RGB24, width_, height_,
@@ -573,7 +572,7 @@ rendererCairo::textureRGB (int x, int y, void *buffer)
 }
 
 int 
-rendererCairo::textureRGB (int x, int y, cairo_surface_t *surface) {
+RendererCairo::textureRGB (int x, int y, cairo_surface_t *surface) {
   image_list_[image_tail_].image = surface;
 
   draw_commands_[draw_tail_].command = COMMAND_IMAGE_TEXTURE_PERSIST;
@@ -589,60 +588,54 @@ rendererCairo::textureRGB (int x, int y, cairo_surface_t *surface) {
 //
 // Redraw the screen from the surface. Note that the ::draw
 // signal receives a ready-to-be-used cairo_t that is already
-// clipped to only draw the exposed areas of the widget
+// clipped to only draw the exposed areas of the Widget
 //
 gboolean
-rendererCairo::DrawCb (GtkWidget *widget, cairo_t   *cr, gpointer   data) {
+RendererCairo::DrawCb (GtkWidget *Widget, cairo_t   *cr, gpointer   data) {
   
   cairo_set_source_surface (cr, render_.surface, 0, 0);
   cairo_paint (cr);
 
-  gtk_widget_queue_draw(widget) ;
+  gtk_widget_queue_draw(Widget) ;
   return FALSE;
 }
 
 // Create a new surface of the appropriate size to store our HMI 
 gboolean
-rendererCairo::ConfigureEventCb (GtkWidget *widget, GdkEventConfigure *event, gpointer data)
+RendererCairo::ConfigureEventCb (GtkWidget *Widget, GdkEventConfigure *event, gpointer data)
 {
-  render_.surface = gdk_window_create_similar_surface (gtk_widget_get_window (widget),
+  render_.surface = gdk_window_create_similar_surface (gtk_widget_get_window (Widget),
                                                CAIRO_CONTENT_COLOR,
-                                               gtk_widget_get_allocated_width (widget),
-                                               gtk_widget_get_allocated_height (widget));
+                                               gtk_widget_get_allocated_width (Widget),
+                                               gtk_widget_get_allocated_height (Widget));
 
   render_.cr = cairo_create (render_.surface);
 
-  gint height,width;
-  width =  gtk_widget_get_allocated_width (widget);
-  height =  gtk_widget_get_allocated_height (widget);  
-
-  cairo_scale(render_.cr, (double)width / DEFAULT_WIDTH, (double)height / DEFAULT_HEIGHT);  
-  gtk_widget_queue_draw(widget) ;
+  cairo_scale(render_.cr, (double)gtk_widget_get_allocated_width (Widget) / DEFAULT_WIDTH, 
+    (double)gtk_widget_get_allocated_height (Widget) / DEFAULT_HEIGHT); 
+  gtk_widget_queue_draw(Widget);
 
   // We've handled the configure event, no need for further processing. 
   return TRUE;
 }
 
 void
-rendererCairo::Activate (GtkApplication *app, gpointer user_data)
+RendererCairo::Activate (GtkApplication *app, gpointer user_data)
 {
   render_.win.win = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (render_.win.win), "HMI vivoe-lite");
 
-  g_signal_connect (render_.win.win, "destroy", G_CALLBACK (CloseWindow), NULL);
-
-  gtk_container_set_border_width (GTK_CONTAINER (render_.win.win), 0);
 
   render_.win.draw = gtk_drawing_area_new ();
   gtk_container_add (GTK_CONTAINER (render_.win.win), render_.win.draw);
   // set a minimum size 
   gtk_widget_set_size_request (render_.win.draw, MIN_WIDTH, MIN_HEIGHT );
-
-  gtk_container_add (GTK_CONTAINER (render_.win.win), render_.win.draw);
-
+  
   //
   // Event signals 
   //
+  g_signal_connect (render_.win.win, "destroy", 
+                    G_CALLBACK (CloseWindow), NULL);
   g_signal_connect (render_.win.draw, "button-press-event",
                     G_CALLBACK (EventsGva::ButtonPressEventCb), NULL);
   g_signal_connect (render_.win.win, "key-press-event",
@@ -670,12 +663,12 @@ rendererCairo::Activate (GtkApplication *app, gpointer user_data)
 }
 
 gboolean 
-rendererCairo::Callback (gpointer user_data) {
-  callback_(arg_);
+RendererCairo::Callback (gpointer user_data) {
+  callback_(arg_, user_data);
 }
 
 void
-rendererCairo::CloseWindow (void)
+RendererCairo::CloseWindow (void)
 {
   if (render_.surface)
     cairo_surface_destroy (render_.surface);

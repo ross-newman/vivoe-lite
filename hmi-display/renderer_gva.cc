@@ -24,7 +24,7 @@
 // @file renderer_gva.cc
 // @author ross@rossnewman.com
 // @date 04 July 2019
-// @brief Rendering functions for all the complex widgets needed by the HMI. Widgets are reusable components of the HMI.
+// @brief Rendering functions for all the complex Widgets needed by the HMI. Widgets are reusable components of the HMI.
 //
 #include <math.h>               /* sqrt */
 #include "debug.h"
@@ -43,15 +43,12 @@ gvaRow::addCell(gvaCellType newcell, int width)
   return m_cells; 
 };
 
-rendererGva::rendererGva (int width, int height):
-rendererCairo (width, height)
-{
-  m_height = height;
-  m_width = width;
+RendererGva::RendererGva (int width, int height)
+: RendererCairo (width, height) {
 }
 
 void
-FunctionKeySimple::draw (rendererGva * r, int x, int y, int width, int height, char *text)
+FunctionKeySimple::draw (RendererGva * r, int x, int y, int width, int height, char *text)
 {
   char copy[256];
   char delim[] = ".";
@@ -79,7 +76,7 @@ FunctionKeySimple::draw (rendererGva * r, int x, int y, int width, int height, c
 }
 
 void
-FunctionKeyToggle::toggle (rendererGva * r, char *label1,
+FunctionKeyToggle::toggle (RendererGva * r, char *label1,
                            char *label2)
 {
   r->setColourForground (BLACK);
@@ -97,11 +94,11 @@ FunctionKeyToggle::toggle (rendererGva * r, char *label1,
 }
 
 void
-rendererGva::drawFunctionLabels (int x, int active, int hide,
+RendererGva::drawFunctionLabels (int x, int active, int hide,
                                int toggle, int toggleOn, char labels[6][40])
 {
   int i = 0;
-  int offset = m_height - 100;
+  int offset = height_ - 100;
 
   setColourForground (DARK_GREEN2);
   setColourBackground (DARK_GREEN);
@@ -130,11 +127,11 @@ rendererGva::drawFunctionLabels (int x, int active, int hide,
 }
 
 void
-rendererGva::drawTopLabels (int y, int active, int hide)
+RendererGva::drawTopLabels (int y, int active, int hide)
 {
   int i = 0;
-  int offset = m_width * 0.02;
-  int width = (m_width - offset * 2) / 8;
+  int offset = width_ * 0.02;
+  int width = (width_ - offset * 2) / 8;
   int spacing = width * 0.1;
 
   setColourForground (DARK_GREEN2);
@@ -158,7 +155,7 @@ rendererGva::drawTopLabels (int y, int active, int hide)
 }
 
 void
-rendererGva::drawControlLabels (int y, int active, int hide)
+RendererGva::drawControlLabels (int y, int active, int hide)
 {
   int i = 0;
   int offset = 20;
@@ -193,7 +190,7 @@ rendererGva::drawControlLabels (int y, int active, int hide)
 }
 
 void
-rendererGva::drawPPI (int x, int y, int degrees, int sightAzimuth)
+RendererGva::drawPPI (int x, int y, int degrees, int sightAzimuth)
 {
   int radius = 50;
   int angle = 45;
@@ -281,10 +278,10 @@ rendererGva::drawPPI (int x, int y, int degrees, int sightAzimuth)
 }
 
 void
-rendererGva::drawMode ()
+RendererGva::drawMode ()
 {
-  int offset = m_width * 0.4;
-  int y = m_height * 0.08;
+  int offset = width_ * 0.4;
+  int y = height_ * 0.08;
   setColourForground (WHITE);
   setColourBackground (DARK_BLUE);
   setLineThickness (1, LINE_SOLID);
@@ -295,13 +292,13 @@ rendererGva::drawMode ()
   int w = getTextWidth ("Maintinance Mode", 12);
   int h = getTextHeight ("Maintinance Mode", 12);
 
-  drawRectangle (m_width / 2 - (w / 2) - 5, y,
-                 m_width / 2 + (w / 2) + 10, y + (h) + 15, true);
-  drawText (m_width / 2 - (w / 2), y + 8, "Maintinance Mode", 12);
+  drawRectangle (width_ / 2 - (w / 2) - 5, y,
+                 width_ / 2 + (w / 2) + 10, y + (h) + 15, true);
+  drawText (width_ / 2 - (w / 2), y + 8, "Maintinance Mode", 12);
 }
 
 void
-rendererGva::drawTable (gvaTable *table)
+RendererGva::drawTable (GvaTable *table)
 {
   int height = 20;
   int row = 0;
@@ -352,12 +349,12 @@ rendererGva::drawTable (gvaTable *table)
 }
 
 void
-rendererGva::drawButton (char *keyText, int fontSize, int x, int y, int size) {
+RendererGva::drawButton (char *keyText, int fontSize, int x, int y, int size) {
   drawButton(keyText, fontSize, x, y, size, size, ALIGN_LEFT);
 }
 
 void
-rendererGva::drawButton (char *keyText, int fontSize, int x, int y, int width, int height, int align)
+RendererGva::drawButton (char *keyText, int fontSize, int x, int y, int width, int height, int align)
 {
   int textX = 6;
   setColourForground (GREY);
@@ -373,7 +370,7 @@ rendererGva::drawButton (char *keyText, int fontSize, int x, int y, int width, i
 };
 
 void
-rendererGva::drawKeyboard (keyboardModeType mode)
+RendererGva::drawKeyboard (KeyboardModeType mode)
 {
   int i = 0;
   int yLocation = 30;
@@ -399,9 +396,10 @@ rendererGva::drawKeyboard (keyboardModeType mode)
       break;
     }
   
-//  drawRoundedRectangle (110, 50, 420, 250, 10, true);
-  drawRectangle (110, yLocation, 530,
-                 yLocation + padding + ((bSize + 5) * 4) + 1, true);
+  drawRoundedRectangle (110, yLocation, 530,
+                 yLocation + padding + ((bSize + 5) * 4) + 1, 10, true);
+//  drawRectangle (110, yLocation, 530,
+//                 yLocation + padding + ((bSize + 5) * 4) + 1, true);
   setColourBackground (DARK_GREY);
   setLineThickness (1, LINE_SOLID);
   setTextFont ((int) CAIRO_FONT_SLANT_NORMAL,

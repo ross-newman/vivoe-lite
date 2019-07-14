@@ -111,11 +111,11 @@ typedef enum {
     KEY_BRIGHTNESS_DOWN,
     KEY_BLACKOUT,
     MAX_KEYS
-} gvaKeyEnum;
+} GvaKeyEnum;
 
 typedef struct gvaInputType {
     char            name[10];
-    gvaKeyEnum      key;
+    GvaKeyEnum      key;
     int             binding;
     bool            active;
 } gvaInput;

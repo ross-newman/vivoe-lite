@@ -33,24 +33,24 @@
 
 namespace gva
 {
-  enum locationEnum {
+  enum LocationEnum {
     LOCATION_FORMAT_LONG_LAT = 0,
     LOCATION_FORMAT_MGRS
   };
   
-  enum screenMode {
+  enum ScreenMode {
     MODE_MAINTINENCE = 0,
     MODE_OPERATIONAL
   };
 
-  enum iconEnum {
+  enum IconEnum {
     ICON_NONE = 0,
     ICON_WARNING,
     ICON_INFO,
     ICON_ERROR 
   };
   
-  enum labelModeEnum {
+  enum LabelModeEnum {
     LABEL_ALL,
     LABEL_STATUS_ONLY,
     LABEL_MINIMAL
@@ -60,75 +60,75 @@ namespace gva
     bool visible;
     int x;
     int y;
-  } widget;
+  } Widget;
   
-  typedef struct functionSelect {
+  typedef struct FunctionSelect {
     bool visible;
     int active;
     int hidden;
-  } functionSelectType;
+  } FunctionSelectType;
 
-  typedef struct functionKeys {
+  typedef struct FunctionKeys {
     bool visible;
     int active;
     int hidden;
     int toggleActive;
     int toggleOn;
     char labels[6][40];
-  } functionKeysType;
+  } FunctionKeysType;
 
-  typedef struct commonTaskKeys {
+  typedef struct CommonTaskKeys {
     bool visible;
     int active;
     int hidden;
     char labels[8][40];
-  } commonTaskKeysType;
+  } CommonTaskKeysType;
 
   typedef struct {
-    locationEnum locationFormat;
+    LocationEnum locationFormat;
     float lat;
     float lon;
-  } locationType;
+  } LocationType;
 
-  typedef struct statusBar {
+  typedef struct StatusBar {
     bool visible;
     int x;
     int y;
-    locationType location;
+    LocationType location;
     char labels[7][80];
-  } statusBarType;
+  } StatusBarType;
 
   typedef struct {
     bool visible;
-  } alarmsType;
+  } AlarmsType;
   
-  enum surfaceType {
+  enum SurfaceType {
     SURFACE_NONE = 0,
     SURFACE_FILE,
     SURFACE_BUFFER_RGB24,
     SURFACE_CAIRO
   };
 
-  typedef struct canvas {
+  typedef struct Canvas {
     bool visible;
-    surfaceType bufferType;
+    SurfaceType bufferType;
     char filename[256];
     char* buffer;
     cairo_surface_t *surface;
-  } canvasType;
+  } CanvasType;
 
-  typedef struct label {
+  typedef struct Label {
     bool visible;
     char text[256];
     int x;
     int y;
     int fontSize;
-  } labelType;
+  } LabelType;
   
-  typedef struct message {
+  typedef struct Message {
     bool visible;
     int width;
-    iconEnum icon;
+    IconEnum icon;
     struct {
       char text[256];
       int fontSize;
@@ -137,94 +137,91 @@ namespace gva
       char text[4096];
       int fontSize;
     } detail;
-  } messageType;
+  } MessageType;
 
-  typedef struct screen {
+  typedef struct Screen {
     struct {
       char name[100];
-      screenMode mode;
+      ScreenMode mode;
       char gpsDevice[100];
     } info;
-    gvaFunctionEnum currentFunction;
-    canvasType canvas;
-    functionSelectType *functionTop;
-    commonTaskKeysType *control;
-    statusBarType *statusBar;
-    functionKeysType functionLeft;
-    functionKeysType functionRight;
-    alarmsType alarms;
-    labelType label;
-    messageType message;
-    labelModeEnum labels;
-  } screenType;
+    GvaFunctionEnum currentFunction;
+    CanvasType canvas;
+    FunctionSelectType *functionTop;
+    CommonTaskKeysType *control;
+    StatusBarType *StatusBar;
+    FunctionKeysType functionLeft;
+    FunctionKeysType functionRight;
+    AlarmsType alarms;
+    LabelType label;
+    MessageType message;
+    LabelModeEnum labels;
+  } ScreenType;
   
   //
   // Widgets
   //
-  typedef struct compass {
+  typedef struct Compass {
     bool visible;
     int x;
     int y;
     int bearing;
     int bearingSight;
-  } compassType;
+  } CompassType;
 
-  typedef struct keyboard {
+  typedef struct Keyboard {
     bool visible;
-    keyboardModeType mode;
-  } keyboardType;
+    KeyboardModeType mode;
+  } KeyboardType;
 
-  typedef struct alarmIndicator {
+  typedef struct AlarmIndicator {
     bool visible;
     int y;
     char text[256];
-    gvaAlarmType type;
+    GvaAlarmType type;
   } alarmIndicatorType;
   
   typedef struct {
-    compassType compass;
-    keyboardType keyboard;
+    CompassType compass;
+    KeyboardType keyboard;
     alarmIndicatorType alarmIndicator;
-  } widgetsType;
+  } WidgetsType;
 
-  class screenGva;
+  class ScreenGva;
 
   //
   // These are used by the clock thread to update the time and refresh the screen 
   //
-  typedef struct arg_struct {
+  typedef struct ArgStruct {
       char* clockString;
       char* locationFormat;
       char* locationString;
-      screenGva* screen;
+      ScreenGva* screen;
       int *gps;
       nmeaINFO *info;
       nmeaPARSER *parser;
       bool active;
-      locationType *location;
+      LocationType *location;
   } args;
 
-  class screenGva : public rendererGva
+  class ScreenGva : public RendererGva
   {
   public:
-    screenGva(screenType *screen, widgetsType *widgets, int width, int height);
-    ~screenGva();
-    int update();
-    int refresh();
-    void startClock(statusBarType *barData);
+    ScreenGva(ScreenType *screen, WidgetsType *Widgets, int width, int height);
+    ~ScreenGva();
+    int Update();
+    void StartClock(StatusBarType *barData);
   private:
-    char *posDegrees(float lon, float lat);
-    screenType *m_screen;
-    widgetsType *m_widgets;
-    args *m_args;
-    int m_gps;
-    int m_hndl;
-    int m_width;
-    int m_height;
-    screenType m_last_screen;
-    pthread_t m_clock_thread;
-    nmeaINFO m_info;
-    nmeaPARSER m_parser;
+    char *PosDegrees(float lon, float lat);
+    ScreenType *screen_;
+    WidgetsType *widgets_;
+    args *args_;
+    int gps_;
+    int hndl_;
+    ScreenType last_screen_;
+    pthread_t clock_thread_;
+    nmeaINFO info_;
+    nmeaPARSER parser_;
   };
 }
 #endif
