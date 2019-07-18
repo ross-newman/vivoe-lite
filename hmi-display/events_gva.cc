@@ -28,9 +28,12 @@
 
 namespace gva
 {
+  static unsigned int previous_key_;
+
   EventsGva::EventsGva(gtkType *window, touchGva *touch) { 
     window_ = window;
     touch_ = touch;
+    previous_key_ = 0;
   }
 
   // Handle button press events by either drawing a rectangle
@@ -44,6 +47,7 @@ namespace gva
                          gpointer        data)
   {
     printf("[GVA] Mouse event %d\n", event->button);
+    
     if (event->button == GDK_BUTTON_PRIMARY) {
       EventGvaType gvaEvent;
       int binding = 0;
@@ -71,7 +75,57 @@ namespace gva
     EventGvaType gvaEvent;
     
     modifiers = gtk_accelerator_get_default_mod_mask ();
-    printf("[GVA] Key event %d\n", event->keyval);
+    printf("[GVA] Key event 0x%x (prev 0x%x)\n", event->keyval, previous_key_);
+    switch (previous_key_) {
+	case 0xffe3 : // Top keys
+		switch (event->keyval) {
+		case 0xffbe :
+		  /* 1 maps to SA */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_SA;
+		  break;
+		case 0xffbf:
+		  /* 2 maps to WPN */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_WPN;
+		  break;
+		case 0xffc0:
+		  /* 3 maps to DEF */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_DEF;
+		  break;
+		case 0xffc1:
+		  /* 4 maps to SYS */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_SYS;
+		  break;
+		case 0xffc2:
+		  /* 5 maps to DRV */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_DRV;
+		  break;
+		case 0xffc3:
+		  /* 6 maps to STR */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_STR;
+		  break;
+		case 0xffc4:
+		  /* 7 maps to COM */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_COM;
+		  break;
+		case 0xffc5:
+		  /* 8 maps to BMS */
+		  gvaEvent.type = KEY_EVENT;
+		  gvaEvent.key_ = KEY_BMS;
+		  break;
+	    }
+printf("[GVA] Top event 0x%x\n", event->keyval);
+        previous_key_ = event->keyval;
+        if (gvaEvent.type != NO_EVENT)
+          eventqueue_.push_back(gvaEvent); 
+        return TRUE;
+	}
 //    g_print ("send_event=%d, state=%u, keyval=%u, length=%d, string='%s', hardware_keycode=%u, group=%u\n", gvaEvent.send_event, gvaEvent.state, gvaEvent.keyval, gvaEvent.length, gvaEvent.string, gvaEvent.hardware_keycode, gvaEvent.group);
     /* The event was handled, and the emission should stop */
     switch (event->keyval) {
@@ -120,8 +174,69 @@ namespace gva
       gvaEvent.type = KEY_EVENT;
       gvaEvent.key_ = KEY_BMS;
       break;
+    case 0xffbe:
+      /* F1 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F1;
+      break;
+    case 0xffbf:
+      /* F2 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F2;
+      break;
+    case 0xffc0:
+      /* F3 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F3;
+      break;
+    case 0xffc1:
+      /* F4 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F4;
+      break;
+    case 0xffc2:
+      /* F5 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F5;
+      break;
+    case 0xffc3:
+      /* F6 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F6;
+      break;
+    case 0xffc4:
+      /* F7 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F7;
+      break;
+    case 0xffc5:
+      /* F8 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F8;
+      break;
+    case 0xffc6:
+      /* F9 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F9;
+      break;
+    case 0xffc7:
+      /* F10 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F10;
+      break;
+    case 0xffc8:
+      /* F11 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F11;
+      break;
+    case 0xffc9:
+      /* F12 */
+      gvaEvent.type = KEY_EVENT;
+      gvaEvent.key_ = KEY_F12;
+      break;
     case 65 :
     case 97 :
+    case 0xffe9:
       /* a maps to ALARMS */
       gvaEvent.type = KEY_EVENT;
       gvaEvent.key_ = KEY_F14;
@@ -176,7 +291,8 @@ namespace gva
       break;
     default:
       printf ("[GVA] KeyPress not defined 0x%x\n", event->keyval);
-      break;
+      previous_key_ = event->keyval;
+      return TRUE;
     }
     if (gvaEvent.type != NO_EVENT)
       eventqueue_.push_back(gvaEvent); 
