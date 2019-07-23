@@ -5,7 +5,6 @@
 [![codecov](https://codecov.io/gh/ross-newman/vivoe-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/ross-newman/vivoe-lite)
 ![Version](https://img.shields.io/badge/version-0.1.321-red.svg)
 [![ZenHub](https://img.shields.io/badge/plan-ZenHub-%2349569D.svg)](https://www.zenhub.com/)
-[![Support](https://img.shields.io/badge/communitybridge-donate-ff69b4.svg)](https://funding.communitybridge.org/projects/vivoe-lite)
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
