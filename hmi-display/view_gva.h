@@ -30,6 +30,7 @@
 #include "screen_gva.h"
 
 #define MAX_LABEL 50
+
 namespace gva
 {
   struct ToggleInfo {

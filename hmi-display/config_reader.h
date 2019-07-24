@@ -21,14 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 // 
+#ifndef CONFIG_READER_H
+#define CONFIG_READER_H
 
-#ifndef XML_RENDERER_H
-#define XML_RENDERER_H
-
-class xmlData {
-public:
-  unsigned int zoom = 20000;
-  double lon = DUMMY_LON;
-  double lat = DUMMY_LAT;
+namespace gva {
+  class ConfigData {
+  public:
+    ConfigData();
+    ~ConfigData();
+    int GetZoom();
+    void SetZoom(int zoom);
+    double GetTestLon();
+    void SetTestLon(double lon);
+    double GetTestLat();
+    void SetTestLat(double lat);
+  private:
+  };
 };
 #endif

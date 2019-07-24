@@ -26,7 +26,6 @@
 #define EVENTS_GVA_H
 #include <gtk/gtk.h>
 #include <vector> 
-#include <cairo-xlib.h>
 #include "gva.h"
 #include "renderer_gva.h"
 

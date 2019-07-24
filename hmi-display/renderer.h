@@ -46,6 +46,8 @@
 #define ORANGE 255,165,0
 #define NONE -1, -1, -1
 
+
+
 struct colour_type {
   int red;
   int green;
@@ -83,6 +85,7 @@ public:
   virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
   virtual int drawColor (int r, int g, int b) = 0;
   virtual int textureRGB (int x, int y, void *buffer, char *file) = 0;
+  long PackRgb(int r, int g, int b) { return (long) r<<16 & g<<8 & b; };
 protected:
   int height_;
   int width_;

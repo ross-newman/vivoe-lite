@@ -86,29 +86,6 @@ ExternalProject_Add(
 )
 
 # ------------------------------------------------------------------------------
-# protobuf
-# ------------------------------------------------------------------------------
-message(STATUS "SUBPROJECT_NAME = protobuf")
-ExternalProject_Add(
-    protobuf
-    GIT_REPOSITORY      https://github.com/protocolbuffers/protobuf
-    GIT_TAG             v3.8.0
-    GIT_SHALLOW         1
-    CMAKE_ARGS          "-DCMAKE_BUILD_TYPE=Release"
-    PREFIX              ${CMAKE_BINARY_DIR}/external/protobuf/prefix
-    TMP_DIR             ${CMAKE_BINARY_DIR}/external/protobuf/tmp
-    STAMP_DIR           ${CMAKE_BINARY_DIR}/external/protobuf/stamp
-    DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/protobuf/download
-    SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/protobuf/src
-    BINARY_DIR          ${CMAKE_BINARY_DIR}/external/protobuf/src
-    CONFIGURE_COMMAND   "./autogen.sh" COMMAND "./configure"
-    BUILD_COMMAND       ${MAKE}
-    SOURCE_SUBDIR       ""
-    INSTALL_COMMAND     ""
-    UPDATE_DISCONNECTED 1
-)
-
-# ------------------------------------------------------------------------------
 # rtp-payloader
 # ------------------------------------------------------------------------------
 message(STATUS "SUBPROJECT_NAME = rtp-payloader")

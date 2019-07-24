@@ -28,7 +28,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <cairo.h>
-#include <cairo-xlib.h>
 #include "gva.h"
 #include "renderer.h"
 
@@ -50,7 +49,7 @@ typedef struct win {
     int scr;
     int width;
     int height;
-    Window win;
+    int win;
 } win_t;
 
 struct handle_type
@@ -177,7 +176,7 @@ private:
   unsigned char* texture_;
   int current_handle_;
   double scale_;
-  Window root_;
+  gtkType root_;
 
   //
   // Helper Functions

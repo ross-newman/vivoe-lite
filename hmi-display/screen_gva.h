@@ -40,7 +40,8 @@ namespace gva
   
   enum ScreenMode {
     MODE_MAINTINENCE = 0,
-    MODE_OPERATIONAL
+    MODE_OPERATIONAL,
+    MODE_BLACKOUT
   };
 
   enum IconEnum {
@@ -99,14 +100,72 @@ namespace gva
   } StatusBarType;
 
   typedef struct {
+    int width;
+    char text[256];
+    long background_colour;
+    long foreground_colour;
+    cellAlignType alignment;  
+  } CellType;
+  
+  #define MAX_CELLS 20
+  typedef struct {
+	int cell_count;
+    CellType cells[MAX_CELLS];
+    long background_colour;
+    long foreground_colour;
+    long outline_colour;
+    long highlight_colour;
+    weightType font_weight;
+    bool highlighted;
+    cellAlignType alignment;
+  } RowType;
+  
+  #define MAX_ROWS 100
+  class TableWidget {
+  public:
+    void AddRow(long forground_colour, long background_colour, 
+                long outline_colour, long highlight_colour, weightType font_weight) {
+				RowType *row = &rows[row_count++]; 
+		            row->background_colour = background_colour;
+		            row->foreground_colour = forground_colour;
+		            row->outline_colour = outline_colour;
+		            row->highlight_colour = highlight_colour;
+		            row->font_weight = font_weight;
+		            row->highlighted = false; }
+    void AddRow() { RowType *row = &rows[row_count++]; 
+		            row->background_colour = DARK_GREEN;
+		            row->foreground_colour = WHITE;
+		            row->outline_colour = WHITE;
+		            row->highlight_colour = YELLOW;
+		            row->font_weight = WEIGHT_NORMAL;
+		            row->highlighted = false;
+		            row->alignment = ALIGN_LEFT; }
+    void CurrentRowHighlight() {rows[row_count].highlighted = true; };
+	void AddCell(char* text, int width) { AddCell(text, width, ALIGN_RIGHT); }
+	void AddCell(char* text, int width, cellAlignType align) {
+		CellType *cell = &rows[row_count].cells[rows[row_count].cell_count++];
+	    cell->background_colour = rows[row_count].background_colour;
+	    cell->background_colour = rows[row_count].foreground_colour;
+	    cell->background_colour = rows[row_count].outline_colour;
+	    cell->background_colour = rows[row_count].highlight_colour;
+	    strcpy(cell->text, text); 
+	    cell->width = width;
+		cell->alignment = align; }
     bool visible;
-  } AlarmsType;
+    int height;
+    int width;
+    int x;
+    int y;
+    int row_count;
+    RowType rows[MAX_ROWS];
+  };
   
   enum SurfaceType {
     SURFACE_NONE = 0,
     SURFACE_FILE,
     SURFACE_BUFFER_RGB24,
-    SURFACE_CAIRO
+    SURFACE_CAIRO,
+    SURFACE_BLACKOUT
   };
 
   typedef struct Canvas {
@@ -152,7 +211,7 @@ namespace gva
     StatusBarType *StatusBar;
     FunctionKeysType functionLeft;
     FunctionKeysType functionRight;
-    AlarmsType alarms;
+    TableWidget alarms;
     LabelType label;
     MessageType message;
     LabelModeEnum labels;

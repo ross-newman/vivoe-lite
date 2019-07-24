@@ -54,7 +54,7 @@ RendererCairo::~RendererCairo ()
     texture_ = 0;
   }
   cairo_destroy (render_.cr);
-
+  g_object_unref (render_.win.app);
   CloseWindow();
 }
 
@@ -305,7 +305,6 @@ RendererCairo::init (int width, int height, CallbackType cb, void *arg)
   g_signal_connect (render_.win.app, "activate", G_CALLBACK (Activate), NULL);
   g_timeout_add (40, Callback, &render_);
   int status = g_application_run (G_APPLICATION (render_.win.app), 0, 0);
-  g_object_unref (render_.win.app);
 
   return 0;
 }

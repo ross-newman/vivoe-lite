@@ -29,7 +29,7 @@
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 441
+#define PATCH 448
 
 #define MIN_HEIGHT 480
 #define MIN_WIDTH 640
@@ -61,8 +61,7 @@ enum GvaFunctionGroupEnum {
   KEYBOARD
 };
 
-enum GvaKeyEnum 
-{
+enum GvaKeyEnum {
   /* These are physical GVA keys around the display */
   KEY_NONE = 0,
   KEY_SA,

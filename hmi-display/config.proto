@@ -1,0 +1,29 @@
+syntax = "proto2";
+
+package config;
+
+message Gva {
+  required string name = 1;
+  optional int32 height = 3 [default = 480];
+  optional int32 width = 4 [default = 640];
+  
+  message Geo {
+    required bool live = 1;
+    required int32 zoom = 2 [default = 20000];
+    optional string device = 3;
+    required double test_lon = 4 [default = -0.124240];
+    required double test_lat = 5 [default = 51.500655];
+    optional string gps_device = 6 [default = "/dev/ttyUSB0"];
+  }
+
+  message Odb {
+    optional string odb_device = 1 [default = "/dev/ttyUSB1"];    
+  }
+  
+  message BezelKeyset {
+    required int32 act = 1;
+    required int32 hidden = 2;
+  }
+
+}
+

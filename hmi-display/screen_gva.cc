@@ -227,6 +227,22 @@ namespace gva
         setColourBackground (GREEN);
         drawRectangle (0, 0, width_, height_, true);
         break;
+      case SURFACE_BLACKOUT:
+        // Set background black
+        setColourForground (BLACK);
+        setColourBackground (BLACK);
+        drawRectangle (0, 0, width_, height_, true);
+        break;
+    }
+
+    // If BLACKOUT then nothing to render
+    if (screen_->info.mode == MODE_BLACKOUT) {
+      //
+      // Refersh display
+      //
+      draw ();
+      last_screen_ = *screen_;
+      return GVA_SUCCESS;
     }
 
     // Draw label
@@ -310,7 +326,7 @@ namespace gva
     if (widgets_->alarmIndicator.visible) {
       GvaTable table(102, widgets_->alarmIndicator.y, 436);
       gvaRow alarmrow;
-      gvaCellType cell = {widgets_->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_BOLD };
+      gvaCellType cell = {widgets_->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
       
       table.m_border = 0;
       alarmrow.addCell(cell, 100);
@@ -320,6 +336,22 @@ namespace gva
 
     // Setup and draw the alarms
     if (screen_->alarms.visible) {
+#if 1
+	  GvaTable table(screen_->alarms.x, screen_->alarms.y, screen_->alarms.width);
+	  table.m_border = 1;
+	  for (int row=0; row<screen_->alarms.row_count; row++) {
+        gvaRow newrow;
+    
+        for (int cell=0;cell<screen_->alarms.rows[row].cell_count;cell++) {
+          newrow.addCell({screen_->alarms.rows[row].cells[cell].text, screen_->alarms.rows[row].cells[cell].alignment, 
+			             { WHITE }, 
+			             { DARK_GREEN }, 
+			             { WHITE }, 
+			             screen_->alarms.rows[row].font_weight }, screen_->alarms.rows[row].cells[cell].width);
+        }
+        table.addRow(newrow);
+	  }
+#else		
       int i = 0;
       int widths[6] = { 20, 50, 10, 20 };
       char row1[4][MAX_TEXT] = { "Time", "Alarm Text", "Cat", "Status"};
@@ -394,7 +426,7 @@ namespace gva
       newrow9.addCell({"Page 1 of 1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
       table.addRow(newrow9);
 
-
+#endif
       drawTable (&table);
     }
 

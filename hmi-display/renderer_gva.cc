@@ -98,7 +98,7 @@ RendererGva::drawFunctionLabels (int x, int active, int hide,
                                int toggle, int toggleOn, char labels[6][40])
 {
   int i = 0;
-  int offset = height_ - 100;
+  int offset = height_ - 88;
 
   setColourForground (DARK_GREEN2);
   setColourBackground (DARK_GREEN);
@@ -117,8 +117,8 @@ RendererGva::drawFunctionLabels (int x, int active, int hide,
           (1 << (5 - i) & active) ? setColourForground (YELLOW) :
             setColourForground (DARK_GREEN2);
           FunctionKeyToggle *key = new FunctionKeyToggle ();
-          key->draw (this, x, offset - (i * 65), 100, 50, labels[i]);
-          m_touch.add(group, (int)(firstKey + i),  x, offset - (i * 65), 100, 50);
+          key->draw (this, x, offset - (i * 72), 100, 50, labels[i]);
+          m_touch.add(group, (int)(firstKey + i),  x, offset - (i * 72), 100, 50);
 
           if ((1 << (5 - i) & toggle))
             key->toggle (this, "On", "Off");
@@ -396,10 +396,10 @@ RendererGva::drawKeyboard (KeyboardModeType mode)
       break;
     }
   
-  drawRoundedRectangle (110, yLocation, 530,
-                 yLocation + padding + ((bSize + 5) * 4) + 1, 10, true);
-//  drawRectangle (110, yLocation, 530,
-//                 yLocation + padding + ((bSize + 5) * 4) + 1, true);
+//  drawRoundedRectangle (110, yLocation, 530,
+//                 yLocation + padding + ((bSize + 5) * 4) + 1, 10, true);
+  drawRectangle (110, yLocation, 530,
+                 yLocation + padding + ((bSize + 5) * 4) + 1, true);
   setColourBackground (DARK_GREY);
   setLineThickness (1, LINE_SOLID);
   setTextFont ((int) CAIRO_FONT_SLANT_NORMAL,

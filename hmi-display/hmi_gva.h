@@ -29,7 +29,7 @@
 #include "renderer_map.h"
 #include "view_gva.h"
 #include "screen_gva.h"
-#include "xml_reader.h"
+#include "config_reader.h"
 
 using namespace gva;
 
@@ -59,7 +59,7 @@ using namespace gva;
 #define DEF_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b000000, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL } }
 
 #define SYS_FUNCTION_KEYS_LEFT   { true, 0b100000, 0b111101, 0b000000, 0b000000, { "Overview", "Automotive", "System", "HUMS", LABEL_NULL, "BIT" } }
-#define SYS_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b111111, 0b000000, 0b000000, { "Commander.Health", "Gunner.Health", "Driver.Health", "Roll.Allocation", "Mission", "Blackout" } }
+#define SYS_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b111111, 0b000000, 0b000000, { "Commander.Health", "Gunner.Health", "Driver.Health", "Roll.Allocation", "Blackout", "Exit" } }
 
 #define DRV_FUNCTION_KEYS_LEFT   { true, 0b110000, 0b100000, 0b000000, 0b000000, { "Assist", "PPI Mode", LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL } }
 #define DRV_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b000000, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL } }
@@ -138,10 +138,10 @@ protected:
   static CommonTaskKeysType bottom_;
   static CanvasType canvas_;
   static KeyboardType keyboard_;
-  static AlarmsType alarms_;
+  static TableWidget alarms_;
   static ScreenType screen_;
   static WidgetsType widgets_;
-  static ScreenGva *render_;
+  static ScreenGva *screen_render_;
   static rendererMap *map_;
   static int lastState_;
   static bool alarmson_;
@@ -157,8 +157,8 @@ public:
   static void KeyCOM(int key);
   static void KeyBMS(int key);
   static void Reset();
-  static xmlData xml_;
-  static ScreenGva* GetRendrer() { return render_; }
+  static ConfigData config_;
+  static ScreenGva* GetRendrer() { return screen_render_; }
   static ScreenType* GetScreen() { return &screen_; }
   static WidgetsType* GetWidgets() { return &widgets_; }
   static void Labels(LabelModeEnum labels);

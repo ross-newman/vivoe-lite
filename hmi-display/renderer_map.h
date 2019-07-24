@@ -30,7 +30,6 @@
 #include <osmscout/MapService.h>
 #include <osmscout/MapPainterCairo.h>
 #include <cairo.h>
-#include <cairo-xlib.h>
 
 using namespace std;
 

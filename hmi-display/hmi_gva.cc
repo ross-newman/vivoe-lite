@@ -40,7 +40,6 @@ using namespace std;
 void
 Hmi::Reset()
 {
-  screen_.canvas.visible = false;
   screen_.StatusBar->visible = true;
   Labels(screen_.labels);
   screen_.canvas.visible = false;
@@ -289,12 +288,22 @@ Hmi::KeySYS(int keypress) {
   case KEY_F8:
   case KEY_F9:
   case KEY_F10:
-  case KEY_F11:
-  case KEY_F12:
     screen_.message.visible = true;
     screen_.message.icon = ICON_NONE;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
+    break;
+  case KEY_F11:
+    // Blackout
+    screen_.info.mode = (screen_.info.mode == MODE_BLACKOUT) ? MODE_MAINTINENCE : MODE_BLACKOUT;
+    screen_.canvas.visible = true;
+    screen_.canvas.bufferType = SURFACE_BLACKOUT;
+    break;
+  case KEY_F12:
+    // Exit
+    if (render_.surface)
+      cairo_surface_destroy (render_.surface);
+    g_application_quit(G_APPLICATION (render_.win.app));
     break;
   }
 }
@@ -412,27 +421,27 @@ Hmi::KeyBMS(int key) {
   switch (key){
   case KEY_F3 :
     // Shift UP
-    xml_.lat += conv(xml_.zoom);
+    config_.SetTestLat(config_.GetZoom() + conv(config_.GetZoom()));
     break;
   case KEY_F4 :
     // Shift DOWN
-    xml_.lat -= conv(xml_.zoom);
+    config_.SetTestLat(config_.GetZoom() - conv(config_.GetZoom()));
     break;
   case KEY_F5 :
     // Zoom +
-    xml_.zoom += xml_.zoom;
+    config_.SetZoom(config_.GetZoom() + conv(config_.GetZoom()));
     break;
   case KEY_F9 :
     // Shift LEFT
-    xml_.lon -= conv(xml_.zoom);
+    config_.SetTestLon(config_.GetZoom() - conv(config_.GetZoom()));
     break;
   case KEY_F10 :
     // Shift RIGHT
-    xml_.lon += conv(xml_.zoom);
+    config_.SetTestLon(config_.GetZoom() + conv(config_.GetZoom()));
     break;
   case KEY_F11 :
     // Zoom -
-    xml_.zoom -= xml_.zoom / 2;
+    config_.SetZoom(config_.GetZoom() - conv(config_.GetZoom()) / 2);
     break;
   default:
     screen_.message.visible = true;
@@ -441,11 +450,11 @@ Hmi::KeyBMS(int key) {
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     return;
   }
-printf("Zoom level %d lat %f, %f\n", xml_.zoom, xml_.lat, ((double)xml_.zoom / 10000000) * ((double)xml_.zoom / 10000));
-  map_->SetWidth((double)render_->GetWidth() / DEFAULT_WIDTH);
-  map_->SetHeight((double)render_->GetHeight() / DEFAULT_HEIGHT);
-printf("res %d x %d\n", render_->GetWidth(), render_->GetHeight());
-  map_->Project(xml_.zoom, xml_.lon, xml_.lat, &screen_.canvas.surface);
+printf("Zoom level %d lat %f, %f\n", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
+  map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
+  map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
+printf("res %d x %d\n", screen_render_->GetWidth(), screen_render_->GetHeight());
+  map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
   screen_.canvas.bufferType = SURFACE_CAIRO;  
 }
 
@@ -644,9 +653,9 @@ struct StateBMS : Hmi
 
         screen_.canvas.visible = true;
 
-        map_->SetWidth((double)render_->GetWidth() / DEFAULT_WIDTH);
-        map_->SetHeight((double)render_->GetHeight() / DEFAULT_HEIGHT);
-        map_->Project(xml_.zoom, xml_.lon, xml_.lat, &screen_.canvas.surface);
+        map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
+        map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
+        map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
         screen_.canvas.bufferType = SURFACE_CAIRO;
 
         screen_.functionTop->active = 0x1 << 0;
@@ -702,6 +711,72 @@ struct StateAlarms : Hmi
       screen_ = manager_->GetScreen(ALARMSX);
 
       screen_.alarms.visible = true;
+      screen_.alarms.x = 110;
+      screen_.alarms.y = 390;
+      screen_.alarms.width = 420;
+
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("Time", 20);
+      screen_.alarms.AddCell("Alarm Text", 50);
+      screen_.alarms.AddCell("Cat", 10);
+      screen_.alarms.AddCell("Status", 20);
+      
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("15/6 15:06", 20);
+      screen_.alarms.AddCell("Low engine oil pressure", 50);
+      screen_.alarms.AddCell("W", 10);
+      screen_.alarms.AddCell("RES", 20);
+      
+      screen_.alarms.AddRow(screen_render_->PackRgb(WHITE), 
+                     screen_render_->PackRgb(RED), 
+                     screen_render_->PackRgb(WHITE), 
+                     screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
+      screen_.alarms.AddCell("15/6 15:26", 20);
+      screen_.alarms.AddCell("Engine over tempreture", 50);
+      screen_.alarms.AddCell("W", 10);
+      screen_.alarms.AddCell("UNACK", 20);
+      
+      screen_.alarms.AddRow();
+      screen_.alarms.CurrentRowHighlight();
+      screen_.alarms.AddCell("15/6 15:29", 20);
+      screen_.alarms.AddCell("Engine over tempreture", 50);
+      screen_.alarms.AddCell("W", 10);
+      screen_.alarms.AddCell("RES", 20);
+      
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("15/6 14:00", 20);
+      screen_.alarms.AddCell("Gun fault", 50);
+      screen_.alarms.AddCell("C", 10);
+      screen_.alarms.AddCell("RES", 20);
+      
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("15/6 18:16", 20);
+      screen_.alarms.AddCell("Air con fault", 50);
+      screen_.alarms.AddCell("A", 10);
+      screen_.alarms.AddCell("ACT", 20);
+      
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("15/6 19:03", 20);
+      screen_.alarms.AddCell("Gun barrel over tempreture", 50);
+      screen_.alarms.AddCell("C", 10);
+      screen_.alarms.AddCell("ACT(OVR)", 20);
+      
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("15/6 19:", 20);
+      screen_.alarms.AddCell("LRU xx fault", 50);
+      screen_.alarms.AddCell("C", 10);
+      screen_.alarms.AddCell("ACT", 20);
+
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("Page 1 of 1", 100, ALIGN_RIGHT);
+ 
+          
+      screen_.alarms.AddRow();
+      screen_.alarms.AddCell("Page 1 of 1", 20);
+      screen_.alarms.AddCell("??", 50);
+      screen_.alarms.AddCell("C", 10);
+      screen_.alarms.AddCell("ACT", 20);  
+          
       screen_.control->active = 0x1 << 6;
     }
   };
@@ -735,7 +810,7 @@ struct StateOn : Hmi
     init(status_, StatusBarType, COMMON_STATUS_BAR);
     init(canvas_, CanvasType, CANVAS);
     init(keyboard_, KeyboardType, KEYBOARD);
-    init(alarms_, AlarmsType, ALARMS);
+    init(alarms_, TableWidget, ALARMS);
 
     // Setup the main screens
     manager_->GetNewView(SA,     &top_, &bottom_, (FunctionKeys)SA_FUNCTION_KEYS_LEFT,  (FunctionKeys)SA_FUNCTION_KEYS_RIGHT);
@@ -765,7 +840,7 @@ struct StateOn : Hmi
     SET_CANVAS_PNG("test2.png");
     
     /* These are comon to all screens */
-    render_ = new ScreenGva (&screen_, &widgets_, view_.width, view_.height);
+    screen_render_ = new ScreenGva (&screen_, &widgets_, view_.width, view_.height);
 
     transit<StateSYS>(); 
   };
@@ -774,9 +849,9 @@ struct StateOn : Hmi
 struct StateOff : Hmi
 {
   void entry() override { 
-    free(render_);
+    free(screen_render_);
     free(manager_);
-    render_ = 0;
+    screen_render_ = 0;
     manager_ = 0;
   };
   void react(EventKeyPowerOn const &) override { transit<StateOn>(); };
@@ -789,14 +864,14 @@ FunctionSelectType Hmi::top_;
 CommonTaskKeysType Hmi::bottom_;
 CanvasType Hmi::canvas_;
 KeyboardType Hmi::keyboard_;
-AlarmsType Hmi::alarms_;
+TableWidget Hmi::alarms_;
 ScreenType Hmi::screen_;
 WidgetsType Hmi::widgets_;
-ScreenGva* Hmi::render_;
+ScreenGva* Hmi::screen_render_;
 rendererMap* Hmi::map_;
 int  Hmi::lastState_;
 bool Hmi::alarmson_ = false;
-xmlData Hmi::xml_;
+ConfigData Hmi::config_;
 
 // ----------------------------------------------------------------------------
 // Initial state definition
