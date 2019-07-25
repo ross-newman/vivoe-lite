@@ -177,7 +177,13 @@ include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
 add_library(test_catch STATIC test/test.cc)
 add_dependencies(test_catch catch)
 
-add_library(business_logic STATIC hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc )
+find_package(Protobuf REQUIRED)
+message(STATUS "Using Protocol Buffers ${Protobuf_VERSION}...")
+include_directories(${Protobuf_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROJECT_SOURCE_DIR}/hmi-display/config.proto)
+
+add_library(business_logic STATIC ${PROTO_SRCS} hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc  hmi-display/renderer_cairo.cc  hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
 add_dependencies(business_logic libnmea hmi-video rtp_payloader libosmscout)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
@@ -191,7 +197,7 @@ include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout/i
 include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map/include)
 include_directories(${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map-cairo/include)
 link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src ${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout ${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map ${CMAKE_BINARY_DIR}/external/libosmscout/build/libosmscout-map-cairo)
-target_link_libraries(business_logic ${GTK3_LIBRARIES} ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib osmscout osmscout_map osmscout_map_cairo)
+target_link_libraries(business_logic ${Protobuf_LIBRARIES} ${GTK3_LIBRARIES} ${CAIRO_LIBRARIES} ${PANGO_LIBRARIES} ${SWSCALE_LIBRARIES} X11 pthread Geographic nmealib osmscout osmscout_map osmscout_map_cairo)
 target_compile_definitions(business_logic PRIVATE VIRTUAL=virtual MAIN=unittest_main)
 target_include_directories(business_logic PUBLIC ${GTK3_INCLUDE_DIRS} ${CAIRO_INCLUDE_DIRS} ${PANGO_INCLUDE_DIRS} ${SWSCALE_INCLUDE_DIRS} catch nmealib rtp-payloader video hmi-display hmi-display/common )
 
