@@ -47,7 +47,7 @@ Hmi::Reset()
   widgets_.compass.visible = false;
   widgets_.compass.x = 165;
   widgets_.keyboard.visible = (widgets_.keyboard.visible) ? true : false;
-  screen_.alarms.visible = false;
+  screen_.table.visible_ = false;
   screen_.control->active = 0;
   alarmson_ = false;
 }
@@ -56,7 +56,7 @@ void
 Hmi::Labels(LabelModeEnum labels) {
   switch(labels) {
   case LABEL_ALL :
-    if ( (screen_.currentFunction == SA) || (screen_.currentFunction == WPN) || (screen_.currentFunction == SYS) || (screen_.currentFunction == DRV) )
+    if ( (screen_.currentFunction == SA) || (screen_.currentFunction == WPN) || (screen_.currentFunction == DRV) )
       widgets_.compass.visible = true;
     screen_.functionLeft.visible = true;
     screen_.functionRight.visible = true;
@@ -549,9 +549,39 @@ struct StateSYS : Hmi
 
         screen_.StatusBar->visible = true;
         screen_.functionTop->visible = true;
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
+        
+		screen_.table.visible_ = true;
+		screen_.table.x_ = 110;
+		screen_.table.y_ = 350;
+		screen_.table.width_ = 420;
+
+		screen_.table.AddRow(WEIGHT_BOLD);
+		screen_.table.AddCell("Fuction", 80);
+		screen_.table.AddCell("Status", 20);
+
+		screen_.table.AddRow();
+		char tmp[100];
+		sprintf(tmp, "HMI Version %d.%d.%d", MAJOR, MINOR, PATCH);
+		screen_.table.AddCell(tmp, 80);
+		screen_.table.AddCell("Ok", 20);
+
+		screen_.table.AddRow();
+		screen_.table.AddCell("GPS Source, /dev/ttyUSB0", 80);
+		screen_.table.AddCell("Error", 20, renderer::PackRgb(RED));
+
+		screen_.table.AddRow();
+		screen_.table.AddCell("ODB Source, /dev/ttyUSB1", 80);
+		screen_.table.AddCell("Error", 20, renderer::PackRgb(RED));
+
+		screen_.table.AddRow();
+		screen_.table.AddCell("UK Maps, /opt/osmscout/maps/england", 80);
+		screen_.table.AddCell("Ok", 20);
+
+		screen_.table.AddRow();
+		screen_.table.AddCell("Timesource GPS Lock", 80);
+		screen_.table.AddCell("Off", 20, renderer::PackRgb(ORANGE));
 
         screen_.functionTop->active = 0x1 << 4;
       }
@@ -710,72 +740,71 @@ struct StateAlarms : Hmi
       alarmson_ = true;
       screen_ = manager_->GetScreen(ALARMSX);
 
-      screen_.alarms.visible = true;
-      screen_.alarms.x = 110;
-      screen_.alarms.y = 390;
-      screen_.alarms.width = 420;
+      screen_.table.visible_ = true;
+      screen_.table.x_ = 110;
+      screen_.table.y_ = 390;
+      screen_.table.width_ = 420;
 
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("Time", 20);
-      screen_.alarms.AddCell("Alarm Text", 50);
-      screen_.alarms.AddCell("Cat", 10);
-      screen_.alarms.AddCell("Status", 20);
+      screen_.table.AddRow(WEIGHT_BOLD);
+      screen_.table.AddCell("Time", 20);
+      screen_.table.AddCell("Alarm Text", 50);
+      screen_.table.AddCell("Cat", 10);
+      screen_.table.AddCell("Status", 20);
       
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("15/6 15:06", 20);
-      screen_.alarms.AddCell("Low engine oil pressure", 50);
-      screen_.alarms.AddCell("W", 10);
-      screen_.alarms.AddCell("RES", 20);
+      screen_.table.AddRow();
+      screen_.table.AddCell("15/6 15:06", 20);
+      screen_.table.AddCell("Low engine oil pressure", 50);
+      screen_.table.AddCell("W", 10);
+      screen_.table.AddCell("RES", 20);
       
-      screen_.alarms.AddRow(screen_render_->PackRgb(WHITE), 
+      screen_.table.AddRow(screen_render_->PackRgb(WHITE), 
                      screen_render_->PackRgb(RED), 
                      screen_render_->PackRgb(WHITE), 
                      screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
-      screen_.alarms.AddCell("15/6 15:26", 20);
-      screen_.alarms.AddCell("Engine over tempreture", 50);
-      screen_.alarms.AddCell("W", 10);
-      screen_.alarms.AddCell("UNACK", 20);
+      screen_.table.AddCell("15/6 15:26", 20);
+      screen_.table.AddCell("Engine over tempreture", 50);
+      screen_.table.AddCell("W", 10);
+      screen_.table.AddCell("UNACK", 20);
       
-      screen_.alarms.AddRow();
-      screen_.alarms.CurrentRowHighlight();
-      screen_.alarms.AddCell("15/6 15:29", 20);
-      screen_.alarms.AddCell("Engine over tempreture", 50);
-      screen_.alarms.AddCell("W", 10);
-      screen_.alarms.AddCell("RES", 20);
+      screen_.table.AddRow();
+      screen_.table.CurrentRowHighlight();
+      screen_.table.AddCell("15/6 15:29", 20);
+      screen_.table.AddCell("Engine over tempreture", 50);
+      screen_.table.AddCell("W", 10);
+      screen_.table.AddCell("RES", 20);
       
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("15/6 14:00", 20);
-      screen_.alarms.AddCell("Gun fault", 50);
-      screen_.alarms.AddCell("C", 10);
-      screen_.alarms.AddCell("RES", 20);
+      screen_.table.AddRow();
+      screen_.table.AddCell("15/6 14:00", 20);
+      screen_.table.AddCell("Gun fault", 50);
+      screen_.table.AddCell("C", 10);
+      screen_.table.AddCell("RES", 20);
       
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("15/6 18:16", 20);
-      screen_.alarms.AddCell("Air con fault", 50);
-      screen_.alarms.AddCell("A", 10);
-      screen_.alarms.AddCell("ACT", 20);
+      screen_.table.AddRow();
+      screen_.table.AddCell("15/6 18:16", 20);
+      screen_.table.AddCell("Air con fault", 50);
+      screen_.table.AddCell("A", 10);
+      screen_.table.AddCell("ACT", 20);
       
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("15/6 19:03", 20);
-      screen_.alarms.AddCell("Gun barrel over tempreture", 50);
-      screen_.alarms.AddCell("C", 10);
-      screen_.alarms.AddCell("ACT(OVR)", 20);
+      screen_.table.AddRow(screen_render_->PackRgb(WHITE), 
+                            screen_render_->PackRgb(GREY), 
+                            screen_render_->PackRgb(WHITE), 
+                            screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
+      screen_.table.AddCell("15/6 19:03", 20);
+      screen_.table.AddCell("Gun barrel over tempreture", 50);
+      screen_.table.AddCell("C", 10);
+      screen_.table.AddCell("ACT(OVR)", 20);
       
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("15/6 19:", 20);
-      screen_.alarms.AddCell("LRU xx fault", 50);
-      screen_.alarms.AddCell("C", 10);
-      screen_.alarms.AddCell("ACT", 20);
+      screen_.table.AddRow(screen_render_->PackRgb(WHITE), 
+                            screen_render_->PackRgb(ORANGE), 
+                            screen_render_->PackRgb(WHITE), 
+                            screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
+      screen_.table.AddCell("15/6 19:", 20);
+      screen_.table.AddCell("LRU xx fault", 50);
+      screen_.table.AddCell("C", 10);
+      screen_.table.AddCell("ACT", 20);
 
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("Page 1 of 1", 100, ALIGN_RIGHT);
- 
-          
-      screen_.alarms.AddRow();
-      screen_.alarms.AddCell("Page 1 of 1", 20);
-      screen_.alarms.AddCell("??", 50);
-      screen_.alarms.AddCell("C", 10);
-      screen_.alarms.AddCell("ACT", 20);  
+      screen_.table.AddRow();
+      screen_.table.AddCell("Page 1 of 1", 100, ALIGN_RIGHT);
           
       screen_.control->active = 0x1 << 6;
     }
@@ -834,8 +863,8 @@ struct StateOn : Hmi
 
     screen_.canvas = canvas_;
     screen_.canvas.visible = true;
-    screen_.alarms = alarms_;
-    screen_.alarms.visible = false;
+    screen_.table = alarms_;
+    screen_.table.visible_ = false;
     screen_.labels = LABEL_ALL;
     SET_CANVAS_PNG("test2.png");
     

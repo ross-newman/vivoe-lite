@@ -335,98 +335,32 @@ namespace gva
     }
 
     // Setup and draw the alarms
-    if (screen_->alarms.visible) {
-#if 1
-	  GvaTable table(screen_->alarms.x, screen_->alarms.y, screen_->alarms.width);
+    if (screen_->table.visible_) {
+	  GvaTable table(screen_->table.x_, screen_->table.y_, screen_->table.width_);
 	  table.m_border = 1;
-	  for (int row=0; row<screen_->alarms.row_count; row++) {
+	  for (int row=0; row<screen_->table.row_count_; row++) {
         gvaRow newrow;
-    
-        for (int cell=0;cell<screen_->alarms.rows[row].cell_count;cell++) {
-          newrow.addCell({screen_->alarms.rows[row].cells[cell].text, screen_->alarms.rows[row].cells[cell].alignment, 
-			             { WHITE }, 
-			             { DARK_GREEN }, 
-			             { WHITE }, 
-			             screen_->alarms.rows[row].font_weight }, screen_->alarms.rows[row].cells[cell].width);
+        RgbUnpackedType f, b, o;
+        for (int cell=0;cell<screen_->table.rows_[row].cell_count; cell++) {
+		  f = UnpackRgb(screen_->table.rows_[row].cells[cell].foreground_colour);
+	   	  b = UnpackRgb(screen_->table.rows_[row].cells[cell].background_colour);
+	   	  
+	   	  // Choose colour for cell border
+	   	  if (screen_->table.rows_[row].highlighted == false) {
+    	    o = UnpackRgb(screen_->table.rows_[row].cells[cell].outline_colour);
+		  } else {
+		    o = UnpackRgb(screen_->table.rows_[row].cells[cell].highlight_colour);
+		  }
+
+          newrow.addCell({screen_->table.rows_[row].cells[cell].text, screen_->table.rows_[row].cells[cell].alignment, 
+			             o.r, o.g, o.b, // Outline
+			             b.r, b.g, b.b, // Background
+			             f.r, f.g, f.b, // Foreground
+			             screen_->table.rows_[row].font_weight }, screen_->table.rows_[row].cells[cell].width);
         }
         table.addRow(newrow);
 	  }
-#else		
-      int i = 0;
-      int widths[6] = { 20, 50, 10, 20 };
-      char row1[4][MAX_TEXT] = { "Time", "Alarm Text", "Cat", "Status"};
-      char row2[4][MAX_TEXT] = { "15/6 15:06", "Low engine oil pressure", "W", "RES"};
-      char row3[4][MAX_TEXT] = { "15/6 15:26", "Engine over tempreture", "W", "UNACK"};
-      char row4[4][MAX_TEXT] = { "15/6 15:29", "Engine over tempreture", "W", "RES"};
-      char row5[4][MAX_TEXT] = { "15/6 14:00", "Gun fault", "C", "RES"};
-      char row6[4][MAX_TEXT] = { "15/6 18:16", "Air con fault", "A", "ACT"};
-      char row7[4][MAX_TEXT] = { "15/6 19:03", "Gun barrel over tempreture", "C", "(OVR)ACT"};
-      char row8[4][MAX_TEXT] = { "15/6 19:04", "LRU fault", "C", "ACT"};
-      GvaTable table(110, 390, 420);
-      gvaRow newrow;
-      gvaRow newrow1;
-      gvaRow newrow2;
-      gvaRow newrow3;
-      gvaRow newrow4;
-      gvaRow newrow5;
-      gvaRow newrow6;
-      gvaRow newrow7;
-      gvaRow newrow8;
-      gvaRow newrow9;
-      
-      table.m_border = 1;
 
-      for (i=0;i<4;i++) {
-        newrow.addCell({row1[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow);
-
-      for (i=0;i<4;i++) {
-        newrow1.addCell({row2[i], ALIGN_LEFT, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow1);
-
-      for (i=0;i<4;i++) {
-        newrow2.addCell({row3[i], ALIGN_LEFT, { YELLOW }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow2);
-
-      for (i=0;i<4;i++) {
-        newrow3.addCell({row4[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow3);
-
-      for (i=0;i<4;i++) {
-        newrow4.addCell({row5[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow4);
-
-      for (i=0;i<4;i++) {
-        newrow5.addCell({row6[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow5);
-
-      for (i=0;i<4;i++) {
-        newrow6.addCell({row7[i], ALIGN_LEFT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow6);
-
-      for (i=0;i<4;i++) {
-        newrow7.addCell({row8[i], ALIGN_LEFT, { WHITE }, { GREY }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow7);
-
-      for (i=0;i<4;i++) {
-        newrow8.addCell({row3[i], ALIGN_LEFT, { WHITE }, { ORANGE }, { WHITE }, WEIGHT_NORMAL }, widths[i]);
-      }
-      table.addRow(newrow8);
-
-//        newrow9.addCell({"Page_1_of_1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
-
-      newrow9.addCell({"Page 1 of 1", ALIGN_RIGHT, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
-      table.addRow(newrow9);
-
-#endif
       drawTable (&table);
     }
 

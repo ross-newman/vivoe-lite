@@ -104,6 +104,8 @@ namespace gva
     char text[256];
     long background_colour;
     long foreground_colour;
+    long outline_colour;
+    long highlight_colour;
     cellAlignType alignment;  
   } CellType;
   
@@ -125,39 +127,49 @@ namespace gva
   public:
     void AddRow(long forground_colour, long background_colour, 
                 long outline_colour, long highlight_colour, weightType font_weight) {
-				RowType *row = &rows[row_count++]; 
+				RowType *row = &rows_[row_count_]; 
 		            row->background_colour = background_colour;
 		            row->foreground_colour = forground_colour;
 		            row->outline_colour = outline_colour;
 		            row->highlight_colour = highlight_colour;
 		            row->font_weight = font_weight;
-		            row->highlighted = false; }
-    void AddRow() { RowType *row = &rows[row_count++]; 
-		            row->background_colour = DARK_GREEN;
-		            row->foreground_colour = WHITE;
-		            row->outline_colour = WHITE;
-		            row->highlight_colour = YELLOW;
+		            row->highlighted = false;
+		            row_count_+=1; }
+    void AddRow() { RowType *row = &rows_[row_count_]; 
+		            row->background_colour = renderer::PackRgb(DARK_GREEN);
+		            row->foreground_colour = renderer::PackRgb(WHITE);
+		            row->outline_colour = renderer::PackRgb(WHITE);
+		            row->highlight_colour = renderer::PackRgb(YELLOW);
 		            row->font_weight = WEIGHT_NORMAL;
 		            row->highlighted = false;
-		            row->alignment = ALIGN_LEFT; }
-    void CurrentRowHighlight() {rows[row_count].highlighted = true; };
-	void AddCell(char* text, int width) { AddCell(text, width, ALIGN_RIGHT); }
+		            row->alignment = ALIGN_LEFT;
+		            row_count_+=1; }
+	void AddRow(weightType font_weight)	{ RowType *row = &rows_[row_count_];
+		                                  AddRow(); 
+		                                  row->font_weight = font_weight; }
+    void CurrentRowHighlight() {rows_[row_count_-1].highlighted = true; };
+	void AddCell(char* text, int width) { AddCell(text, width, ALIGN_LEFT); }
+	void AddCell(char* text, int width, 
+	             long background_colour) { CellType *cell = &rows_[row_count_-1].cells[rows_[row_count_-1].cell_count];
+					                      AddCell(text, width, ALIGN_LEFT);
+		                                  cell->background_colour = background_colour;}
 	void AddCell(char* text, int width, cellAlignType align) {
-		CellType *cell = &rows[row_count].cells[rows[row_count].cell_count++];
-	    cell->background_colour = rows[row_count].background_colour;
-	    cell->background_colour = rows[row_count].foreground_colour;
-	    cell->background_colour = rows[row_count].outline_colour;
-	    cell->background_colour = rows[row_count].highlight_colour;
+		CellType *cell = &rows_[row_count_-1].cells[rows_[row_count_-1].cell_count];
+	    cell->background_colour = rows_[row_count_-1].background_colour;
+	    cell->foreground_colour = rows_[row_count_-1].foreground_colour;
+	    cell->outline_colour = rows_[row_count_-1].outline_colour;
+	    cell->highlight_colour = rows_[row_count_-1].highlight_colour;
 	    strcpy(cell->text, text); 
 	    cell->width = width;
-		cell->alignment = align; }
-    bool visible;
-    int height;
-    int width;
-    int x;
-    int y;
-    int row_count;
-    RowType rows[MAX_ROWS];
+		cell->alignment = align; 
+		rows_[row_count_-1].cell_count+=1; }
+    bool visible_;
+    int height_;
+    int width_;
+    int x_;
+    int y_;
+    int row_count_;
+    RowType rows_[MAX_ROWS];
   };
   
   enum SurfaceType {
@@ -211,7 +223,7 @@ namespace gva
     StatusBarType *StatusBar;
     FunctionKeysType functionLeft;
     FunctionKeysType functionRight;
-    TableWidget alarms;
+    TableWidget table;
     LabelType label;
     MessageType message;
     LabelModeEnum labels;

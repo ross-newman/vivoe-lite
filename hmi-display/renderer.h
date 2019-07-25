@@ -46,8 +46,6 @@
 #define ORANGE 255,165,0
 #define NONE -1, -1, -1
 
-
-
 struct colour_type {
   int red;
   int green;
@@ -63,6 +61,13 @@ struct ResolutionType {
   int width;
   int height;
   int depth;
+};
+
+struct RgbUnpackedType
+{ 
+  int r;
+  int g; 
+  int b; 
 };
 
 class RendererCairo;
@@ -85,7 +90,13 @@ public:
   virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
   virtual int drawColor (int r, int g, int b) = 0;
   virtual int textureRGB (int x, int y, void *buffer, char *file) = 0;
-  long PackRgb(int r, int g, int b) { return (long) r<<16 & g<<8 & b; };
+  static long PackRgb(int r, int g, int b) { long packed = (r<<16) | (g<<8) | b;  
+	                                  return packed; };
+  RgbUnpackedType UnpackRgb(long rgb) { RgbUnpackedType colour;
+	                                    colour.r = (rgb & 0x0000000000ff0000) >> 16;
+	                                    colour.g = (rgb & 0x000000000000ff00) >> 8;
+	                                    colour.b = (rgb & 0x00000000000000ff);
+	                                    return colour; };
 protected:
   int height_;
   int width_;
