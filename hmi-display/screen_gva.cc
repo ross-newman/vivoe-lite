@@ -280,25 +280,6 @@ namespace gva
       drawMode ();
     }
     
-    // Generic message box
-    if (screen_->message.visible) {
-      char tmp[2][MAX_TEXT];
-      GvaTable table(320-150, 260, 300);
-      gvaRow newrow;
-      gvaRow newrow1;
-      
-      table.m_border = 2;
-
-      strcpy(tmp[0], screen_->message.brief.text);
-      newrow.addCell({tmp[0], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD }, 100);
-      table.addRow(newrow);      
-
-      strcpy(tmp[1], screen_->message.detail.text);
-      newrow1.addCell({tmp[1], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
-      table.addRow(newrow1);
-      drawTable (&table);
-    }
-    
     // Draw the onscreen KEYBOARD
     if (widgets_->keyboard.visible) {
       drawKeyboard(widgets_->keyboard.mode);
@@ -373,6 +354,25 @@ namespace gva
                        screen_->control->hidden);
     }
 
+    // Generic message box
+    if (screen_->message.visible) {
+      char tmp[2][MAX_TEXT];
+      GvaTable table(320-150, 260, 300);
+      gvaRow newrow;
+      gvaRow newrow1;
+      
+      table.m_border = 2;
+
+      strcpy(tmp[0], screen_->message.brief.text);
+      newrow.addCell({tmp[0], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD }, 100);
+      table.addRow(newrow);      
+
+      strcpy(tmp[1], screen_->message.detail.text);
+      newrow1.addCell({tmp[1], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
+      table.addRow(newrow1);
+      drawTable (&table);
+    }
+    
     //
     // Refersh display
     //
