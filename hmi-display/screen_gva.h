@@ -117,7 +117,7 @@ namespace gva
     long foreground_colour;
     long outline_colour;
     long highlight_colour;
-    weightType font_weight;
+    WeightType font_weight;
     bool highlighted;
     cellAlignType alignment;
   } RowType;
@@ -126,7 +126,7 @@ namespace gva
   class TableWidget {
   public:
     void AddRow(long forground_colour, long background_colour, 
-                long outline_colour, long highlight_colour, weightType font_weight) {
+                long outline_colour, long highlight_colour, WeightType font_weight) {
 				RowType *row = &rows_[row_count_]; 
 		            row->background_colour = background_colour;
 		            row->foreground_colour = forground_colour;
@@ -144,7 +144,7 @@ namespace gva
 		            row->highlighted = false;
 		            row->alignment = ALIGN_LEFT;
 		            row_count_+=1; }
-	void AddRow(weightType font_weight)	{ RowType *row = &rows_[row_count_];
+	void AddRow(WeightType font_weight)	{ RowType *row = &rows_[row_count_];
 		                                  AddRow(); 
 		                                  row->font_weight = font_weight; }
     void CurrentRowHighlight() {rows_[row_count_-1].highlighted = true; };
@@ -208,7 +208,7 @@ namespace gva
       char text[4096];
       int fontSize;
     } detail;
-  } MessageType;
+  } MessaGetYpe;
 
   typedef struct Screen {
     struct {
@@ -225,7 +225,7 @@ namespace gva
     FunctionKeysType functionRight;
     TableWidget table;
     LabelType label;
-    MessageType message;
+    MessaGetYpe message;
     LabelModeEnum labels;
   } ScreenType;
   

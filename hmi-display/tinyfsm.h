@@ -91,7 +91,7 @@ namespace tinyfsm
 
     static state_ptr_t current_state_ptr;
 
-    // public, leaving ability to access state instance (e.g. on reset)
+    // public, leaving ability to access state instance (e.g. on Reset)
     template<typename S>
     static constexpr S & state(void) {
       static_assert(is_same_fsm<F, S>::value, "accessing state of different state machine");
@@ -110,7 +110,7 @@ namespace tinyfsm
     // explicitely specialized in FSM_INITIAL_STATE macro
     static void set_initial_state();
 
-    static void reset() { };
+    static void Reset() { };
 
     static void enter() {
       current_state_ptr->entry();
@@ -167,7 +167,7 @@ namespace tinyfsm
 
   template<> struct FsmList<> {
     static void set_initial_state() { }
-    static void reset() { }
+    static void Reset() { }
     static void enter() { }
     template<typename E>
     static void dispatch(E const &) { }
@@ -183,9 +183,9 @@ namespace tinyfsm
       FsmList<FF...>::set_initial_state();
     }
 
-    static void reset() {
-      F::reset();
-      FsmList<FF...>::reset();
+    static void Reset() {
+      F::Reset();
+      FsmList<FF...>::Reset();
     }
 
     static void enter() {
@@ -209,14 +209,14 @@ namespace tinyfsm
 
   template<typename... SS> struct StateList;
   template<> struct StateList<> {
-    static void reset() { }
+    static void Reset() { }
   };
   template<typename S, typename... SS>
   struct StateList<S, SS...>
   {
-    static void reset() {
+    static void Reset() {
       _state_instance<S>::value = S();
-      StateList<SS...>::reset();
+      StateList<SS...>::Reset();
     }
   };
 

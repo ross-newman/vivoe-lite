@@ -63,9 +63,10 @@ struct handle_type
   cairo_t * cr;  
 };
 
-enum draw_type
+enum Draw_type
 {
   COMMAND_CIRCLE = 0,
+  COMMAND_ARC,
   COMMAND_COLOUR_BG,
   COMMAND_COLOUR_FG,
   COMMAND_IMAGE_TEXTURE,
@@ -74,22 +75,31 @@ enum draw_type
   COMMAND_PEN_COLOUR,
   COMMAND_PEN_CURVE,
   COMMAND_PEN_LINE,
-  COMMAND_PEN_DRAW,
+  COMMAND_PEN_draw,
   COMMAND_PEN_MOVE,
   COMMAND_PEN_RECTANGLE,
   COMMAND_PEN_ROUNDED_RECTANGLE,
   COMMAND_PEN_THICKNESS,
   COMMAND_PEN_TRIANGLE,
+  COMMAND_SAVE,
+  COMMAND_RESTORE,
+  COMMAND_SCALE,
+  COMMAND_TRANSLATE,
+  COMMAND_ROTATE,
+  COMMAND_CLOSE_PATH,
   COMMAND_TEXT_FONT,
-  COMMAND_TEXT,
+  COMMAND_TEXT
 };
 
 struct command_type
 {
-  draw_type command;
+  Draw_type command;
+  double height;
   double width;
   point_type points[3];
   double radius;
+  double angle1;
+  double angle2;
   colour_type colour;  
   int arg1;
   int arg2;
@@ -106,24 +116,16 @@ struct image_type
   bool from_cache;
 };
 
-static void triangle(cairo_t *cr);
-static void square(cairo_t *cr);
-static void bowtie(cairo_t *cr);
-static void win_init(win_t *win, int width, int height);
-static void win_deinit(win_t *win);
-static void win_draw(win_t *win);
-static void win_handle_events(win_t *win);
-
 typedef enum {
   LINE_SOLID,
   LINE_DASHED,
   LINE_DASHED_MEDIUM,
   LINE_DASHED_LARGE,
-} lineType;
+} LineType;
 
 static handle_type render_;
 
-typedef void (*CallbackType)(void * io, gpointer user_data);
+typedef void (*CallbackType)(void * io, gpointer data);
 
 class RendererCairo : public renderer {
 public:
@@ -131,47 +133,49 @@ public:
   ~RendererCairo ();
   int init (int width, int height, CallbackType cb, void *arg);   
   // Pure Virtual functions
-  void setPixel (int x, int y);
-  void setColour (int red, int green, int blue);
-  void setColourForground (int red, int green, int blue);
-  void setColourBackground (int red, int green, int blue);
+  void SetPixel (int x, int y);
+  void SetColour (int red, int green, int blue);
+  void SetColourForground (int red, int green, int blue);
+  void SetColourBackground (int red, int green, int blue);
   void setLineType (int type);
-  void setLineThickness (int thickness, lineType fill);
-  int movePen (int x, int y);
-  int drawPen (int x, int y, bool close);
-  int drawLine (int x1, int y1, int x2, int y2);
-  void drawCircle (int x, int y, int radius, bool fill);
-  void drawRectangle (int x1, int y1, int x2, int y2, bool fill);
-  void drawRoundedRectangle (int x1, int y1, int x2, int y2, int courner, bool fill);
-  void drawTriangle (int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
-  int drawColor (int r, int g, int b);
-  void setTextFont (int slope, int weight, char* fontName);
-  int getTextWidth (char* str, int fontSize);
-  int getTextHeight (char* str, int fontSize);
-  void drawText (int x, int y, char* text, int size);
-  void drawLabel (int x, int y, char* text, int size);
-  void drawTextCentre (int x, char* text, int size);
-  int textureRGB (int x, int y, void *buffer, char *file);
-  int textureRGB (int x, int y, void *buffer);
-  int textureRGB (int x, int y, cairo_surface_t *surface);
+  void SetLineThickness (int thickness, LineType fill);
+  int MovePen (int x, int y);
+  int DrawPen (int x, int y, bool close);
+  int DrawPen (int x, int y) { return DrawPen(x,y,false); };
+  int MovePenRaw (int x, int y);
+  int DrawPenRaw (int x, int y);
+  void DrawArcRaw(int x, int y, int radius, int angle1, int angle2);
+  int DrawLine (int x1, int y1, int x2, int y2);
+  void Save ();
+  void Restore ();
+  void Scale (double x, double y);
+  void Translate (int x, int y);
+  void Rotate (double radians);
+  int ClosePath(bool fill);
+  void DrawCircle (int x, int y, int radius, bool fill);
+  void DrawRectangle (int x1, int y1, int x2, int y2, bool fill);
+  void DrawRoundedRectangle (int x1, int y1, int x2, int y2, int courner, bool fill);
+  void DrawTriangle (int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
+  int DrawColor (int r, int g, int b);
+  void SetTextFont (int slope, int weight, char* fontName);
+  int GetTextWidth (char* str, int fontSize);
+  int GetTextHeight (char* str, int fontSize);
+  void DrawText (int x, int y, char* text, int size);
+  void DrawLabel (int x, int y, char* text, int size);
+  void DrawTextCentre (int x, char* text, int size);
+  int TextureRGB (int x, int y, void *buffer, char *file);
+  int TextureRGB (int x, int y, void *buffer);
+  int TextureRGB (int x, int y, cairo_surface_t *surface);
   
   // Cairo specific functions
-  void draw ();
-  void reset () { draw_tail_ = 0; image_tail_ = 0;}
-  gtkType* getWindow() { return &render_.win; }
-#if X11
-  void setHeight(int height) { cairo_xlib_surface_set_size(render_.surface, render_.win.width, height); 
-      cairo_scale(render_.cr, 1.0, (double)height / render_.win.height);  render_.win.height = height; }
-  void setWidth(int width) { cairo_xlib_surface_set_size(render_.surface, width, render_.win.height); 
-      cairo_scale(render_.cr, (double)width / render_.win.width, 1.0);  render_.win.width = width; }
-  int getHeight() { return render_.win.height; }
-  int getWidth() { return render_.win.width; }
-#else
-  void setHeight(int height) { height_ = height; gtk_widget_set_size_request(render_.win.draw, (gint)width_, (gint)height_); }
-  void setWidth(int width) { width_ = width; gtk_widget_set_size_request(render_.win.draw, (gint)width_, (gint)height_); }
-  int getHeight() { gint h,w; gtk_widget_get_size_request(render_.win.draw, &w, &h); return (int)w; }
-  int getWidth() { gint h,w; gtk_widget_get_size_request(render_.win.draw, &w, &h); return (int)h; }
-#endif
+  void Draw ();
+  void Reset () { draw_tail_ = 0; image_tail_ = 0;}
+  gtkType* GetWindow() { return &render_.win; }
+
+  void SetHeight(int height) { height_ = height; gtk_widget_set_size_request(render_.win.draw, (gint)width_, (gint)height_); }
+  void SetWidth(int width) { width_ = width; gtk_widget_set_size_request(render_.win.draw, (gint)width_, (gint)height_); }
+  int GetHeight() { gint h,w; gtk_widget_get_size_request(render_.win.draw, &w, &h); return (int)w; }
+  int GetWidth() { gint h,w; gtk_widget_get_size_request(render_.win.draw, &w, &h); return (int)h; }
 private:
   unsigned char* texture_;
   int current_handle_;
@@ -186,7 +190,7 @@ private:
   //
   //Render List
   //
-  command_type draw_commands_[MAX_COMMANDS];
+  command_type Draw_commands_[MAX_COMMANDS];
   int draw_tail_ = 0;
 
   //
@@ -202,7 +206,7 @@ private:
   int cache_image_tail_ = 0;
   
 private:
-  static gboolean DrawCb (GtkWidget *Widget, cairo_t *cr, gpointer   data);
+  static gboolean DrawCb (GtkWidget *Widget, cairo_t *cr, gpointer data);
   static gboolean ConfigureEventCb (GtkWidget *Widget, 
     GdkEventConfigure *event, gpointer data);
   static void Activate (GtkApplication *app, gpointer user_data);

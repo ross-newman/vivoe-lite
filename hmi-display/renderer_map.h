@@ -49,10 +49,10 @@ private:
   osmscout::StyleConfigRef styleConfig_;
   osmscout::DatabaseParameter databaseParameter_;
   osmscout::DatabaseRef database_;
-  osmscout::MercatorProjection  projection_;
-  osmscout::MapParameter        drawParameter_;
+  osmscout::MercatorProjection projection_;
+  osmscout::MapParameter DrawParameter_;
   osmscout::AreaSearchParameter searchParameter_;
-  osmscout::MapData             data_;
+  osmscout::MapData data_;
   std::list<osmscout::TileRef> tiles_;
   osmscout::MapPainterCairo *painter_;  
   cairo_surface_t *surface_;

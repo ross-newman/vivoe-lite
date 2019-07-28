@@ -29,20 +29,20 @@
 namespace gva {
   static unsigned int previous_key_;
 
-  EventsGva::EventsGva(gtkType * window, touchGva * touch) {
+  EventsGva::EventsGva(gtkType * window, TouchGva * touch) {
     window_ = window;
     touch_ = touch;
     previous_key_ = 0;
   }
   
-  // Handle button press events by either drawing a rectangle
+  // Handle button press events by either Drawing a rectangle
   // or clearing the surface, depending on which button was pressed.
   // The ::button-press signal handler receives a GdkEventButton
   // struct which contains this information.
   gboolean EventsGva::ButtonPressEventCb(GtkWidget * Widget,
                                      GdkEventButton * event,
                                      gpointer data) {
-    printf("[GVA] Mouse event %d\n", event->button);
+//printf("[GVA] Mouse event %d\n", event->button);
 
     if (event->button == GDK_BUTTON_PRIMARY) {
       EventGvaType gvaEvent;
@@ -64,7 +64,7 @@ namespace gva {
       // Not much to do here now as second button is unused
     }
 
-    /* We've handled the event, stop processing */
+    // We've handled the event, stop processing 
     return TRUE;
   }
 
@@ -116,6 +116,8 @@ namespace gva {
             /* 8 maps to BMS */
             gvaEvent.type = KEY_EVENT;
             gvaEvent.key_ = KEY_BMS;
+            break;
+          default:
             break;
         }
         printf("[GVA] Top event 0x%x\n", event->keyval);

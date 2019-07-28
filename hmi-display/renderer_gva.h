@@ -53,9 +53,22 @@ typedef enum
   WEIGHT_NORMAL = 0,
   WEIGHT_BOLD,
   WEIGHT_ITALIC
-} weightType;
+} WeightType;
 
-struct gvaColourType
+typedef enum {
+  ICON_UP_ARROW,
+  ICON_DOWN_ARROW,
+  ICON_LEFT_ARROW,
+  ICON_RIGHT_ARROW,
+  ICON_ENTER,
+  ICON_ROTATE_LEFT,
+  ICON_ROTATE_RIGHT,
+  ICON_POWER_OFF,
+  ICON_LOCATION,
+  ICON_CENTRE
+} IconType;
+
+struct GvaColourType_
 {
   int red;
   int green;
@@ -68,10 +81,10 @@ public:
   Widget(int x, int y) : m_x(x), m_y(y), m_width(0), m_height(0)  { };
   Widget(int x, int y, int width) : m_x(x), m_y(y), m_width(width), m_height(0) { };
   Widget(int x, int y, int width, int height) : m_x(x), m_y(y), m_width(width), m_height(height) { };
-  int getX() { return m_x; };
-  int getY() { return m_y; };
-  int getWidth() { return m_width; };
-  int getHeight() { return m_height; };
+  int GetX() { return m_x; };
+  int GetY() { return m_y; };
+  int GetWidth() { return m_width; };
+  int GetHeight() { return m_height; };
 private:
   int m_x = 0;
   int m_y = 0;
@@ -79,64 +92,64 @@ private:
   int m_height = 0;
 };
 
-typedef struct gvaCellType  {
+typedef struct GvaCellType  {
 public :
   char *text;
   cellAlignType align;
-  gvaColourType foreground;
-  gvaColourType background;
-  gvaColourType textcolour;
-  weightType weight;  
-} gvaCell;
+  GvaColourType_ foreground;
+  GvaColourType_ background;
+  GvaColourType_ textcolour;
+  WeightType weight;  
+} GvaCell;
 
-class gvaRow : public Widget {
+class GvaRow : public Widget {
 public :
-  gvaRow() { };  
-  gvaRow(int x, int y) : Widget(x, y) {};  
-  int addCell(gvaCellType newcell, int width);
-  gvaCellType m_cell[MAX_CELLS];
-  int m_widths[MAX_CELLS];
-  int m_cells = 0;
+  GvaRow() { };  
+  GvaRow(int x, int y) : Widget(x, y) {};  
+  int addCell(GvaCellType newcell, int width);
+  GvaCellType cell_[MAX_CELLS];
+  int widths_[MAX_CELLS];
+  int cells_ = 0;
 };
 
 class GvaTable : public Widget {
 public :
   GvaTable(int x, int y, int width) : Widget(x, y, width) {};  
-  int addRow(gvaRow newrow) { m_row[m_rows++] = newrow; return m_rows; };
-  void setFontName(char *name) { strcpy(m_fontname, name); };
-  void setBorderThickness(int thickness) { m_border=thickness; };
-  int m_rows = 0;
-  int m_border = 2;
-  gvaRow m_row[MAX_ROWS];
-  char m_fontname[100] = "Courier";
+  int AddRow(GvaRow newrow) { row_[rows_++] = newrow; return rows_; };
+  void SetFontName(char *name) { strcpy(fontname_, name); };
+  void SetBorderThickness(int thickness) { border_=thickness; };
+  int rows_ = 0;
+  int border_ = 2;
+  GvaRow row_[MAX_ROWS];
+  char fontname_[100] = "Courier";
 };
 
-class hotspot : public Widget {
+class Hotspot : public Widget {
 public :
-  hotspot(int groupId, int x, int y) : m_groupId(groupId), m_binding(0), Widget(x, y) {};  
-  hotspot(int groupId, int binding, int x, int y, int width, int height) : m_groupId(groupId), m_binding(binding), Widget(x, y, width, height) {};  
+  Hotspot(int groupId, int x, int y) : m_groupId(groupId), m_binding(0), Widget(x, y) {};  
+  Hotspot(int groupId, int binding, int x, int y, int width, int height) : m_groupId(groupId), m_binding(binding), Widget(x, y, width, height) {};  
   int getGroupId() { return m_groupId; };
   int getBinding() { return m_binding; };
 private:
   int m_groupId; // Group hostpots together
-  int m_binding; // Bind a value or a key to this hotspot
+  int m_binding; // Bind a value or a key to this Hotspot
 };
 
-class touchGva 
+class TouchGva 
 {
 public:
-  GvaStatusTypes add(int groupId, int x, int y) { m_hotspots.push_back(hotspot(groupId, x, y)); return GVA_SUCCESS; }
-  GvaStatusTypes add(int groupId, int binding, int x, int y, int width, int height) { m_hotspots.push_back(hotspot(groupId, binding, x, y, width, height));  return GVA_SUCCESS; }
-  GvaStatusTypes addAbsolute(int groupId, int binding, int x, int y, int xx, int yy) { m_hotspots.push_back(hotspot(groupId, binding, x, y, xx-x, yy-y));  return GVA_SUCCESS; }
-  void reset() { m_hotspots.clear(); };
+  GvaStatusTypes add(int groupId, int x, int y) { m_Hotspots.push_back(Hotspot(groupId, x, y)); return GVA_SUCCESS; }
+  GvaStatusTypes add(int groupId, int binding, int x, int y, int width, int height) { m_Hotspots.push_back(Hotspot(groupId, binding, x, y, width, height));  return GVA_SUCCESS; }
+  GvaStatusTypes addAbsolute(int groupId, int binding, int x, int y, int xx, int yy) { m_Hotspots.push_back(Hotspot(groupId, binding, x, y, xx-x, yy-y));  return GVA_SUCCESS; }
+  void Reset() { m_Hotspots.clear(); };
   bool check(int groupId, int *binding, int x, int y) {
     y = MIN_HEIGHT - y;
-    for (auto i = m_hotspots.begin(); i != m_hotspots.end(); ++i) {
+    for (auto i = m_Hotspots.begin(); i != m_Hotspots.end(); ++i) {
 
-      if ( (x > i->getX()) &&
-           (x < ( i->getX() + i->getWidth() ) ) &&
-           (y > i->getY()) &&
-           (y < ( i->getY() + i->getHeight() ) ) &&
+      if ( (x > i->GetX()) &&
+           (x < ( i->GetX() + i->GetWidth() ) ) &&
+           (y > i->GetY()) &&
+           (y < ( i->GetY() + i->GetHeight() ) ) &&
            (i->getGroupId() == groupId) ) {
         *binding = i->getBinding();
         return true;
@@ -144,39 +157,40 @@ public:
     }
   }
 public:
-  std::vector<hotspot> m_hotspots;
+  std::vector<Hotspot> m_Hotspots;
 };
 
 class RendererGva : public RendererCairo {
 public:  
   RendererGva(int width, int height);
-  void drawLabels(char * text, int fontSize, int x, int y);
-  void drawFunctionLabels(int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
-  void drawTopLabels(int y, int active, int hide);
-  void drawControlLabels(int y, int active, int hide);
-  void drawPPI(int x, int y, int degrees, int sightAzimuth);
-  void drawTable(GvaTable *table);
-  void drawMode();
-  void drawButton (char *keytext, int fontSize, int x, int y, int size);
-  void drawButton (char *keytext, int fontSize, int x, int y, int height, int width, int align);
-  void drawKeyboard(KeyboardModeType mode);
-  touchGva *getTouch() { return &m_touch; };
+  void DrawLabels(char * text, int fontSize, int x, int y);
+  void DrawFunctionLabels(int x, int active, int hide, int toggle, int toggleOn, char labels[6][40]);
+  void DrawTopLabels(int y, int active, int hide);
+  void DrawControlLabels(int y, int active, int hide);
+  void DrawIcon (IconType icon, int x, int y, int width, int height);
+  void DrawPPI(int x, int y, int degrees, int sightAzimuth);
+  void DrawTable(GvaTable *table);
+  void DrawMode();
+  void DrawButton (char *keytext, int fontSize, int x, int y, int size);
+  void DrawButton (char *keytext, int fontSize, int x, int y, int height, int width, int align);
+  void DrawKeyboard(KeyboardModeType mode);
+  TouchGva *GetTouch() { return &touch_; };
 private:
-  touchGva m_touch;
-  char m_upperKeys[3][10] = { { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' }, { 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '-' }, { 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '-', '-', '-' } };
-  char m_lowerKeys[3][10] = { { 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' }, { 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-' }, { 'z', 'x', 'c', 'v', 'b', 'n', 'm', '-', '-', '-' } };
-  char m_numKeys[3][10] = { { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }, { '-', '_', '.', ',', ';', ':', '"', '-', '-', '-' }, { '!', '@', '#', '$', '%', '^', '&', '-', '-', '-' } };
+  TouchGva touch_;
+  char upperKeys_[3][10] = { { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' }, { 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '-' }, { 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ', '-', '-' } };
+  char lowerKeys_[3][10] = { { 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' }, { 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-' }, { 'z', 'x', 'c', 'v', 'b', 'n', 'm', ' ', '-', '-' } };
+  char numKeys_[3][10] = { { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }, { '-', '_', '.', ',', ';', ':', '"', '-', '-', '-' }, { '!', '@', '#', '$', '%', '^', '&', ' ', '-', '-' } };
 };
 
 class FunctionKeySimple
 {
 public:
-  void draw(RendererGva *r, int x, int y, int width, int height, char* text);
-  int getX() { return m_x; };
-  int getY() { return m_y; };
+  void Draw(RendererGva *r, int x, int y, int width, int height, char* text);
+  int GetX() { return x_; };
+  int GetY() { return y_; };
 private: 
-  int m_x; 
-  int m_y;
+  int x_; 
+  int y_;
 };
 
 class FunctionKeyToggle : public FunctionKeySimple

@@ -57,11 +57,11 @@ rendererMap::rendererMap(string map, string style, int width, int height)
     logGva::log("Cannot create libosmscout cairo surface", LOG_ERROR);
   }
   
-  drawParameter_.SetFontSize(3.0);
-  drawParameter_.SetLabelLineMinCharCount(15);
-  drawParameter_.SetLabelLineMaxCharCount(30);
-  drawParameter_.SetLabelLineFitToArea(true);
-  drawParameter_.SetLabelLineFitToWidth(std::min(projection_.GetWidth(), projection_.GetHeight()));
+  DrawParameter_.SetFontSize(3.0);
+  DrawParameter_.SetLabelLineMinCharCount(15);
+  DrawParameter_.SetLabelLineMaxCharCount(30);
+  DrawParameter_.SetLabelLineFitToArea(true);
+  DrawParameter_.SetLabelLineFitToWidth(std::min(projection_.GetWidth(), projection_.GetHeight()));
   painter_ = new osmscout::MapPainterCairo(styleConfig_);
 };
 
@@ -84,8 +84,8 @@ rendererMap::Project(double zoom, double lon, double lat, cairo_surface_t **surf
       /*
       std::list<std::string> paths;
       paths.push_back("./libosmscout/data/icons/14x14/standard/");
-      drawParameter.SetIconMode(osmscout::MapParameter::FixedSizePixmap);
-      drawParameter.SetIconPaths(paths);
+      DrawParameter.SetIconMode(osmscout::MapParameter::FixedSizePixmap);
+      DrawParameter.SetIconPaths(paths);
       */
 
       projection_.Set(osmscout::GeoCoord(lat,lon),
@@ -100,7 +100,7 @@ rendererMap::Project(double zoom, double lon, double lat, cairo_surface_t **surf
       mapService_->AddTileDataToMapData(tiles_,data_);
 
       if (painter_->DrawMap(projection_,
-                          drawParameter_,
+                          DrawParameter_,
                           data_,
                           cairo_)) {
         // Map rendered

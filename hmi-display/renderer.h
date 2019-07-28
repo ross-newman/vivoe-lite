@@ -77,19 +77,19 @@ class renderer
 public:
   renderer(int width, int height) : width_(width), height_(height) {};
   int init (int width, int height);
-  virtual void setPixel (int x, int y) = 0;
-  virtual void setColour (int red, int green, int blue) = 0;
-  virtual void setColourForground (int red, int green, int blue) = 0;
-  virtual void setColourBackground (int red, int green, int blue) = 0;
+  virtual void SetPixel (int x, int y) = 0;
+  virtual void SetColour (int red, int green, int blue) = 0;
+  virtual void SetColourForground (int red, int green, int blue) = 0;
+  virtual void SetColourBackground (int red, int green, int blue) = 0;
   int GetWidth () { return width_; };
   int GetHeight () { return height_; };
   void SetWidth (int width) { width_ = width; };
   void SetHeight (int height) { height_ = height; };
-  virtual int drawLine (int x1, int y1, int x2, int y2) = 0;
-  virtual void drawCircle (int x, int y, int radius, bool fill) = 0;
-  virtual void drawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
-  virtual int drawColor (int r, int g, int b) = 0;
-  virtual int textureRGB (int x, int y, void *buffer, char *file) = 0;
+  virtual int DrawLine (int x1, int y1, int x2, int y2) = 0;
+  virtual void DrawCircle (int x, int y, int radius, bool fill) = 0;
+  virtual void DrawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
+  virtual int DrawColor (int r, int g, int b) = 0;
+  virtual int TextureRGB (int x, int y, void *buffer, char *file) = 0;
   static long PackRgb(int r, int g, int b) { long packed = (r<<16) | (g<<8) | b;  
 	                                  return packed; };
   RgbUnpackedType UnpackRgb(long rgb) { RgbUnpackedType colour;

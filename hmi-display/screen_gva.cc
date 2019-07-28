@@ -207,31 +207,31 @@ namespace gva
   {
     char *texture = 0;
 
-    // Reset the drawing context, must be reset before redrawing the screen
-    reset();
-    getTouch()->reset();
+    // Reset the Drawing context, must be Reset before reDrawing the screen
+    Reset();
+    GetTouch()->Reset();
 
     // Draw the background canvas first
     switch (screen_->canvas.bufferType) {
       case SURFACE_CAIRO:
-        textureRGB (0, 0, screen_->canvas.surface);
+        TextureRGB (0, 0, screen_->canvas.surface);
         break;
       case SURFACE_FILE:
-        textureRGB (0, 0, screen_->canvas.buffer);
-        textureRGB (0, 0, texture, screen_->canvas.filename);
+        TextureRGB (0, 0, screen_->canvas.buffer);
+        TextureRGB (0, 0, texture, screen_->canvas.filename);
         break;
       default:
       case SURFACE_NONE:
         // Set background green
-        setColourForground (GREEN);
-        setColourBackground (GREEN);
-        drawRectangle (0, 0, width_, height_, true);
+        SetColourForground (GREEN);
+        SetColourBackground (GREEN);
+        DrawRectangle (0, 0, width_, height_, true);
         break;
       case SURFACE_BLACKOUT:
         // Set background black
-        setColourForground (BLACK);
-        setColourBackground (BLACK);
-        drawRectangle (0, 0, width_, height_, true);
+        SetColourForground (BLACK);
+        SetColourBackground (BLACK);
+        DrawRectangle (0, 0, width_, height_, true);
         break;
     }
 
@@ -240,19 +240,19 @@ namespace gva
       //
       // Refersh display
       //
-      draw ();
+      Draw ();
       last_screen_ = *screen_;
       return GVA_SUCCESS;
     }
 
     // Draw label
     if (screen_->label.visible) {
-      drawLabel (screen_->label.x, screen_->label.y, screen_->label.text, screen_->label.fontSize);
+      DrawLabel (screen_->label.x, screen_->label.y, screen_->label.text, screen_->label.fontSize);
     }
 
     // Draw the LEFT bezel labels
     if (screen_->functionLeft.visible) {
-      drawFunctionLabels (1, screen_->functionLeft.active,
+      DrawFunctionLabels (1, screen_->functionLeft.active,
                         screen_->functionLeft.hidden,
                         screen_->functionLeft.toggleActive,
                         screen_->functionLeft.toggleOn,
@@ -261,7 +261,7 @@ namespace gva
 
     // Draw the RIGHT bezel labels
     if (screen_->functionRight.visible) {
-      drawFunctionLabels (width_ - 100 - 1,
+      DrawFunctionLabels (width_ - 100 - 1,
                         screen_->functionRight.active,
                         screen_->functionRight.hidden,
                         screen_->functionRight.toggleActive,
@@ -271,56 +271,56 @@ namespace gva
 
     // Draw the TOP bezel labels     
     if (screen_->functionTop->visible) {
-      drawTopLabels (height_-11, screen_->functionTop->active,
+      DrawTopLabels (height_-11, screen_->functionTop->active,
                   screen_->functionTop->hidden);
     }
 
     // Draw the maintinance mode indicator 
     if (screen_->info.mode == MODE_MAINTINENCE) {
-      drawMode ();
+      DrawMode ();
     }
     
     // Draw the onscreen KEYBOARD
     if (widgets_->keyboard.visible) {
-      drawKeyboard(widgets_->keyboard.mode);
+      DrawKeyboard(widgets_->keyboard.mode);
     }
     
-    // Setup and draw the status bar, one row table
+    // Setup and Draw the status bar, one row table
     if (screen_->StatusBar->visible) {
       int i = 0;
-      // Setup and draw the status bar, one row table
+      // Setup and Draw the status bar, one row table
       int widths[7] = { 23, 8, 37, 8, 8, 8, 8 };
       GvaTable table(1, screen_->StatusBar->y , 640);
-      gvaRow newrow;
+      GvaRow newrow;
 
       for (i=0;i<7;i++) {
         cellAlignType align = ALIGN_LEFT;
         if (i==1) align = ALIGN_CENTRE;
-        gvaCellType cell = {screen_->StatusBar->labels[i], align, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
+        GvaCellType cell = {screen_->StatusBar->labels[i], align, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
         newrow.addCell(cell, widths[i]);
       }
-      table.addRow(newrow);
-      drawTable (&table);
+      table.AddRow(newrow);
+      DrawTable (&table);
     }
 
     // TODO : Draw the alarms if any (Mock up)
     if (widgets_->alarmIndicator.visible) {
       GvaTable table(102, widgets_->alarmIndicator.y, 436);
-      gvaRow alarmrow;
-      gvaCellType cell = {widgets_->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
+      GvaRow alarmrow;
+      GvaCellType cell = {widgets_->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
       
-      table.m_border = 0;
+      table.border_ = 0;
       alarmrow.addCell(cell, 100);
-      table.addRow(alarmrow);
-      drawTable (&table);
+      table.AddRow(alarmrow);
+      DrawTable (&table);
     }
 
-    // Setup and draw the alarms
+    // Setup and Draw the alarms
     if (screen_->table.visible_) {
 	  GvaTable table(screen_->table.x_, screen_->table.y_, screen_->table.width_);
-	  table.m_border = 1;
+	  table.border_ = 1;
 	  for (int row=0; row<screen_->table.row_count_; row++) {
-        gvaRow newrow;
+        GvaRow newrow;
         RgbUnpackedType f, b, o;
         for (int cell=0;cell<screen_->table.rows_[row].cell_count; cell++) {
 		  f = UnpackRgb(screen_->table.rows_[row].cells[cell].foreground_colour);
@@ -339,18 +339,18 @@ namespace gva
 			             f.r, f.g, f.b, // Foreground
 			             screen_->table.rows_[row].font_weight }, screen_->table.rows_[row].cells[cell].width);
         }
-        table.addRow(newrow);
+        table.AddRow(newrow);
 	  }
 
-      drawTable (&table);
+      DrawTable (&table);
     }
 
     if (widgets_->compass.visible) {
-      drawPPI (widgets_->compass.x, widgets_->compass.y, widgets_->compass.bearing, widgets_->compass.bearingSight);
+      DrawPPI (widgets_->compass.x, widgets_->compass.y, widgets_->compass.bearing, widgets_->compass.bearingSight);
     }
 
     if (screen_->control->visible) {
-      drawControlLabels (0, screen_->control->active,
+		DrawControlLabels (0, screen_->control->active,
                        screen_->control->hidden);
     }
 
@@ -358,25 +358,25 @@ namespace gva
     if (screen_->message.visible) {
       char tmp[2][MAX_TEXT];
       GvaTable table(320-150, 260, 300);
-      gvaRow newrow;
-      gvaRow newrow1;
+      GvaRow newrow;
+      GvaRow newrow1;
       
-      table.m_border = 2;
+      table.border_ = 2;
 
       strcpy(tmp[0], screen_->message.brief.text);
       newrow.addCell({tmp[0], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD }, 100);
-      table.addRow(newrow);      
+      table.AddRow(newrow);      
 
       strcpy(tmp[1], screen_->message.detail.text);
       newrow1.addCell({tmp[1], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
-      table.addRow(newrow1);
-      drawTable (&table);
+      table.AddRow(newrow1);
+      DrawTable (&table);
     }
     
     //
     // Refersh display
     //
-    draw ();
+    Draw ();
     last_screen_ = *screen_;
   }
   

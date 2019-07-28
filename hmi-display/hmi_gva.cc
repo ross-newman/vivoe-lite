@@ -48,12 +48,11 @@ Hmi::Reset()
   widgets_.compass.x = 165;
   widgets_.keyboard.visible = (widgets_.keyboard.visible) ? true : false;
   screen_.table.visible_ = false;
-  screen_.control->active = 0;
+  screen_.control->active = 0x0;
   alarmson_ = false;
 }
 
-void 
-Hmi::Labels(LabelModeEnum labels) {
+void Hmi::Labels(LabelModeEnum labels) {
   switch(labels) {
   case LABEL_ALL :
     if ( (screen_.currentFunction == SA) || (screen_.currentFunction == WPN) || (screen_.currentFunction == DRV) )
@@ -144,7 +143,7 @@ Hmi::Key(int keypress) {
     screen_.control->active = 1 << 7;
     break;
   case KEY_F14 :
-    screen_.control->active = 1 << 6;
+    if (screen_.currentFunction == ALARMSX) screen_.control->active = 1 << 6;
     break;
   case KEY_F15 :
     screen_.control->active = 1 << 5;
@@ -176,6 +175,9 @@ Hmi::Key(int keypress) {
   case KEY_F20 :
     screen_.control->active = 1;
     screen_.message.visible = false;
+    break;
+  default:
+    screen_.control->active = 0;
     break;
   }
 }
@@ -209,7 +211,6 @@ Hmi::KeySA(int keypress) {
   }
 }
 
-
 void
 Hmi::KeyWPN(int keypress) {
   screen_.functionLeft.active = 0;
@@ -238,7 +239,6 @@ Hmi::KeyWPN(int keypress) {
     break;
   }
 }
-
 
 void
 Hmi::KeyDEF(int keypress) {
@@ -546,15 +546,15 @@ struct StateSYS : Hmi
         screen_ = manager_->GetScreen(SYS);
         lastState_ = SYS;
         Reset();
-
+        
         screen_.StatusBar->visible = true;
         screen_.functionTop->visible = true;
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
-        
+
 		screen_.table.visible_ = true;
 		screen_.table.x_ = 110;
-		screen_.table.y_ = 350;
+		screen_.table.y_ = 390;
 		screen_.table.width_ = 420;
 
 		screen_.table.AddRow(WEIGHT_BOLD);
@@ -805,8 +805,6 @@ struct StateAlarms : Hmi
 
       screen_.table.AddRow();
       screen_.table.AddCell("Page 1 of 1", 100, ALIGN_RIGHT);
-          
-      screen_.control->active = 0x1 << 6;
     }
   };
   void react(EventKeySA const &) override { transit<StateSA>(); };

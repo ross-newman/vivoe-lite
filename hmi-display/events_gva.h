@@ -37,7 +37,7 @@ namespace gva
     TOUCH_EVENT,
     DDS_EVENT,
     RESIZE_EVENT,
-    REDRAW_EVENT
+    REDraw_EVENT
   };
 
   struct TouchType {
@@ -57,11 +57,11 @@ namespace gva
   };
   
   static std::vector<EventGvaType> eventqueue_;
-  static touchGva *touch_;
+  static TouchGva *touch_;
 
   class EventsGva {
   public:
-    EventsGva(gtkType *window, touchGva *touch); 
+    EventsGva(gtkType *window, TouchGva *touch); 
     int NextGvaEvent(EventGvaType *event); // Use for GTK/DDS/Touch events
     static gboolean ButtonPressEventCb (GtkWidget *Widget, GdkEventButton *event, gpointer data);
     static gboolean KeyPressEventCb (GtkWidget *Widget, GdkEventKey *event);
