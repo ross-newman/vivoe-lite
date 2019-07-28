@@ -241,11 +241,21 @@ namespace gva {
         gvaEvent.type = KEY_EVENT;
         gvaEvent.key_ = KEY_F14;
         break;
+      case 0xff0d:
+        /* Enter maps to F20 */
+        gvaEvent.type = KEY_EVENT;
+        gvaEvent.key_ = KEY_F20;
+        break;
       case 70:
       case 102:
         /* f toggle fullscreen TODO: Does not work */
         gvaEvent.type = KEY_EVENT;
         gvaEvent.key_ = KEY_FULLSCREEN;
+        break;
+      case 0x62:
+        /* b toggle blackout F11 */
+        gvaEvent.type = KEY_EVENT;
+        gvaEvent.key_ = KEY_F11;
         break;
       case 75:
       case 107:

@@ -56,6 +56,7 @@ typedef enum
 } WeightType;
 
 typedef enum {
+  ICON_NONE = 0,
   ICON_UP_ARROW,
   ICON_DOWN_ARROW,
   ICON_LEFT_ARROW,
@@ -65,6 +66,9 @@ typedef enum {
   ICON_ROTATE_RIGHT,
   ICON_POWER_OFF,
   ICON_LOCATION,
+  ICON_WARNING,
+  ICON_ERROR,
+  ICON_INFO,
   ICON_CENTRE
 } IconType;
 

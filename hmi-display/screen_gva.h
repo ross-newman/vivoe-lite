@@ -43,13 +43,6 @@ namespace gva
     MODE_OPERATIONAL,
     MODE_BLACKOUT
   };
-
-  enum IconEnum {
-    ICON_NONE = 0,
-    ICON_WARNING,
-    ICON_INFO,
-    ICON_ERROR 
-  };
   
   enum LabelModeEnum {
     LABEL_ALL,
@@ -199,7 +192,7 @@ namespace gva
   typedef struct Message {
     bool visible;
     int width;
-    IconEnum icon;
+    IconType icon;
     struct {
       char text[256];
       int fontSize;

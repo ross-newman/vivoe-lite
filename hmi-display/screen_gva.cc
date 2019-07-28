@@ -348,7 +348,7 @@ namespace gva
     if (widgets_->compass.visible) {
       DrawPPI (widgets_->compass.x, widgets_->compass.y, widgets_->compass.bearing, widgets_->compass.bearingSight);
     }
-
+    
     if (screen_->control->visible) {
 		DrawControlLabels (0, screen_->control->active,
                        screen_->control->hidden);
@@ -366,11 +366,13 @@ namespace gva
       strcpy(tmp[0], screen_->message.brief.text);
       newrow.addCell({tmp[0], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD }, 100);
       table.AddRow(newrow);      
-
+          
       strcpy(tmp[1], screen_->message.detail.text);
       newrow1.addCell({tmp[1], ALIGN_CENTRE, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_NORMAL }, 100);
       table.AddRow(newrow1);
       DrawTable (&table);
+
+      DrawIcon(screen_->message.icon, 320-150 + 300 -17 , 270 ,11,11);
     }
     
     //

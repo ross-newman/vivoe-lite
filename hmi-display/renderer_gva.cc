@@ -23,7 +23,7 @@
 
 // @file renderer_gva.cc
 // @author ross@rossnewman.com
-// @date 04 July 2019
+// @date 28 July 2019
 // @brief Rendering functions for all the complex Widgets needed by the HMI. Widgets are reusable components of the HMI.
 //
 #include <math.h>               /* sqrt */
@@ -231,6 +231,27 @@ void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
       DrawArcRaw(0, 0, 8, 290, 250);
       MovePenRaw(0, -4);
       DrawPenRaw(0, -10);
+      ClosePath(false);
+      break;
+    case ICON_INFO :
+    case ICON_ERROR :
+    case ICON_WARNING :
+      SetLineThickness(2, LINE_SOLID);
+      if (icon == ICON_INFO) SetColourBackground(GREEN);
+      if (icon == ICON_ERROR) SetColourBackground(RED);
+      if (icon == ICON_WARNING) SetColourBackground(ORANGE);
+      Scale(sx, sy);
+      MovePenRaw(-10, -10);
+      DrawPenRaw(0, +10);
+      DrawPenRaw(+10, -10);
+      DrawPenRaw(-10, -10);
+      ClosePath(true);
+      DrawColor(WHITE);
+      MovePenRaw(0, +3);
+      DrawPenRaw(0, -3);
+      ClosePath(false);
+      MovePenRaw(0, -6);
+      DrawPenRaw(0, -7);
       ClosePath(false);
       break;
   }

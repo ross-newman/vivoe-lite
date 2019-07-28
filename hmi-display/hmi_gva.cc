@@ -204,7 +204,7 @@ Hmi::KeySA(int keypress) {
   case KEY_F11:
   case KEY_F12:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -233,7 +233,7 @@ Hmi::KeyWPN(int keypress) {
   case KEY_F11:
   case KEY_F12:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -262,7 +262,7 @@ Hmi::KeyDEF(int keypress) {
   case KEY_F11:
   case KEY_F12:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_ERROR;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -289,7 +289,7 @@ Hmi::KeySYS(int keypress) {
   case KEY_F9:
   case KEY_F10:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -330,7 +330,7 @@ Hmi::KeyDRV(int keypress) {
   case KEY_F11:
   case KEY_F12:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -359,7 +359,7 @@ Hmi::KeySTR(int keypress) {
   case KEY_F11:
   case KEY_F12:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -388,7 +388,7 @@ Hmi::KeyCOM(int keypress) {
   case KEY_F11:
   case KEY_F12:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     break;
@@ -445,7 +445,7 @@ Hmi::KeyBMS(int key) {
     break;
   default:
     screen_.message.visible = true;
-    screen_.message.icon = ICON_NONE;
+    screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     return;

@@ -107,7 +107,7 @@ void RendererCairo::Draw() {
         forground_colour_.blue = currentCmd->arg3;
         break;
       case COMMAND_PEN_MOVE:
-        cairo_new_path(cr);
+        if (currentCmd->arg1) cairo_new_path(cr);
         cairo_move_to(cr, currentCmd->points[0].x, currentCmd->points[0].y);
         break;
       case COMMAND_PEN_draw:
@@ -363,16 +363,17 @@ int RendererCairo::MovePen(int x, int y) {
   Draw_commands_[draw_tail_].command = COMMAND_PEN_MOVE;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
+  Draw_commands_[draw_tail_].arg1 = 1; // 1 indicatesnew path
   draw_tail_++;
   return 0;
 }
 
 int RendererCairo::MovePenRaw(int x, int y) {
-//  y = render_.size.height - y;
-//  x = render_.size.width - x;	
   Draw_commands_[draw_tail_].command = COMMAND_PEN_MOVE;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
+  Draw_commands_[draw_tail_].arg1 = 0; // 0 indicates no new path
+  
   draw_tail_++;
   return 0;
 }
@@ -488,8 +489,7 @@ void RendererCairo::DrawRectangle(int x1, int y1, int x2, int y2, bool fill) {
   draw_tail_++;
 }
 
-void
-  RendererCairo::DrawRoundedRectangle(int x, int y, int width,
+void RendererCairo::DrawRoundedRectangle(int x, int y, int width,
                                       int height, int courner, bool fill) {
 #if INVERTED
   y = render_.size.height - y;
