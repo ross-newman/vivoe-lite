@@ -55,7 +55,16 @@ void FunctionKeySimple::Draw(RendererGva * r, int x, int y, int width, int heigh
   r->DrawColor(WHITE);
 
   if (!strncmp(text, "icon:", 5)) {
-    r->DrawIcon(ICON_POWER_OFF, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "exit"))
+      r->DrawIcon(ICON_POWER_OFF, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "uparrow"))
+      r->DrawIcon(ICON_UP_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "downarrow"))
+      r->DrawIcon(ICON_DOWN_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "rightarrow"))
+      r->DrawIcon(ICON_RIGHT_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "leftarrow"))
+      r->DrawIcon(ICON_LEFT_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
   } else {
     strncpy(copy, text, 40);
     ptr = strtok(copy, delim);
@@ -213,6 +222,16 @@ void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
         DrawPenRaw(arrow[i][0], arrow[i][1]);
       }
       ClosePath(true);
+      break;    
+    case ICON_DOWN_ARROW_OUTLINE:
+      Rotate(M_PI);
+    case ICON_UP_ARROW_OUTLINE:
+      Scale(sx, sy);
+      MovePenRaw(arrow[0][0], arrow[0][1]);
+      for (int i = 1; i < 8; i++) {
+        DrawPenRaw(arrow[i][0], arrow[i][1]);
+      }
+      ClosePath(false);
       break;
     case ICON_RIGHT_ARROW:
       Rotate(M_PI);
@@ -224,6 +243,17 @@ void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
         DrawPenRaw(arrow[i][0], arrow[i][1]);
       }
       ClosePath(true);
+      break;
+    case ICON_RIGHT_ARROW_OUTLINE:
+      Rotate(M_PI);
+    case ICON_LEFT_ARROW_OUTLINE:
+      Rotate(M_PI*1.5);
+      Scale(sx, sy);
+      MovePenRaw(arrow[0][0], arrow[0][1]);
+      for (int i = 1; i < 8; i++) {
+        DrawPenRaw(arrow[i][0], arrow[i][1]);
+      }
+      ClosePath(false);
       break;
     case ICON_POWER_OFF:
       SetLineThickness(2, LINE_SOLID);

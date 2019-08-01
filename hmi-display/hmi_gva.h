@@ -70,8 +70,9 @@ using namespace gva;
 #define COM_FUNCTION_KEYS_LEFT   { true, 0b100000, 0b110000, 0b000000, 0b000000, { "Comms", "RF State", LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL } }
 #define COM_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b000000, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL, LABEL_NULL } }
 
-#define BMS_FUNCTION_KEYS_LEFT   { true, 0b100000, 0b101111, 0b000000, 0b000000, { "Mission", LABEL_NULL, "Shift.up", "Shift.down", "Zoom +", "Rotate.>>" } }
-#define BMS_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b001111, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, "Shift.left", "Shift.right", "Zoom -", "Rotate.<<" } }
+//#define BMS_FUNCTION_KEYS_LEFT   { true, 0b100000, 0b101111, 0b000000, 0b000000, { "Mission", LABEL_NULL, "Shift.up", "Shift.down", "Zoom +", "Rotate.>>" } }
+#define BMS_FUNCTION_KEYS_LEFT   { true, 0b100000, 0b101111, 0b000000, 0b000000, { "Mission", LABEL_NULL, "icon:uparrow", "icon:downarrow", "Zoom +", "Rotate.>>" } }
+#define BMS_FUNCTION_KEYS_RIGHT  { true, 0b000000, 0b001111, 0b000000, 0b000000, { LABEL_NULL, LABEL_NULL, "icon:leftarrow", "icon:rightarrow", "Zoom -", "Rotate.<<" } }
 
 #define ALARM_KEYS_LEFT          { true, 0b000000, 0b111100, 0b000000, 0b000000, { "Sort", "Order", "Show.Overridden", "Select.All", LABEL_NULL, LABEL_NULL } }
 #define ALARM_KEYS_RIGHT         { true, 0b000000, 0b111011, 0b000000, 0b000000, { "Override", "Clear", "Add Note", LABEL_NULL, "Page.Up", "Page.Down" } }
