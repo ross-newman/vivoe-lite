@@ -121,6 +121,7 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
   int group = (x < DEFAULT_WIDTH / 2) ? LEFT : RIGHT;
 
   for (i = 0; i < 6; i++) {
+    SetLineThickness(2, LINE_SOLID);
     SetColourBackground(DARK_GREEN);
     if ((1 << (5 - i) & hide)) {
       (1 << (5 - i) & active) ? SetColourForground(YELLOW) :
@@ -292,7 +293,7 @@ void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
       ClosePath(false);
       break;
     case ICON_PLUS:
-      SetLineThickness(2, LINE_SOLID, LINE_CAP_BUTT);
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_ROUND);
       Scale(sx, sy);
       MovePenRaw(-10, 0);
       DrawPenRaw(10, 0);
@@ -301,7 +302,7 @@ void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
       ClosePath(false);
       break;
     case ICON_MINUS:
-      SetLineThickness(2, LINE_SOLID, LINE_CAP_BUTT);
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_ROUND);
       Scale(sx, sy);
       MovePenRaw(-10, 0);
       DrawPenRaw(10, 0);
