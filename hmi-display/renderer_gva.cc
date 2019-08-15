@@ -367,8 +367,8 @@ void RendererGva::DrawPPI(int x, int y, int degrees, int sightAzimuth) {
   DrawPen(x - 5, y + 20, false);
   DrawPen(x - 15, y + 20, false);
   DrawPen(x - 15, y - 20, true);
+  ClosePath(false);
   Restore();
-//  ClosePath(false);
 
   // Compass Markings
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
