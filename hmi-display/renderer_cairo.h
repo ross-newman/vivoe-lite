@@ -75,7 +75,7 @@ enum Draw_type
   COMMAND_PEN_COLOUR,
   COMMAND_PEN_CURVE,
   COMMAND_PEN_LINE,
-  COMMAND_PEN_draw,
+  COMMAND_PEN_DRAW,
   COMMAND_PEN_MOVE,
   COMMAND_PEN_RECTANGLE,
   COMMAND_PEN_ROUNDED_RECTANGLE,
@@ -123,6 +123,12 @@ typedef enum {
   LINE_DASHED_LARGE,
 } LineType;
 
+typedef enum {
+  LINE_CAP_BUTT,
+  LINE_CAP_ROUND,
+  LINE_CAP_SQUARE
+} LineCapEnd;
+
 static handle_type render_;
 
 typedef void (*CallbackType)(void * io, gpointer data);
@@ -139,6 +145,7 @@ public:
   void SetColourBackground (int red, int green, int blue);
   void setLineType (int type);
   void SetLineThickness (int thickness, LineType fill);
+  void SetLineThickness (int thickness, LineType fill, LineCapEnd end);
   int MovePen (int x, int y);
   int DrawPen (int x, int y, bool close);
   int DrawPen (int x, int y) { return DrawPen(x,y,false); };

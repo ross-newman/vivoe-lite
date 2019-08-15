@@ -110,7 +110,7 @@ void RendererCairo::Draw() {
         if (currentCmd->arg1) cairo_new_path(cr);
         cairo_move_to(cr, currentCmd->points[0].x, currentCmd->points[0].y);
         break;
-      case COMMAND_PEN_draw:
+      case COMMAND_PEN_DRAW:
         cairo_line_to(cr, currentCmd->points[0].x, currentCmd->points[0].y);
         if (currentCmd->arg1 > 0)
           cairo_stroke(cr);
@@ -212,6 +212,21 @@ void RendererCairo::Draw() {
         break;
       case COMMAND_PEN_THICKNESS:
         cairo_set_line_width(cr, (cairo_line_join_t) currentCmd->arg1);
+        {
+	      cairo_line_cap_t cap;
+	      switch (currentCmd->arg3) {
+		    case LINE_CAP_BUTT :
+		      cap=CAIRO_LINE_CAP_BUTT;
+		      break; 
+		    case LINE_CAP_ROUND :
+		      cap=CAIRO_LINE_CAP_ROUND;
+		      break; 
+		    case LINE_CAP_SQUARE :
+		      cap=CAIRO_LINE_CAP_SQUARE;
+		      break; 
+		  }
+          cairo_set_line_cap(cr, cap);
+		}
         switch (currentCmd->arg2) {
           case LINE_DASHED:
             cairo_set_dash(cr, dashed, 1, 0);
@@ -243,7 +258,7 @@ void RendererCairo::Draw() {
         cairo_rotate (cr, currentCmd->width);
         break;
       case COMMAND_CLOSE_PATH:
-        cairo_close_path(cr);
+//        cairo_close_path(cr);
         if (currentCmd->arg1 > 0) {
 		  cairo_set_source_rgb(cr, intToFloat(background_colour_.red),
 				   intToFloat(background_colour_.green),
@@ -330,29 +345,30 @@ void RendererCairo::SetColourForground(int red, int green, int blue) {
   Draw_commands_[draw_tail_].command = COMMAND_COLOUR_FG;
   Draw_commands_[draw_tail_].arg1 = red;
   Draw_commands_[draw_tail_].arg2 = green;
-  Draw_commands_[draw_tail_].arg3 = blue;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg3 = blue;
 }
 
 void RendererCairo::SetColourBackground(int red, int green, int blue) {
   Draw_commands_[draw_tail_].command = COMMAND_COLOUR_BG;
   Draw_commands_[draw_tail_].arg1 = red;
   Draw_commands_[draw_tail_].arg2 = green;
-  Draw_commands_[draw_tail_].arg3 = blue;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg3 = blue;
 }
 
 void RendererCairo::setLineType(int type) {
   Draw_commands_[draw_tail_].command = COMMAND_LINE_JOIN;
-  Draw_commands_[draw_tail_].arg1 = type;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg1 = type;
 }
 
-void RendererCairo::SetLineThickness(int thickness, LineType fill) {
+void RendererCairo::SetLineThickness(int thickness, LineType fill, LineCapEnd end) {
   Draw_commands_[draw_tail_].command = COMMAND_PEN_THICKNESS;
   Draw_commands_[draw_tail_].arg1 = thickness;
   Draw_commands_[draw_tail_].arg2 = fill;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg3 = end;
+}
+
+void RendererCairo::SetLineThickness(int thickness, LineType fill) {
+  SetLineThickness(thickness, fill, LINE_CAP_BUTT);
 }
 
 int RendererCairo::MovePen(int x, int y) {
@@ -363,8 +379,7 @@ int RendererCairo::MovePen(int x, int y) {
   Draw_commands_[draw_tail_].command = COMMAND_PEN_MOVE;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
-  Draw_commands_[draw_tail_].arg1 = 1; // 1 indicatesnew path
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg1 = 1; // 1 indicatesnew path
   return 0;
 }
 
@@ -372,9 +387,7 @@ int RendererCairo::MovePenRaw(int x, int y) {
   Draw_commands_[draw_tail_].command = COMMAND_PEN_MOVE;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
-  Draw_commands_[draw_tail_].arg1 = 0; // 0 indicates no new path
-  
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg1 = 0; // 0 indicates no new path
   return 0;
 }
 
@@ -383,7 +396,7 @@ int RendererCairo::DrawPen(int x, int y, bool close) {
   y = render_.size.height - y;
 #endif
 
-  Draw_commands_[draw_tail_].command = COMMAND_PEN_draw;
+  Draw_commands_[draw_tail_].command = COMMAND_PEN_DRAW;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
   Draw_commands_[draw_tail_++].arg1 = close ? 1 : 0;
@@ -393,7 +406,7 @@ int RendererCairo::DrawPen(int x, int y, bool close) {
 int RendererCairo::DrawPenRaw(int x, int y) {
 //  y = render_.size.height - y;	
 //  x = render_.size.width - x;	
-  Draw_commands_[draw_tail_].command = COMMAND_PEN_draw;
+  Draw_commands_[draw_tail_].command = COMMAND_PEN_DRAW;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
   Draw_commands_[draw_tail_++].arg1 = 0;
@@ -430,8 +443,7 @@ void RendererCairo::Rotate (double radians) {
 
 int RendererCairo::ClosePath(bool fill) {
   Draw_commands_[draw_tail_].command = COMMAND_CLOSE_PATH;
-  Draw_commands_[draw_tail_].arg1 = fill ? 1 : 0;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].arg1 = fill ? 1 : 0;
   return 0;
 }
 
@@ -443,8 +455,7 @@ int RendererCairo::DrawLine(int x1, int y1, int x2, int y2) {
 
   Draw_commands_[draw_tail_].command = COMMAND_PEN_LINE;
   Draw_commands_[draw_tail_].points[0].x = x1;
-  Draw_commands_[draw_tail_].points[0].y = y1;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].points[0].y = y1;
   return 0;
 }
 
@@ -459,8 +470,7 @@ void RendererCairo::DrawCircle(int x, int y, int radius, bool fill) {
   Draw_commands_[draw_tail_].radius = radius;
   Draw_commands_[draw_tail_].points[1].x = 1;
   Draw_commands_[draw_tail_].points[1].y = 0;
-  Draw_commands_[draw_tail_].fill = fill ? 1 : 0;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].fill = fill ? 1 : 0;
 }
 
 void RendererCairo::DrawArcRaw(int x, int y, int radius, int angle1, int angle2) {
@@ -470,8 +480,7 @@ void RendererCairo::DrawArcRaw(int x, int y, int radius, int angle1, int angle2)
   Draw_commands_[draw_tail_].points[0].y = y;
   Draw_commands_[draw_tail_].radius = radius;
   Draw_commands_[draw_tail_].angle1 = angle1 * (M_PI/180.0);  /* angles are specified */
-  Draw_commands_[draw_tail_].angle2 = angle2 * (M_PI/180.0);  /* in radians           */;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].angle2 = angle2 * (M_PI/180.0);  /* in radians           */;
 }
 
 void RendererCairo::DrawRectangle(int x1, int y1, int x2, int y2, bool fill) {
@@ -485,8 +494,7 @@ void RendererCairo::DrawRectangle(int x1, int y1, int x2, int y2, bool fill) {
   Draw_commands_[draw_tail_].points[0].y = y1;
   Draw_commands_[draw_tail_].points[1].x = x2;
   Draw_commands_[draw_tail_].points[1].y = y2;
-  Draw_commands_[draw_tail_].fill = fill ? 1 : 0;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].fill = fill ? 1 : 0;
 }
 
 void RendererCairo::DrawRoundedRectangle(int x, int y, int width,
@@ -501,8 +509,7 @@ void RendererCairo::DrawRoundedRectangle(int x, int y, int width,
   Draw_commands_[draw_tail_].arg1 = width;
   Draw_commands_[draw_tail_].arg2 = height;
   Draw_commands_[draw_tail_].arg3 = courner;
-  Draw_commands_[draw_tail_].fill = fill ? 1 : 0;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].fill = fill ? 1 : 0;
 }
 
 void
@@ -521,16 +528,14 @@ void
   Draw_commands_[draw_tail_].points[1].y = y2;
   Draw_commands_[draw_tail_].points[2].x = x3;
   Draw_commands_[draw_tail_].points[2].y = y3;
-  Draw_commands_[draw_tail_].fill = fill ? 1 : 0;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].fill = fill ? 1 : 0;
 }
 
 int RendererCairo::DrawColor(int r, int g, int b) {
   Draw_commands_[draw_tail_].command = COMMAND_PEN_COLOUR;
   Draw_commands_[draw_tail_].colour.red = r;
   Draw_commands_[draw_tail_].colour.green = g;
-  Draw_commands_[draw_tail_].colour.blue = b;
-  draw_tail_++;
+  Draw_commands_[draw_tail_++].colour.blue = b;
   return 0;
 }
 
@@ -538,8 +543,7 @@ void RendererCairo::SetTextFont(int slope, int weight, char *fontName) {
   Draw_commands_[draw_tail_].command = COMMAND_TEXT_FONT;
   Draw_commands_[draw_tail_].arg1 = slope;
   Draw_commands_[draw_tail_].arg2 = weight;
-  strcpy(Draw_commands_[draw_tail_].text, fontName);
-  draw_tail_++;
+  strcpy(Draw_commands_[draw_tail_++].text, fontName);
 }
 
 int RendererCairo::GetTextWidth(char *str, int fontSize) {
@@ -571,8 +575,7 @@ void RendererCairo::DrawText(int x, int y, char *text, int size) {
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
   Draw_commands_[draw_tail_].arg1 = size;
-  strcpy(Draw_commands_[draw_tail_].text, text);
-  draw_tail_++;
+  strcpy(Draw_commands_[draw_tail_++].text, text);
 }
 
 void RendererCairo::DrawLabel(int x, int y, char *text, int size) {
@@ -582,8 +585,7 @@ void RendererCairo::DrawLabel(int x, int y, char *text, int size) {
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
   Draw_commands_[draw_tail_].arg1 = size;
-  strcpy(Draw_commands_[draw_tail_].text, text);
-  draw_tail_++;
+  strcpy(Draw_commands_[draw_tail_++].text, text);
 }
 
 void RendererCairo::DrawTextCentre(int x, char *text, int size) {
@@ -621,10 +623,7 @@ int RendererCairo::TextureRGB(int x, int y, void *buffer, char *file) {
   Draw_commands_[draw_tail_].command = COMMAND_IMAGE_TEXTURE;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
-  Draw_commands_[draw_tail_].arg1 = image_tail_++;
-
-  draw_tail_++;
-
+  Draw_commands_[draw_tail_++].arg1 = image_tail_++;
   return 0;
 }
 
@@ -638,10 +637,7 @@ int RendererCairo::TextureRGB(int x, int y, void *buffer) {
   Draw_commands_[draw_tail_].command = COMMAND_IMAGE_TEXTURE;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
-  Draw_commands_[draw_tail_].arg1 = image_tail_++;
-
-  draw_tail_++;
-
+  Draw_commands_[draw_tail_++].arg1 = image_tail_++;
   return 0;
 }
 
@@ -651,10 +647,7 @@ int RendererCairo::TextureRGB(int x, int y, cairo_surface_t * surface) {
   Draw_commands_[draw_tail_].command = COMMAND_IMAGE_TEXTURE_PERSIST;
   Draw_commands_[draw_tail_].points[0].x = x;
   Draw_commands_[draw_tail_].points[0].y = y;
-  Draw_commands_[draw_tail_].arg1 = image_tail_++;
-
-  draw_tail_++;
-
+  Draw_commands_[draw_tail_++].arg1 = image_tail_++;
   return 0;
 }
 

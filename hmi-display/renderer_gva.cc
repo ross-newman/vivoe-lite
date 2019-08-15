@@ -23,7 +23,7 @@
 
 // @file renderer_gva.cc
 // @author ross@rossnewman.com
-// @date 28 July 2019
+// @date 15 August 2019
 // @brief Rendering functions for all the complex Widgets needed by the HMI. Widgets are reusable components of the HMI.
 //
 #include <math.h>               /* sqrt */
@@ -58,13 +58,21 @@ void FunctionKeySimple::Draw(RendererGva * r, int x, int y, int width, int heigh
 	if (!strcmp(&text[5], "exit"))
       r->DrawIcon(ICON_POWER_OFF, x + width/2, y + height/2,20,20);
 	if (!strcmp(&text[5], "uparrow"))
-      r->DrawIcon(ICON_UP_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+      r->DrawIcon(ICON_UP_ARROW, x + width/2, y + height/2,20,20);
 	if (!strcmp(&text[5], "downarrow"))
-      r->DrawIcon(ICON_DOWN_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+      r->DrawIcon(ICON_DOWN_ARROW, x + width/2, y + height/2,20,20);
 	if (!strcmp(&text[5], "rightarrow"))
-      r->DrawIcon(ICON_RIGHT_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+      r->DrawIcon(ICON_RIGHT_ARROW, x + width/2, y + height/2,20,20);
 	if (!strcmp(&text[5], "leftarrow"))
-      r->DrawIcon(ICON_LEFT_ARROW_OUTLINE, x + width/2, y + height/2,20,20);
+      r->DrawIcon(ICON_LEFT_ARROW, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "rotateleft"))
+      r->DrawIcon(ICON_ROTATE_LEFT, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "rotateright"))
+      r->DrawIcon(ICON_ROTATE_RIGHT, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "plus"))
+      r->DrawIcon(ICON_PLUS, x + width/2, y + height/2,20,20);
+	if (!strcmp(&text[5], "minus"))
+      r->DrawIcon(ICON_MINUS, x + width/2, y + height/2,20,20);
   } else {
     strncpy(copy, text, 40);
     ptr = strtok(copy, delim);
@@ -192,13 +200,13 @@ void RendererGva::DrawControlLabels(int y, int active, int hide) {
 void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
   double sx, sy;
   int arrow[8][2] = { {-5, -10},
-  {-5, -10},
-  {-5, 0},
+  {-4, -10},
+  {-4, 0},
   {-8, 0},
   {0, +10},
   {8, 0},
-  {+5, 0},
-  {+5, -10}
+  {+4, 0},
+  {+4, -10}
   };
 
   DrawColor(WHITE);
@@ -256,11 +264,47 @@ void RendererGva::DrawIcon(IconType icon, int x, int y, int width, int height) {
       ClosePath(false);
       break;
     case ICON_POWER_OFF:
-      SetLineThickness(2, LINE_SOLID);
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_ROUND);
       Scale(sx, sy);
       DrawArcRaw(0, 0, 8, 290, 250);
       MovePenRaw(0, -4);
       DrawPenRaw(0, -10);
+      ClosePath(false);
+      break;
+    case ICON_ROTATE_LEFT:
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_ROUND);
+      Scale(sx, sy);
+      DrawArcRaw(0, 0, 8, 315, 225);
+      MovePenRaw(5, -6);
+      DrawPenRaw(5, -1);
+      MovePenRaw(5, -6);
+      DrawPenRaw(9, -6);
+      ClosePath(false);
+      break;
+    case ICON_ROTATE_RIGHT:
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_ROUND);
+      Scale(sx, sy);
+      DrawArcRaw(0, 0, 8, 315, 225);
+      MovePenRaw(-5, -6);
+      DrawPenRaw(-5, -1);
+      MovePenRaw(-5, -6);
+      DrawPenRaw(-9, -6);
+      ClosePath(false);
+      break;
+    case ICON_PLUS:
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_BUTT);
+      Scale(sx, sy);
+      MovePenRaw(-10, 0);
+      DrawPenRaw(10, 0);
+      MovePenRaw(0, -10);
+      DrawPenRaw(0, 10);
+      ClosePath(false);
+      break;
+    case ICON_MINUS:
+      SetLineThickness(2, LINE_SOLID, LINE_CAP_BUTT);
+      Scale(sx, sy);
+      MovePenRaw(-10, 0);
+      DrawPenRaw(10, 0);
       ClosePath(false);
       break;
     case ICON_INFO :
