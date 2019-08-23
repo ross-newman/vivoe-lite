@@ -298,7 +298,10 @@ Hmi::KeySYS(int keypress) {
     // Blackout
     screen_.info.mode = (screen_.info.mode == MODE_BLACKOUT) ? MODE_MAINTINENCE : MODE_BLACKOUT;
     screen_.canvas.visible = true;
-    screen_.canvas.bufferType = SURFACE_BLACKOUT;
+    if (screen_.info.mode == MODE_BLACKOUT) 
+      screen_.canvas.bufferType = SURFACE_BLACKOUT;
+    else
+      screen_.canvas.bufferType = SURFACE_FILE;      
     break;
   case KEY_F12:
     // Exit
