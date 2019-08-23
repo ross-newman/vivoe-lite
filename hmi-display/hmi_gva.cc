@@ -49,6 +49,7 @@ Hmi::Reset()
   widgets_.keyboard.visible = (widgets_.keyboard.visible) ? true : false;
   screen_.table.visible_ = false;
   screen_.control->active = 0x0;
+  screen_.message.visible = false;
   alarmson_ = false;
 }
 
@@ -301,9 +302,9 @@ Hmi::KeySYS(int keypress) {
     break;
   case KEY_F12:
     // Exit
-    if (render_.surface)
-      cairo_surface_destroy (render_.surface);
-    g_application_quit(G_APPLICATION (render_.win.app));
+    if (RendererCairo::render_.surface)
+      cairo_surface_destroy (RendererCairo::render_.surface);
+    g_application_quit(G_APPLICATION (RendererCairo::render_.win.app));
     break;
   }
 }
@@ -450,10 +451,10 @@ Hmi::KeyBMS(int key) {
     strcpy(screen_.message.detail.text, "Operation not implemented!");
     return;
   }
-printf("Zoom level %d lat %f, %f\n", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
+printf("[BMS] Zoom level %d lat %f, %f\n", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
   map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
   map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
-printf("res %d x %d\n", screen_render_->GetWidth(), screen_render_->GetHeight());
+printf("[BMS] res %d x %d\n", screen_render_->GetWidth(), screen_render_->GetHeight());
   map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
   screen_.canvas.bufferType = SURFACE_CAIRO;  
 }

@@ -37,7 +37,7 @@ namespace gva
     TOUCH_EVENT,
     DDS_EVENT,
     RESIZE_EVENT,
-    REDraw_EVENT
+    REDRAW_EVENT
   };
 
   struct TouchType {

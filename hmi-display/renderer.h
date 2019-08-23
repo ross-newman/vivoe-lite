@@ -46,22 +46,22 @@
 #define ORANGE 255,165,0
 #define NONE -1, -1, -1
 
-struct colour_type {
+typedef struct {
   int red;
   int green;
   int blue;
-};
+} ColourType;
 
-struct point_type {
+typedef struct {
   int x;
   int y;
-};
+} PointType;
 
-struct ResolutionType {
+typedef struct  {
   int width;
   int height;
   int depth;
-};
+} ResolutionType;
 
 struct RgbUnpackedType
 { 
@@ -101,8 +101,8 @@ protected:
   int height_;
   int width_;
 private:
-  colour_type forground_colour_;
-  colour_type background_colour_;
+  ColourType forground_colour_;
+  ColourType background_colour_;
   friend class rendererSdl;
   friend class RendererCairo;
 };

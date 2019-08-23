@@ -45,14 +45,7 @@ typedef struct  {
 #define DEFAULT_WIDTH 640
 #define DEFAULT_HEIGHT 480
 
-typedef struct win {
-    int scr;
-    int width;
-    int height;
-    int win;
-} win_t;
-
-struct handle_type
+typedef struct 
 {
   int handle;
   bool inUse;
@@ -61,7 +54,7 @@ struct handle_type
   gtkType win;
   cairo_surface_t *surface;
   cairo_t * cr;  
-};
+} HandleType;
 
 enum Draw_type
 {
@@ -96,11 +89,11 @@ struct command_type
   Draw_type command;
   double height;
   double width;
-  point_type points[3];
+  PointType points[3];
   double radius;
   double angle1;
   double angle2;
-  colour_type colour;  
+  ColourType colour;  
   int arg1;
   int arg2;
   int arg3;
@@ -129,15 +122,15 @@ typedef enum {
   LINE_CAP_SQUARE
 } LineCapEnd;
 
-static handle_type render_;
 
 typedef void (*CallbackType)(void * io, gpointer data);
 
 class RendererCairo : public renderer {
 public:
+  static HandleType render_;
   RendererCairo (int width, int height);
   ~RendererCairo ();
-  int init (int width, int height, CallbackType cb, void *arg);   
+  int init (int width, int height, bool fullscreen, CallbackType cb, void *arg);   
   // Pure Virtual functions
   void SetPixel (int x, int y);
   void SetColour (int red, int green, int blue);

@@ -44,6 +44,7 @@ using namespace gva;
 struct opts {
   bool videoEnabled;
   bool windowEnabled;
+  bool fullscreen;
   char config[256];
 };
 
@@ -59,7 +60,7 @@ void Dispatch(GvaKeyEnum key) {
 int getopt(int argc, char *argv[]) {
   int c = 0;
 
-  while ((c = getopt(argc, argv, "hvwcl:")) != -1)
+  while ((c = getopt(argc, argv, "hvwcl:f::")) != -1)
     switch (c) {
       case 'v':
         cout << "Version " << MAJOR << "." << MINOR << "." << PATCH << endl;
@@ -73,6 +74,9 @@ int getopt(int argc, char *argv[]) {
       case 'x':
         opt.videoEnabled = true;
         return -1;
+      case 'f':
+        opt.fullscreen = true;
+        break;
       case 'h':
         cout << "  -c : XML config file" << endl;
         cout << "  -h : help" << endl;
@@ -80,6 +84,7 @@ int getopt(int argc, char *argv[]) {
           << endl;
         cout << "  -v : Version" << endl;
         cout << "  -l : Live video" << endl;
+        cout << "  -f : Fullscreen" << endl;
         return 0;
       case '?':
         if (optopt == 'c')
@@ -96,12 +101,20 @@ int getopt(int argc, char *argv[]) {
   return -1;
 };
 
+void fullscreen(HandleType *render) {
+  render->fullscreen ?
+    gtk_window_fullscreen(GTK_WINDOW(render->win.win)) :
+    gtk_window_unfullscreen(GTK_WINDOW(render->win.win));
+  render->fullscreen = render->fullscreen ? false : true;
+  logGva::log("Switching to full screen", LOG_INFO);
+}
+
 void Update(void *arg, gpointer user_data) {
   EventsGva *io = (EventsGva *) arg;
   EventGvaType event;
   bool update = true;
   static int c = 0;
-  handle_type *render = (handle_type *) user_data;
+  HandleType *render = (HandleType *) user_data;
 
   io->NextGvaEvent(&event);
   if (opt.videoEnabled) {
@@ -120,8 +133,8 @@ void Update(void *arg, gpointer user_data) {
         switch (event.key_) {
           case KEY_ESC:
             // exit on ESC key press 
-            if (render_.surface)
-              cairo_surface_destroy(render_.surface);
+            if (render->surface)
+              cairo_surface_destroy(render->surface);
             g_application_quit(G_APPLICATION(render->win.app));
             break;
           case KEY_SA:
@@ -284,10 +297,7 @@ void Update(void *arg, gpointer user_data) {
           case KEY_FULLSCREEN:
             // f toggle fullscreen TODO: Does not work 
             // @todo hmi_display: Add support for full screen (GTK)
-            render->fullscreen ?
-              gtk_window_fullscreen(GTK_WINDOW(render->win.win)) :
-              gtk_window_unfullscreen(GTK_WINDOW(render->win.win));
-            render->fullscreen = render->fullscreen ? false : true;
+            fullscreen(render);
             break;
           case KEY_KEYBOARD:
             // k toggle keyboard 
@@ -331,7 +341,7 @@ void Update(void *arg, gpointer user_data) {
         }
       }
       break;
-    case REDraw_EVENT:
+    case REDRAW_EVENT:
       {
         hmi::GetRendrer()->Update();
       }
@@ -386,7 +396,7 @@ int main(int argc, char *argv[]) {
   //
   // Start the render and event loop
   //
-  hmi::GetRendrer()->init(640, 480, Update, (void *) &io);
+  hmi::GetRendrer()->init(640, 480, opt.fullscreen, Update, (void *) &io);
 
   //
   // Clean up code goes here

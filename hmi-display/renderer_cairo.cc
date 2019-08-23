@@ -36,6 +36,7 @@ using namespace gva;
 
 static CallbackType callback_;
 static void *arg_;
+HandleType RendererCairo::render_;
 
 RendererCairo::RendererCairo(int width, int height)
 :renderer(width, height) {
@@ -308,13 +309,15 @@ void RendererCairo::Draw() {
   cairo_paint(cr);
 }
 
-int RendererCairo::init(int width, int height, CallbackType cb, void *arg) {
+int RendererCairo::init(int width, int height, bool fullscreen, CallbackType cb, void *arg) {
   render_.size.width = width;
   render_.size.height = height;
+  
   width_ = width;
   height_ = height;
   callback_ = cb;
   arg_ = arg;
+  render_.fullscreen = false;
 
   render_.surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                                width, height);
@@ -328,6 +331,9 @@ int RendererCairo::init(int width, int height, CallbackType cb, void *arg) {
 
   g_signal_connect(render_.win.app, "activate", G_CALLBACK(Activate), NULL);
   g_timeout_add(40, Callback, &render_);
+  
+  render_.fullscreen = render_.fullscreen ? fullscreen : fullscreen;
+  
   int status = g_application_run(G_APPLICATION(render_.win.app), 0, 0);
 
   return 0;
@@ -723,7 +729,9 @@ void
   g_signal_connect(render_.win.draw, "draw", G_CALLBACK(DrawCb), NULL);
   g_signal_connect(render_.win.draw, "configure-event",
                    G_CALLBACK(ConfigureEventCb), NULL);
-
+  if (render_.fullscreen)
+    gtk_window_fullscreen(GTK_WINDOW(render_.win.win));
+    
   gtk_widget_show_all(render_.win.win);
 }
 

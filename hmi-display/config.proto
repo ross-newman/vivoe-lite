@@ -11,12 +11,15 @@ message Gva {
     required bool live = 1;
     required int32 zoom = 2 [default = 20000];
     optional string device = 3;
+    
 // Big Ben    
 //    required double test_lon = 4 [default = -0.124240];
 //    required double test_lat = 5 [default = 51.500655];
+
 // London Excel (DSEI)
     required double test_lon = 4 [default = 0.029900];
     required double test_lat = 5 [default = 51.508684];
+
     optional string gps_device = 6 [default = "/dev/ttyUSB0"];
   }
 
