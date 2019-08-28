@@ -281,8 +281,8 @@ namespace gva
     }
     
     // Draw the onscreen KEYBOARD
-    if (widgets_->keyboard.visible) {
-      DrawKeyboard(widgets_->keyboard.mode);
+    if (widgets_->keyboard.GetVisible()) {
+      DrawKeyboard(widgets_->keyboard.mode_);
     }
     
     // Setup and Draw the status bar, one row table
@@ -304,10 +304,10 @@ namespace gva
     }
 
     // TODO : Draw the alarms if any (Mock up)
-    if (widgets_->alarmIndicator.visible) {
-      GvaTable table(102, widgets_->alarmIndicator.y, 436);
+    if (widgets_->alarmIndicator.GetVisible()) {
+      GvaTable table(102, widgets_->alarmIndicator.GetY(), 436);
       GvaRow alarmrow;
-      GvaCellType cell = {widgets_->alarmIndicator.text, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
+      GvaCellType cell = {widgets_->alarmIndicator.text_, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
       
       table.border_ = 0;
       alarmrow.addCell(cell, 100);
@@ -345,8 +345,8 @@ namespace gva
       DrawTable (&table);
     }
 
-    if (widgets_->compass.visible) {
-      DrawPPI (widgets_->compass.x, widgets_->compass.y, widgets_->compass.bearing, widgets_->compass.bearingSight);
+    if (widgets_->compass.GetVisible()) {
+      DrawPPI (widgets_->compass.GetX(), widgets_->compass.GetY(), widgets_->compass.bearing_, widgets_->compass.bearingSight_);
     }
     
     if (screen_->control->visible) {
@@ -387,4 +387,11 @@ namespace gva
   {
     
   }
+
+  Keyboard::Keyboard() {  
+    // Initalise keyboard widget, hidden on creation
+    mode_ = KEYBOARD_UPPER;
+    SetVisible(false);
+  }
+  
 }

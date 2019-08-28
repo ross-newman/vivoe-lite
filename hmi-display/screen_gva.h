@@ -49,13 +49,7 @@ namespace gva
     LABEL_STATUS_ONLY,
     LABEL_MINIMAL
   };
-  
-  typedef struct  {
-    bool visible;
-    int x;
-    int y;
-  } Widget;
-  
+    
   typedef struct FunctionSelect {
     bool visible;
     int active;
@@ -225,24 +219,36 @@ namespace gva
   //
   // Widgets
   //
-  typedef struct Compass {
-    bool visible;
-    int x;
-    int y;
-    int bearing;
-    int bearingSight;
+  typedef class Widget  {
+  public:
+    void SetVisible(bool visible) { visible_ = visible; };
+    bool GetVisible() { return visible_; };
+    void SetX(int x) { x_ = x; };
+    int GetX() { return x_; };
+    void SetY(int y) { y_ = y; };
+    int GetY() { return y_; };
+  private:
+    bool visible_ = true;
+    int x_ = 0;
+    int y_ = 0;
+  };
+
+  typedef class Compass : public Widget {
+  public:
+    int bearing_;
+    int bearingSight_;
   } CompassType;
 
-  typedef struct Keyboard {
-    bool visible;
-    KeyboardModeType mode;
+  typedef class Keyboard : public Widget {
+  public:
+    Keyboard();
+    KeyboardModeType mode_;
   } KeyboardType;
 
-  typedef struct AlarmIndicator {
-    bool visible;
-    int y;
-    char text[256];
-    GvaAlarmType type;
+  typedef class AlarmIndicator  : public Widget {
+  public:
+    char text_[256];
+    GvaAlarmType type_;
   } alarmIndicatorType;
   
   typedef struct {

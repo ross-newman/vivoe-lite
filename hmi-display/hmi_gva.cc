@@ -30,8 +30,6 @@ using namespace gva;
 using namespace std;
 
 #define CANVAS { true, SURFACE_NONE, "", 0 }
-#define KEYBOARD { false, KEYBOARD_UPPER }
-#define ALARMS { false }
 #define SCREEN { "Situational Awareness", "/dev/ttyUSB0", SA, canvas_, &top_, &status_, SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard_, alarms_ }
 #define init(var, typ, data) {typ x = data; var = x; }
 #define BIT(b,x) (x & 0x1 << b)
@@ -44,9 +42,9 @@ Hmi::Reset()
   Labels(screen_.labels);
   screen_.canvas.visible = false;
   screen_.canvas.bufferType = SURFACE_NONE;
-  widgets_.compass.visible = false;
-  widgets_.compass.x = 165;
-  widgets_.keyboard.visible = (widgets_.keyboard.visible) ? true : false;
+  widgets_.compass.SetVisible(false);
+  widgets_.compass.SetX(165);
+  widgets_.keyboard.SetVisible ( (widgets_.keyboard.GetVisible()) ? true : false );
   screen_.table.visible_ = false;
   screen_.control->active = 0x0;
   screen_.message.visible = false;
@@ -57,15 +55,15 @@ void Hmi::Labels(LabelModeEnum labels) {
   switch(labels) {
   case LABEL_ALL :
     if ( (screen_.currentFunction == SA) || (screen_.currentFunction == WPN) || (screen_.currentFunction == DRV) )
-      widgets_.compass.visible = true;
+      widgets_.compass.SetVisible(true);
     screen_.functionLeft.visible = true;
     screen_.functionRight.visible = true;
     screen_.control->visible = true;
     screen_.functionTop->visible = true;
     screen_.StatusBar->visible = true;
     screen_.StatusBar->y = 447;
-    widgets_.alarmIndicator.visible = true;
-    widgets_.alarmIndicator.y = 426;
+    widgets_.alarmIndicator.SetVisible(true);
+    widgets_.alarmIndicator.SetY(426);
     break;
   case LABEL_STATUS_ONLY :
     screen_.functionLeft.visible = false;
@@ -74,9 +72,9 @@ void Hmi::Labels(LabelModeEnum labels) {
     screen_.functionTop->visible = false;
     screen_.StatusBar->visible = true;
     screen_.StatusBar->y = 459;
-    widgets_.alarmIndicator.visible = true;
-    widgets_.alarmIndicator.y = 438;
-    widgets_.compass.x = 165-90;
+    widgets_.alarmIndicator.SetVisible(true);
+    widgets_.alarmIndicator.SetY(438);
+    widgets_.compass.SetX(165-90);
     break;
   case LABEL_MINIMAL :
     screen_.functionLeft.visible = false;
@@ -84,9 +82,9 @@ void Hmi::Labels(LabelModeEnum labels) {
     screen_.control->visible = false;
     screen_.functionTop->visible = false;
     screen_.StatusBar->visible = false;
-    widgets_.alarmIndicator.visible = false;
-    widgets_.compass.visible = false;
-    widgets_.compass.x = 165;
+    widgets_.alarmIndicator.SetVisible(false);
+    widgets_.compass.SetVisible(false);
+    widgets_.compass.SetX(165);
     break;
   }
 };
@@ -472,7 +470,7 @@ struct StateSA : Hmi
         Reset();
         screen_.functionTop->visible = true;
                 
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
+        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.canvas.visible = true;
         if (!screen_.canvas.surface) SET_CANVAS_PNG("test2.png");
         screen_.functionTop->active = 0x1 << 7;
@@ -499,7 +497,7 @@ struct StateWPN : Hmi
         lastState_ = WPN;
         Reset();
 
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
+        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
         screen_.functionTop->active = 0x1 << 6;
@@ -611,7 +609,7 @@ struct StateDRV : Hmi
         lastState_ = DRV;
         Reset();
 
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.visible = true;
+        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.StatusBar->visible = true;
         screen_.functionTop->active = 0x1 << 3;
       }
@@ -840,8 +838,6 @@ struct StateOn : Hmi
     init(bottom_, CommonTaskKeysType, COMMON_KEYS);
     init(status_, StatusBarType, COMMON_STATUS_BAR);
     init(canvas_, CanvasType, CANVAS);
-    init(keyboard_, KeyboardType, KEYBOARD);
-    init(alarms_, TableWidget, ALARMS);
 
     // Setup the main screens
     manager_->GetNewView(SA,     &top_, &bottom_, (FunctionKeys)SA_FUNCTION_KEYS_LEFT,  (FunctionKeys)SA_FUNCTION_KEYS_RIGHT);
@@ -855,13 +851,13 @@ struct StateOn : Hmi
     manager_->GetNewView(ALARMSX, &top_, &bottom_, (FunctionKeys)ALARM_KEYS_LEFT,        (FunctionKeys)ALARM_KEYS_RIGHT);
 
     screen_ = manager_->GetScreen(SYS);
-    widgets_.compass.bearingSight = 33;
-    widgets_.compass.x = 165; 
-    widgets_.compass.y = 370;
-    widgets_.compass.visible = true;
-    widgets_.alarmIndicator.visible = true;
-    widgets_.alarmIndicator.y = 422;
-    strcpy(widgets_.alarmIndicator.text,"Engine over tempreture");
+    widgets_.compass.bearingSight_ = 33;
+    widgets_.compass.SetX(165); 
+    widgets_.compass.SetY(370);
+    widgets_.compass.SetVisible(true);
+    widgets_.alarmIndicator.SetVisible(true);
+    widgets_.alarmIndicator.SetY(422);
+    strcpy(widgets_.alarmIndicator.text_,"Engine over tempreture");
 
     screen_.canvas = canvas_;
     screen_.canvas.visible = true;

@@ -267,8 +267,8 @@ void Update(void *arg, gpointer user_data) {
           case KEY_F17:
             // F17 Control Arrow Up
             {
-              hmi::GetWidgets()->keyboard.mode =
-                (hmi::GetWidgets()->keyboard.mode ==
+              hmi::GetWidgets()->keyboard.mode_ =
+                (hmi::GetWidgets()->keyboard.mode_ ==
                  KEYBOARD_UPPER) ? KEYBOARD_LOWER : KEYBOARD_UPPER;
               Dispatch(KEY_F17);
             }
@@ -276,8 +276,8 @@ void Update(void *arg, gpointer user_data) {
           case KEY_F18:
             // F18 Control Arrow Down
             {
-              hmi::GetWidgets()->keyboard.mode =
-                (hmi::GetWidgets()->keyboard.mode ==
+              hmi::GetWidgets()->keyboard.mode_ =
+                (hmi::GetWidgets()->keyboard.mode_ ==
                  KEYBOARD_NUMBERS) ? KEYBOARD_UPPER : KEYBOARD_NUMBERS;
               Dispatch(KEY_F18);
             }
@@ -302,21 +302,21 @@ void Update(void *arg, gpointer user_data) {
           case KEY_KEYBOARD:
             // k toggle keyboard 
             {
-              hmi::GetWidgets()->keyboard.visible =
-                hmi::GetWidgets()->keyboard.visible ? false : true;
+              hmi::GetWidgets()->keyboard.SetVisible(
+                hmi::GetWidgets()->keyboard.GetVisible() ? false : true );
             }
             break;
           case KEY_PLUS:
-            hmi::GetWidgets()->compass.bearing += 2;
+            hmi::GetWidgets()->compass.bearing_ += 2;
             break;
           case KEY_GREATER:
-            hmi::GetWidgets()->compass.bearingSight += 2;
+            hmi::GetWidgets()->compass.bearingSight_ += 2;
             break;
           case KEY_MINUS:
-            hmi::GetWidgets()->compass.bearing -= 2;
+            hmi::GetWidgets()->compass.bearing_ -= 2;
             break;
           case KEY_LESS:
-            hmi::GetWidgets()->compass.bearingSight -= 2;
+            hmi::GetWidgets()->compass.bearingSight_ -= 2;
             break;
           default:
             printf("[GVA] KeyPress not defined 0x%x\n", event.key_);
