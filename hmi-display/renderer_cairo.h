@@ -42,8 +42,6 @@ typedef struct  {
 
 #define MAX_COMMANDS 1000
 #define MAX_IMAGES 100
-#define DEFAULT_WIDTH 640
-#define DEFAULT_HEIGHT 480
 
 typedef struct 
 {
@@ -125,7 +123,7 @@ typedef enum {
 
 typedef void (*CallbackType)(void * io, gpointer data);
 
-class RendererCairo : public renderer {
+class RendererCairo : public Renderer {
 public:
   static HandleType render_;
   RendererCairo (int width, int height);

@@ -295,9 +295,9 @@ void Update(void *arg, gpointer user_data) {
             }
             break;
           case KEY_FULLSCREEN:
-            // f toggle fullscreen TODO: Does not work 
-            // @todo hmi_display: Add support for full screen (GTK)
+            // f toggle fullscreen 
             fullscreen(render);
+            hmi::GetRendrer()->GetTouch()->SetResolution(gdk_screen_width(), gdk_screen_height());
             break;
           case KEY_KEYBOARD:
             // k toggle keyboard 
@@ -338,6 +338,7 @@ void Update(void *arg, gpointer user_data) {
           hmi::GetRendrer()->SetWidth(event.resize_.width);
           hmi::GetRendrer()->SetHeight(event.resize_.height);
           hmi::GetRendrer()->Update();
+          hmi::GetRendrer()->GetTouch()->SetResolution(event.resize_.width, event.resize_.height);
         }
       }
       break;

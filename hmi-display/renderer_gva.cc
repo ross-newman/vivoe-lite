@@ -42,7 +42,8 @@ int GvaRow::addCell(GvaCellType newcell, int width) {
 };
 
 RendererGva::RendererGva(int width, int height)
-:RendererCairo(width, height) {
+:RendererCairo(height, width) {
+	touch_.SetResolution(width, height);
 }
 
 void FunctionKeySimple::Draw(RendererGva * r, int x, int y, int width, int height,
@@ -108,7 +109,7 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
                                      char labels[6][40]) 
 {
   int i = 0;
-  int offset = height_ - 88;
+  int offset = DEFAULT_HEIGHT - 88;
 
   SetColourForground(DARK_GREEN2);
   SetColourBackground(DARK_GREEN);
@@ -129,7 +130,7 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
       FunctionKeyToggle *key = new FunctionKeyToggle();
 
       key->Draw(this, x, offset - (i * 72), 100, 50, labels[i]);
-      touch_.add(group, (int) (firstKey + i), x, offset - (i * 72), 100, 50);
+      touch_.Add(group, (int) (firstKey + i), x, offset - (i * 72), 100, 50);
 
       if ((1 << (5 - i) & toggle))
         key->toggle(this, "On", "Off");
@@ -139,8 +140,8 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
 
 void RendererGva::DrawTopLabels(int y, int active, int hide) {
   int i = 0;
-  int offset = width_ * 0.02;
-  int width = (width_ - offset * 2) / 8;
+  int offset = DEFAULT_WIDTH * 0.02;
+  int width = (DEFAULT_WIDTH - offset * 2) / 8;
   int spacing = width * 0.1;
 
   SetColourForground(DARK_GREEN2);
@@ -154,7 +155,7 @@ void RendererGva::DrawTopLabels(int y, int active, int hide) {
         SetColourBackground(DARK_GREEN);
       DrawRectangle((i * width) + offset, y,
                     (i * width) + width - spacing + offset, y + 10, true);
-      touch_.addAbsolute(TOP, (int) (KEY_SA + i), (i * width) + offset, y,
+      touch_.AddAbsolute(TOP, (int) (KEY_SA + i), (i * width) + offset, y,
                          (i * width) + width - spacing + offset, y + 10);
     }
   }
@@ -188,7 +189,7 @@ void RendererGva::DrawControlLabels(int y, int active, int hide) {
     DrawRectangle((i * w) + offset, y, (i * w) + w - 5 + offset, y + 20, true);
 
     (1 << (7 - i) & hide) ? DrawColor(BLACK) : DrawColor(WHITE);
-    touch_.addAbsolute(BOTTOM, (int) (KEY_F13 + i), (i * w) + offset, y,
+    touch_.AddAbsolute(BOTTOM, (int) (KEY_F13 + i), (i * w) + offset, y,
                        (i * w) + w - 5 + offset, y + 20);
     DrawText((i * w) + offset + 5, y + 6, labels[i], 12);
     if (i == 4)
@@ -430,8 +431,8 @@ void RendererGva::DrawPPI(int x, int y, int degrees, int sightAzimuth) {
 }
 
 void RendererGva::DrawMode() {
-  int offset = width_ * 0.4;
-  int y = height_ * 0.08;
+  int offset = DEFAULT_WIDTH * 0.4;
+  int y = DEFAULT_HEIGHT * 0.08;
 
   SetColourForground(WHITE);
   SetColourBackground(DARK_BLUE);
@@ -443,9 +444,9 @@ void RendererGva::DrawMode() {
   int w = GetTextWidth("Maintinance Mode", 12);
   int h = GetTextHeight("Maintinance Mode", 12);
 
-  DrawRectangle(width_ / 2 - (w / 2) - 5, y,
-                width_ / 2 + (w / 2) + 10, y + (h) + 15, true);
-  DrawText(width_ / 2 - (w / 2), y + 8, "Maintinance Mode", 12);
+  DrawRectangle(DEFAULT_WIDTH / 2 - (w / 2) - 5, y,
+                DEFAULT_WIDTH / 2 + (w / 2) + 10, y + (h) + 15, true);
+  DrawText(DEFAULT_WIDTH / 2 - (w / 2), y + 8, "Maintinance Mode", 12);
 }
 
 void RendererGva::DrawTable(GvaTable * table) {

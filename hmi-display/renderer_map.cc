@@ -67,7 +67,6 @@ rendererMap::rendererMap(string map, string style, int width, int height)
 
 rendererMap::~rendererMap()
 {
-printf("ERROR\n");
   cairo_destroy(cairo_);
   cairo_surface_destroy(surface_);
   free(painter_);

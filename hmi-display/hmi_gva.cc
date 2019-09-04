@@ -571,11 +571,11 @@ struct StateSYS : Hmi
 
 		screen_.table.AddRow();
 		screen_.table.AddCell("GPS Source, /dev/ttyUSB0", 80);
-		screen_.table.AddCell("Error", 20, renderer::PackRgb(RED));
+		screen_.table.AddCell("Error", 20, Renderer::PackRgb(RED));
 
 		screen_.table.AddRow();
 		screen_.table.AddCell("ODB Source, /dev/ttyUSB1", 80);
-		screen_.table.AddCell("Error", 20, renderer::PackRgb(RED));
+		screen_.table.AddCell("Error", 20, Renderer::PackRgb(RED));
 
 		screen_.table.AddRow();
 		screen_.table.AddCell("UK Maps, /opt/osmscout/maps/england", 80);
@@ -583,7 +583,7 @@ struct StateSYS : Hmi
 
 		screen_.table.AddRow();
 		screen_.table.AddCell("Timesource GPS Lock", 80);
-		screen_.table.AddCell("Off", 20, renderer::PackRgb(ORANGE));
+		screen_.table.AddCell("Off", 20, Renderer::PackRgb(ORANGE));
 
         screen_.functionTop->active = 0x1 << 4;
       }
@@ -857,7 +857,7 @@ struct StateOn : Hmi
     widgets_.compass.SetVisible(true);
     widgets_.alarmIndicator.SetVisible(true);
     widgets_.alarmIndicator.SetY(422);
-    strcpy(widgets_.alarmIndicator.text_,"Engine over tempreture");
+    strcpy(widgets_.alarmIndicator.text_,"DSEI Approaching September 10-13 2019");
 
     screen_.canvas = canvas_;
     screen_.canvas.visible = true;

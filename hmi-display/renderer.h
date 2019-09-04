@@ -27,6 +27,8 @@
 #include "debug.h"
 
 #define MAX_HANDLES 10
+#define DEFAULT_WIDTH 640
+#define DEFAULT_HEIGHT 480
 
 #define AMBER 255, 153, 0
 #define WHITE 255, 255, 255
@@ -72,19 +74,19 @@ struct RgbUnpackedType
 
 class RendererCairo;
 
-class renderer
+class Renderer
 {
 public:
-  renderer(int width, int height) : width_(width), height_(height) {};
+  Renderer(int width, int height) { width_ = width; height_ = height; };
   int init (int width, int height);
   virtual void SetPixel (int x, int y) = 0;
   virtual void SetColour (int red, int green, int blue) = 0;
   virtual void SetColourForground (int red, int green, int blue) = 0;
   virtual void SetColourBackground (int red, int green, int blue) = 0;
-  int GetWidth () { return width_; };
-  int GetHeight () { return height_; };
-  void SetWidth (int width) { width_ = width; };
-  void SetHeight (int height) { height_ = height; };
+  static int GetWidth () { return width_; };
+  static int GetHeight () { return height_; };
+  static void SetWidth (int width) { width_ = width; };
+  static void SetHeight (int height) { height_ = height; };
   virtual int DrawLine (int x1, int y1, int x2, int y2) = 0;
   virtual void DrawCircle (int x, int y, int radius, bool fill) = 0;
   virtual void DrawRectangle (int x1, int y1, int x2, int y2, bool fill) = 0;
@@ -98,13 +100,12 @@ public:
 	                                    colour.b = (rgb & 0x00000000000000ff);
 	                                    return colour; };
 protected:
-  int height_;
-  int width_;
+  static int height_;
+  static int width_;
 private:
   ColourType forground_colour_;
   ColourType background_colour_;
   friend class rendererSdl;
   friend class RendererCairo;
 };
-
 #endif

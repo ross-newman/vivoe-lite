@@ -136,38 +136,46 @@ public :
 
 class Hotspot : public Widget {
 public :
-  Hotspot(int groupId, int x, int y) : m_groupId(groupId), m_binding(0), Widget(x, y) {};  
-  Hotspot(int groupId, int binding, int x, int y, int width, int height) : m_groupId(groupId), m_binding(binding), Widget(x, y, width, height) {};  
-  int getGroupId() { return m_groupId; };
-  int getBinding() { return m_binding; };
+  Hotspot(int groupId, int x, int y) : group_id_(groupId), binding_(0), Widget(x, y) {};  
+  Hotspot(int groupId, int binding, int x, int y, int width, int height) : group_id_(groupId), binding_(binding), Widget(x, y, width, height) {};  
+  int GetGroupId() { return group_id_; };
+  int GetBinding() { return binding_; };
 private:
-  int m_groupId; // Group hostpots together
-  int m_binding; // Bind a value or a key to this Hotspot
+  int group_id_; // Group hostpots together
+  int binding_; // Bind a value or a key to this Hotspot
 };
 
 class TouchGva 
 {
 public:
-  GvaStatusTypes add(int groupId, int x, int y) { m_Hotspots.push_back(Hotspot(groupId, x, y)); return GVA_SUCCESS; }
-  GvaStatusTypes add(int groupId, int binding, int x, int y, int width, int height) { m_Hotspots.push_back(Hotspot(groupId, binding, x, y, width, height));  return GVA_SUCCESS; }
-  GvaStatusTypes addAbsolute(int groupId, int binding, int x, int y, int xx, int yy) { m_Hotspots.push_back(Hotspot(groupId, binding, x, y, xx-x, yy-y));  return GVA_SUCCESS; }
-  void Reset() { m_Hotspots.clear(); };
-  bool check(int groupId, int *binding, int x, int y) {
+  GvaStatusTypes Add(int groupId, int x, int y) { hotspots_.push_back(Hotspot(groupId, x, y)); return GVA_SUCCESS; }
+  GvaStatusTypes Add(int groupId, int binding, int x, int y, int width, int height) { hotspots_.push_back(Hotspot(groupId, binding, x, y, width, height));  return GVA_SUCCESS; }
+  GvaStatusTypes AddAbsolute(int groupId, int binding, int x, int y, int xx, int yy) { hotspots_.push_back(Hotspot(groupId, binding, x, y, xx-x, yy-y));  return GVA_SUCCESS; }
+  void SetResolution(int x, int y) { x_=x; y_=y; };
+  void Reset() { hotspots_.clear(); };
+  bool Check(int groupId, int *binding, int x, int y) {
+    // Adjust for resized windows
+    x = x / (float)(Renderer::GetWidth() / (float)DEFAULT_WIDTH); 
+    y = y / (float)(Renderer::GetHeight() / (float)DEFAULT_HEIGHT);
+    // Invert now adjusted for size
     y = MIN_HEIGHT - y;
-    for (auto i = m_Hotspots.begin(); i != m_Hotspots.end(); ++i) {
+    
+    for (auto i = hotspots_.begin(); i != hotspots_.end(); ++i) {
 
       if ( (x > i->GetX()) &&
            (x < ( i->GetX() + i->GetWidth() ) ) &&
            (y > i->GetY()) &&
            (y < ( i->GetY() + i->GetHeight() ) ) &&
-           (i->getGroupId() == groupId) ) {
-        *binding = i->getBinding();
+           (i->GetGroupId() == groupId) ) {
+        *binding = i->GetBinding();
         return true;
       }
     }
   }
 public:
-  std::vector<Hotspot> m_Hotspots;
+  int x_;
+  int y_;
+  std::vector<Hotspot> hotspots_;
 };
 
 class RendererGva : public RendererCairo {

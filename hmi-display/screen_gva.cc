@@ -261,7 +261,7 @@ namespace gva
 
     // Draw the RIGHT bezel labels
     if (screen_->functionRight.visible) {
-      DrawFunctionLabels (width_ - 100 - 1,
+      DrawFunctionLabels (DEFAULT_WIDTH - 100 - 1,
                         screen_->functionRight.active,
                         screen_->functionRight.hidden,
                         screen_->functionRight.toggleActive,
@@ -271,7 +271,7 @@ namespace gva
 
     // Draw the TOP bezel labels     
     if (screen_->functionTop->visible) {
-      DrawTopLabels (height_-11, screen_->functionTop->active,
+      DrawTopLabels (DEFAULT_HEIGHT-11, screen_->functionTop->active,
                   screen_->functionTop->hidden);
     }
 

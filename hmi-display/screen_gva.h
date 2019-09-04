@@ -123,10 +123,10 @@ namespace gva
 		            row->highlighted = false;
 		            row_count_+=1; }
     void AddRow() { RowType *row = &rows_[row_count_]; 
-		            row->background_colour = renderer::PackRgb(DARK_GREEN);
-		            row->foreground_colour = renderer::PackRgb(WHITE);
-		            row->outline_colour = renderer::PackRgb(WHITE);
-		            row->highlight_colour = renderer::PackRgb(YELLOW);
+		            row->background_colour = Renderer::PackRgb(DARK_GREEN);
+		            row->foreground_colour = Renderer::PackRgb(WHITE);
+		            row->outline_colour = Renderer::PackRgb(WHITE);
+		            row->highlight_colour = Renderer::PackRgb(YELLOW);
 		            row->font_weight = WEIGHT_NORMAL;
 		            row->highlighted = false;
 		            row->alignment = ALIGN_LEFT;

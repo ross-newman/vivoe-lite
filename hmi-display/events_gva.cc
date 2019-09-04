@@ -48,13 +48,13 @@ namespace gva {
       EventGvaType gvaEvent;
       int binding = 0;
 
-      touch_->check(TOP, &binding, event->x, event->y);
+      touch_->Check(TOP, &binding, event->x, event->y);
       if (!binding)
-        touch_->check(BOTTOM, &binding, event->x, event->y);
+        touch_->Check(BOTTOM, &binding, event->x, event->y);
       if (!binding)
-        touch_->check(RIGHT, &binding, event->x, event->y);
+        touch_->Check(RIGHT, &binding, event->x, event->y);
       if (!binding)
-        touch_->check(LEFT, &binding, event->x, event->y);
+        touch_->Check(LEFT, &binding, event->x, event->y);
       if (binding) {
         gvaEvent.type = KEY_EVENT;
         gvaEvent.key_ = (GvaKeyEnum) binding;

@@ -39,7 +39,7 @@ static void *arg_;
 HandleType RendererCairo::render_;
 
 RendererCairo::RendererCairo(int width, int height)
-:renderer(width, height) {
+:Renderer(width, height) {
   scale_ = 1.0;
   forground_colour_ = {
   255, 255, 255};
@@ -682,11 +682,12 @@ gboolean
                                       gtk_widget_get_allocated_height(Widget));
 
   render_.cr = cairo_create(render_.surface);
-
-  cairo_scale(render_.cr,
-              (double) gtk_widget_get_allocated_width(Widget) / DEFAULT_WIDTH,
-              (double) gtk_widget_get_allocated_height(Widget) /
-              DEFAULT_HEIGHT);
+  
+  cairo_scale(render_.cr, (double)gtk_widget_get_allocated_width(Widget)
+   / DEFAULT_WIDTH, (double)gtk_widget_get_allocated_height(Widget) 
+   / DEFAULT_HEIGHT);
+  Renderer::SetWidth(gtk_widget_get_allocated_width(Widget));
+  Renderer::SetHeight(gtk_widget_get_allocated_height(Widget));
   gtk_widget_queue_draw(Widget);
 
   // We've handled the configure event, no need for further processing. 
