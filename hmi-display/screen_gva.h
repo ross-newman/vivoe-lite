@@ -150,6 +150,7 @@ namespace gva
 	    cell->width = width;
 		cell->alignment = align; 
 		rows_[row_count_-1].cell_count+=1; }
+    void Reset() { visible_=false; row_count_=0; memset(&rows_, 0, sizeof(rows_)); }
     bool visible_;
     int height_;
     int width_;

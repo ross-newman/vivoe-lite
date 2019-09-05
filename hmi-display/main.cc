@@ -44,7 +44,6 @@ using namespace gva;
 struct opts {
   bool videoEnabled;
   bool windowEnabled;
-  bool fullscreen;
   char config[256];
 };
 
@@ -75,7 +74,7 @@ int getopt(int argc, char *argv[]) {
         opt.videoEnabled = true;
         return -1;
       case 'f':
-        opt.fullscreen = true;
+        hmi::config_.SetFullscreen(true);
         break;
       case 'h':
         cout << "  -c : XML config file" << endl;
@@ -103,10 +102,11 @@ int getopt(int argc, char *argv[]) {
 
 void fullscreen(HandleType *render) {
   render->fullscreen ?
-    gtk_window_fullscreen(GTK_WINDOW(render->win.win)) :
-    gtk_window_unfullscreen(GTK_WINDOW(render->win.win));
+    gtk_window_unfullscreen(GTK_WINDOW(render->win.win)) :
+    gtk_window_fullscreen(GTK_WINDOW(render->win.win));
   render->fullscreen = render->fullscreen ? false : true;
-  logGva::log("Switching to full screen", LOG_INFO);
+  hmi::config_.SetFullscreen(render->fullscreen);
+  logGva::log("Toggle fullscreen", LOG_INFO);
 }
 
 void Update(void *arg, gpointer user_data) {
@@ -397,7 +397,7 @@ int main(int argc, char *argv[]) {
   //
   // Start the render and event loop
   //
-  hmi::GetRendrer()->init(640, 480, opt.fullscreen, Update, (void *) &io);
+  hmi::GetRendrer()->init(640, 480, hmi::config_.GetFullscreen(), Update, (void *) &io);
 
   //
   // Clean up code goes here

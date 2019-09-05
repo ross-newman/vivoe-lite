@@ -23,6 +23,7 @@
 // 
 #ifndef CONFIG_READER_H
 #define CONFIG_READER_H
+#include "config.pb.h"
 
 namespace gva {
   class ConfigData {
@@ -35,7 +36,10 @@ namespace gva {
     void SetTestLon(double lon);
     double GetTestLat();
     void SetTestLat(double lat);
+    bool GetFullscreen();
+    void SetFullscreen(bool fullscreen);
   private:
+    config::Gva * current_config_;
   };
 };
 #endif

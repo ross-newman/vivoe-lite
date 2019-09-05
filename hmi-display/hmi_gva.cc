@@ -278,10 +278,14 @@ Hmi::KeySYS(int keypress) {
 
   switch (keypress) {
   case KEY_F1:
+    HmiHelper::TableSystem(&screen_.table);
+    break;
+  case KEY_F5:
+    HmiHelper::TableLicences(&screen_.table);
+    break;
   case KEY_F2:
   case KEY_F3:
   case KEY_F4:
-  case KEY_F5:
   case KEY_F6:
   case KEY_F7:
   case KEY_F8:
@@ -372,6 +376,7 @@ void
 Hmi::KeyCOM(int keypress) {
   screen_.functionLeft.active = 0;
   screen_.functionRight.active = 0;
+  screen_.message.visible = false;
   
   KeySide(keypress);
   Key(keypress);
@@ -397,7 +402,7 @@ Hmi::KeyCOM(int keypress) {
   }
 }
 
-float 
+double 
 conv(int zoom) {
   switch (zoom) {
     case 1620000 : return 0.00006;
@@ -416,48 +421,64 @@ conv(int zoom) {
 }
 
 void
-Hmi::KeyBMS(int key) {
+Hmi::KeyBMS(int keypress) {
+  bool update = true;
   screen_.functionLeft.active = 0;
   screen_.functionRight.active = 0;
-  KeySide(key);
-  switch (key){
+  int zoom_level = config_.GetZoom();
+  KeySide(keypress);
+  Key(keypress);
+  switch (keypress){
   case KEY_F3 :
     // Shift UP
-    config_.SetTestLat(config_.GetZoom() + conv(config_.GetZoom()));
+    config_.SetTestLat(config_.GetTestLat() + conv(zoom_level));
     break;
   case KEY_F4 :
     // Shift DOWN
-    config_.SetTestLat(config_.GetZoom() - conv(config_.GetZoom()));
+    config_.SetTestLat(config_.GetTestLat() - conv(zoom_level));
     break;
   case KEY_F5 :
     // Zoom +
-    config_.SetZoom(config_.GetZoom() + conv(config_.GetZoom()));
+    config_.SetZoom(zoom_level * 2);
     break;
   case KEY_F9 :
     // Shift LEFT
-    config_.SetTestLon(config_.GetZoom() - conv(config_.GetZoom()));
+    config_.SetTestLon(config_.GetTestLon() - conv(zoom_level));
     break;
   case KEY_F10 :
     // Shift RIGHT
-    config_.SetTestLon(config_.GetZoom() + conv(config_.GetZoom()));
+    config_.SetTestLon(config_.GetTestLon() + conv(zoom_level));
     break;
   case KEY_F11 :
     // Zoom -
-    config_.SetZoom(config_.GetZoom() - conv(config_.GetZoom()) / 2);
+    config_.SetZoom(zoom_level / 2);
     break;
-  default:
+  case KEY_F1 :
+  case KEY_F2 :
+  case KEY_F6 :
+  case KEY_F7 :
+  case KEY_F8 :
+  case KEY_F12 :
     screen_.message.visible = true;
     screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
     strcpy(screen_.message.detail.text, "Operation not implemented!");
-    return;
+  default :
+    update=false;
+    break;
   }
-printf("[BMS] Zoom level %d lat %f, %f\n", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
-  map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
-  map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
-printf("[BMS] res %d x %d\n", screen_render_->GetWidth(), screen_render_->GetHeight());
-  map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
-  screen_.canvas.bufferType = SURFACE_CAIRO;  
+  
+  if (update) {
+    char tmp[100];
+    sprintf(tmp, "[BMS] Zoom level %d lat %f, %f\n", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
+    logGva::log(tmp, LOG_INFO);
+    map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
+    map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
+    sprintf(tmp, "[BMS] res %d x %d\n", screen_render_->GetWidth(), screen_render_->GetHeight());
+    logGva::log(tmp, LOG_INFO);
+    map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
+    screen_.canvas.bufferType = SURFACE_CAIRO;  
+  }
 }
 
 struct StateSA : Hmi
@@ -554,36 +575,7 @@ struct StateSYS : Hmi
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("test2.png");
 
-		screen_.table.visible_ = true;
-		screen_.table.x_ = 110;
-		screen_.table.y_ = 390;
-		screen_.table.width_ = 420;
-
-		screen_.table.AddRow(WEIGHT_BOLD);
-		screen_.table.AddCell("Fuction", 80);
-		screen_.table.AddCell("Status", 20);
-
-		screen_.table.AddRow();
-		char tmp[100];
-		sprintf(tmp, "HMI Version %d.%d.%d", MAJOR, MINOR, PATCH);
-		screen_.table.AddCell(tmp, 80);
-		screen_.table.AddCell("Ok", 20);
-
-		screen_.table.AddRow();
-		screen_.table.AddCell("GPS Source, /dev/ttyUSB0", 80);
-		screen_.table.AddCell("Error", 20, Renderer::PackRgb(RED));
-
-		screen_.table.AddRow();
-		screen_.table.AddCell("ODB Source, /dev/ttyUSB1", 80);
-		screen_.table.AddCell("Error", 20, Renderer::PackRgb(RED));
-
-		screen_.table.AddRow();
-		screen_.table.AddCell("UK Maps, /opt/osmscout/maps/england", 80);
-		screen_.table.AddCell("Ok", 20);
-
-		screen_.table.AddRow();
-		screen_.table.AddCell("Timesource GPS Lock", 80);
-		screen_.table.AddCell("Off", 20, Renderer::PackRgb(ORANGE));
+        HmiHelper::TableSystem(&screen_.table);
 
         screen_.functionTop->active = 0x1 << 4;
       }
@@ -741,72 +733,7 @@ struct StateAlarms : Hmi
       Reset();
       alarmson_ = true;
       screen_ = manager_->GetScreen(ALARMSX);
-
-      screen_.table.visible_ = true;
-      screen_.table.x_ = 110;
-      screen_.table.y_ = 390;
-      screen_.table.width_ = 420;
-
-      screen_.table.AddRow(WEIGHT_BOLD);
-      screen_.table.AddCell("Time", 20);
-      screen_.table.AddCell("Alarm Text", 50);
-      screen_.table.AddCell("Cat", 10);
-      screen_.table.AddCell("Status", 20);
-      
-      screen_.table.AddRow();
-      screen_.table.AddCell("15/6 15:06", 20);
-      screen_.table.AddCell("Low engine oil pressure", 50);
-      screen_.table.AddCell("W", 10);
-      screen_.table.AddCell("RES", 20);
-      
-      screen_.table.AddRow(screen_render_->PackRgb(WHITE), 
-                     screen_render_->PackRgb(RED), 
-                     screen_render_->PackRgb(WHITE), 
-                     screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
-      screen_.table.AddCell("15/6 15:26", 20);
-      screen_.table.AddCell("Engine over tempreture", 50);
-      screen_.table.AddCell("W", 10);
-      screen_.table.AddCell("UNACK", 20);
-      
-      screen_.table.AddRow();
-      screen_.table.CurrentRowHighlight();
-      screen_.table.AddCell("15/6 15:29", 20);
-      screen_.table.AddCell("Engine over tempreture", 50);
-      screen_.table.AddCell("W", 10);
-      screen_.table.AddCell("RES", 20);
-      
-      screen_.table.AddRow();
-      screen_.table.AddCell("15/6 14:00", 20);
-      screen_.table.AddCell("Gun fault", 50);
-      screen_.table.AddCell("C", 10);
-      screen_.table.AddCell("RES", 20);
-      
-      screen_.table.AddRow();
-      screen_.table.AddCell("15/6 18:16", 20);
-      screen_.table.AddCell("Air con fault", 50);
-      screen_.table.AddCell("A", 10);
-      screen_.table.AddCell("ACT", 20);
-      
-      screen_.table.AddRow(screen_render_->PackRgb(WHITE), 
-                            screen_render_->PackRgb(GREY), 
-                            screen_render_->PackRgb(WHITE), 
-                            screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
-      screen_.table.AddCell("15/6 19:03", 20);
-      screen_.table.AddCell("Gun barrel over tempreture", 50);
-      screen_.table.AddCell("C", 10);
-      screen_.table.AddCell("ACT(OVR)", 20);
-      
-      screen_.table.AddRow(screen_render_->PackRgb(WHITE), 
-                            screen_render_->PackRgb(ORANGE), 
-                            screen_render_->PackRgb(WHITE), 
-                            screen_render_->PackRgb(YELLOW), WEIGHT_NORMAL);
-      screen_.table.AddCell("15/6 19:", 20);
-      screen_.table.AddCell("LRU xx fault", 50);
-      screen_.table.AddCell("C", 10);
-      screen_.table.AddCell("ACT", 20);
-
-      screen_.table.AddRow();
-      screen_.table.AddCell("Page 1 of 1", 100, ALIGN_RIGHT);
+      HmiHelper::TableAlarms(&screen_.table);
     }
   };
   void react(EventKeySA const &) override { transit<StateSA>(); };
@@ -857,7 +784,7 @@ struct StateOn : Hmi
     widgets_.compass.SetVisible(true);
     widgets_.alarmIndicator.SetVisible(true);
     widgets_.alarmIndicator.SetY(422);
-    strcpy(widgets_.alarmIndicator.text_,"DSEI Approaching September 10-13 2019");
+    strcpy(widgets_.alarmIndicator.text_,"Engine over tempreture");
 
     screen_.canvas = canvas_;
     screen_.canvas.visible = true;

@@ -22,40 +22,17 @@
 // SOFTWARE.
 // 
 
-#ifndef RENDERER_MAP_H
-#define RENDERER_MAP_H
+#ifndef HMI_GVA_HELPER_H
+#define HMI_GVA_HELPER_H
+#include "screen_gva.h"
 
-#include <string>
-#include <osmscout/Database.h>
-#include <osmscout/MapService.h>
-#include <osmscout/MapPainterCairo.h>
-#include <cairo.h>
+using namespace gva;
 
-using namespace std;
+  class HmiHelper {
+  public:
+    static void TableLicences(TableWidget *table);
+    static void TableSystem(TableWidget *table);
+    static void TableAlarms(TableWidget *table);
+  };
 
-class rendererMap {
-public:
-  rendererMap(string map, string style, int width, int height);
-  ~rendererMap();
-  int Project(double zoom, double lon, double lat, cairo_surface_t **surface);
-  int SetHeight(int height) { height_ = height_; };
-  int SetWidth(int width) { width_ = width_; };
-private:
-  int width_;
-  int height_;
-  string map_;
-  string style_;
-  osmscout::MapServiceRef mapService_;
-  osmscout::StyleConfigRef styleConfig_;
-  osmscout::DatabaseParameter databaseParameter_;
-  osmscout::DatabaseRef database_;
-  osmscout::MercatorProjection projection_;
-  osmscout::MapParameter DrawParameter_;
-  osmscout::AreaSearchParameter searchParameter_;
-  osmscout::MapData data_;
-  std::list<osmscout::TileRef> tiles_;
-  osmscout::MapPainterCairo *painter_;  
-  cairo_surface_t *surface_;
-  cairo_t *cairo_;
-};
 #endif

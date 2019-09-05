@@ -28,6 +28,7 @@
 #include <functional>
 #include "gva.h"
 #include "screen_gva.h"
+#include "config_reader.h"
 
 #define MAX_LABEL 50
 

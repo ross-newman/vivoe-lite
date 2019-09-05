@@ -30,6 +30,7 @@
 #include "view_gva.h"
 #include "screen_gva.h"
 #include "config_reader.h"
+#include "hmi_gva_helpers.h"
 
 using namespace gva;
 

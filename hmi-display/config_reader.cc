@@ -24,75 +24,92 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "debug.h"
+#include "log_gva.h"
 #include "config_reader.h"
-#include "config.pb.h"
 
 using namespace std;
 
 #define CONFIG_FILE "config.pb"
 namespace gva {
   static config::Gva * configuration_;
-  static config::Gva::Geo geo_;
 
    ConfigData::ConfigData() {
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
     GOOGLE_PROTOBUF_VERIFY_VERSION;
-    config::Gva * config = new config::Gva();
+    current_config_ = new config::Gva();
     {
       // Read the existing address book.
       fstream input(CONFIG_FILE, std::fstream::in | std::fstream::binary);
       if (!input) {
-        cout << CONFIG_FILE << ": File not found. Creating a new file." << endl;
-        config->set_name("default name");
+		char tmp[100];
+        sprintf(tmp, "%s : File not found. Creating a new file.", CONFIG_FILE);
+        logGva::log(tmp, LOG_INFO);
+        current_config_->set_name("Test HMI configuration.");
         // Doesnt write defaults unless they have been set once
-        config->set_height(config->height());
-        config->set_width(config->width());
-      } else if (!config->ParseFromIstream(&input)) {
-        cerr << "Failed to parse address book." << endl;
+        current_config_->set_height(current_config_->height());
+        current_config_->set_width(current_config_->width());
+      } else if (!current_config_->ParseFromIstream(&input)) {
+        logGva::log("Failed to parse config file.", LOG_INFO);
         return;
       }
     }
     {
-      // Write the new address book back to disk.
-      fstream output(CONFIG_FILE,
-                     std::fstream::out | std::fstream::trunc | std::
-                     fstream::binary);
-      if (!config->SerializeToOstream(&output)) {
-        cerr << "Failed to write address book." << endl;
+      // Write the new config back to disk.
+      fstream output(CONFIG_FILE, std::fstream::out 
+                     | std::fstream::trunc | std::fstream::binary);
+      if (!current_config_->SerializeToOstream(&output)) {
+        logGva::log("Failed to write config file.", LOG_INFO);
         return;
       }
     }
   }
 
   ConfigData::~ConfigData() {
+
+    // Write the config back to disk.
+    fstream output(CONFIG_FILE, std::fstream::out | std::fstream::trunc 
+                   | std::fstream::binary);
+    if (!current_config_->SerializeToOstream(&output)) {
+      logGva::log("Failed to update config file.", LOG_INFO);
+	  return;
+    }
+    // Log
+    logGva::log("Updated configuration file", LOG_INFO);
     // Optional:  Delete all global objects allocated by libprotobuf.
     google::protobuf::ShutdownProtobufLibrary();
     free(configuration_);
   }
 
   int ConfigData::GetZoom() {
-    return geo_.zoom();
+    return current_config_->zoom();
   };
 
   void ConfigData::SetZoom(int zoom) {
-    geo_.set_zoom(zoom);
+    current_config_->set_zoom(zoom);
   }
 
   double ConfigData::GetTestLon() {
-    return geo_.test_lon();
+    return current_config_->test_lon();
   };
 
   void ConfigData::SetTestLon(double lon) {
-    geo_.set_test_lon(lon);
+    current_config_->set_test_lon(lon);
   }
 
   double ConfigData::GetTestLat() {
-    return geo_.test_lat();
+    return current_config_->test_lat();
   };
 
   void ConfigData::SetTestLat(double lat) {
-    geo_.set_test_lat(lat);
+    current_config_->set_test_lat(lat);
+  }
+  
+  bool ConfigData::GetFullscreen() {
+	return current_config_->fullscreen();	
+  }
+
+  void ConfigData::SetFullscreen(bool fullscreen) {
+	current_config_->set_fullscreen(fullscreen);	
   }
 }
