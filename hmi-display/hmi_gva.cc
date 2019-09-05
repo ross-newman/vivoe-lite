@@ -91,6 +91,7 @@ void Hmi::Labels(LabelModeEnum labels) {
 
 void
 Hmi::KeySide(int key) {
+  screen_.message.visible=false;
   switch (key){
   case KEY_F1 :
     screen_.functionLeft.active = 1 << 5;

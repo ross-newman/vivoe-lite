@@ -125,6 +125,56 @@ namespace gva {
         if (gvaEvent.type != NO_EVENT)
           eventqueue_.push_back(gvaEvent);
         return TRUE;
+        break;
+      case 0xffe9: // Bottom keys
+        switch (event->keyval) {
+		  case 97:
+		  case 0xffbe:
+			/* a maps to F13 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F13;
+			break;
+		  case 0xffbf:
+			/* a maps to F14 (ALARMS) */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F14;
+			break;
+		  case 0xffc0:
+			/* Enter maps to F15 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F15;
+			break;
+		  case 0xffc1:
+			/* Enter maps to F16 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F16;
+			break;
+		  case 0xffc2:
+			/* Enter maps to F17 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F17;
+			break;
+		  case 0xffc3:
+			/* Enter maps to F18 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F18;
+			break;
+		  case 0xffc4:
+			/* Enter maps to F19 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F19;
+			break;
+		  case 0xffc5:
+			/* Enter maps to F20 */
+			gvaEvent.type = KEY_EVENT;
+			gvaEvent.key_ = KEY_F20;
+			break;
+		}
+        printf("[GVA] Bottom event 0x%x\n", event->keyval);
+        previous_key_ = event->keyval;
+        if (gvaEvent.type != NO_EVENT)
+          eventqueue_.push_back(gvaEvent);
+        return TRUE;
     }
 //    g_print ("send_event=%d, state=%u, keyval=%u, length=%d, string='%s', hardware_keycode=%u, group=%u\n", gvaEvent.send_event, gvaEvent.state, gvaEvent.keyval, gvaEvent.length, gvaEvent.string, gvaEvent.hardware_keycode, gvaEvent.group);
     /* The event was handled, and the emission should stop */
@@ -234,18 +284,7 @@ namespace gva {
         gvaEvent.type = KEY_EVENT;
         gvaEvent.key_ = KEY_F12;
         break;
-      case 65:
-      case 97:
-      case 0xffe9:
-        /* a maps to ALARMS */
-        gvaEvent.type = KEY_EVENT;
-        gvaEvent.key_ = KEY_F14;
-        break;
-      case 0xff0d:
-        /* Enter maps to F20 */
-        gvaEvent.type = KEY_EVENT;
-        gvaEvent.key_ = KEY_F20;
-        break;
+//      case 65:
       case 70:
       case 102:
         /* f toggle fullscreen TODO: Does not work */
