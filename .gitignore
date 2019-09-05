@@ -27,4 +27,5 @@ libtest_catch.a
 test_events
 test_log
 video/libhmi-video.a
-
+config.pb
+log.txt
