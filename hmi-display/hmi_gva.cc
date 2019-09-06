@@ -191,18 +191,32 @@ Hmi::KeySA(int keypress) {
   Key(keypress);
 
   switch (keypress) {
-  case KEY_F1:
   case KEY_F2:
-  case KEY_F3:
+    SET_CANVAS_PNG("QUAD.png");
+    break;
   case KEY_F4:
+    SET_CANVAS_PNG("FRONT_RIGHT.png");
+    break;
   case KEY_F5:
+    SET_CANVAS_PNG("FRONT_CENTRE.png");
+    break;
   case KEY_F6:
+    SET_CANVAS_PNG("FRONT_LEFT.png");
+    break;
+  case KEY_F10:
+    SET_CANVAS_PNG("RIGHT.png");
+    break;
+  case KEY_F11:
+    SET_CANVAS_PNG("REAR.png");
+    break;
+  case KEY_F12:
+    SET_CANVAS_PNG("LEFT.png");
+    break;
+  case KEY_F1:
+  case KEY_F3:
   case KEY_F7:
   case KEY_F8:
   case KEY_F9:
-  case KEY_F10:
-  case KEY_F11:
-  case KEY_F12:
     screen_.message.visible = true;
     screen_.message.icon = ICON_INFO;
     strcpy(screen_.message.brief.text, "Function key");
@@ -494,7 +508,7 @@ struct StateSA : Hmi
                 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.canvas.visible = true;
-        if (!screen_.canvas.surface) SET_CANVAS_PNG("test2.png");
+        if (!screen_.canvas.surface) SET_CANVAS_PNG("FRONT_CENTRE.png");
         screen_.functionTop->active = 0x1 << 7;
       }
   };
@@ -521,7 +535,7 @@ struct StateWPN : Hmi
 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.canvas.visible = true;
-        SET_CANVAS_PNG("test2.png");
+        SET_CANVAS_PNG("FRONT_CENTRE.png");
         screen_.functionTop->active = 0x1 << 6;
       }
   };
@@ -574,7 +588,7 @@ struct StateSYS : Hmi
         screen_.StatusBar->visible = true;
         screen_.functionTop->visible = true;
         screen_.canvas.visible = true;
-        SET_CANVAS_PNG("test2.png");
+        SET_CANVAS_PNG("FRONT_CENTRE.png");
 
         HmiHelper::TableSystem(&screen_.table);
 
@@ -792,7 +806,7 @@ struct StateOn : Hmi
     screen_.table = alarms_;
     screen_.table.visible_ = false;
     screen_.labels = LABEL_ALL;
-    SET_CANVAS_PNG("test2.png");
+    SET_CANVAS_PNG("FRONT_CENTRE.png");
     
     /* These are comon to all screens */
     screen_render_ = new ScreenGva (&screen_, &widgets_, view_.width, view_.height);
