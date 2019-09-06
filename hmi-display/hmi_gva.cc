@@ -485,11 +485,11 @@ Hmi::KeyBMS(int keypress) {
   
   if (update) {
     char tmp[100];
-    sprintf(tmp, "[BMS] Zoom level %d lat %f, %f\n", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
+    sprintf(tmp, "[BMS] Zoom level %d lat %f, %f", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
     logGva::log(tmp, LOG_INFO);
     map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
     map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
-    sprintf(tmp, "[BMS] res %d x %d\n", screen_render_->GetWidth(), screen_render_->GetHeight());
+    sprintf(tmp, "[BMS] res %d x %d", screen_render_->GetWidth(), screen_render_->GetHeight());
     logGva::log(tmp, LOG_INFO);
     map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
     screen_.canvas.bufferType = SURFACE_CAIRO;  
