@@ -13,7 +13,7 @@ sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses
 # HMI
 The project includes an referance implementation of a GVA like Human Machine Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with different video overlay options for sensing, monitoring and detection of systems events.
 
-![GVA HMI](images/GVA-HMI-Cairo.png)
+![GVA HMI](images/Display_RD104_02.jpg)
 
 > NOTE: Not all labels are currently implemented, project in heavy development! See [DEVELOPER.md](docs/DEVELOPER.md) for issues and features.
 
@@ -117,7 +117,7 @@ This defence standard is currently split into the parts below:
 The HMI uses Cairo for rendering the GUI components.
 
 ##### Rendering
-![GVA HMI](images/GVA_HMI.png)<br>
+![GVA HMI](images/GVA_HMI.png) <br>
 Basic HMI layout as illustrated in the GVA standard.
 
 ### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
