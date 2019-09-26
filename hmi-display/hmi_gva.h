@@ -159,7 +159,6 @@ public:
   static void KeyCOM(int key);
   static void KeyBMS(int key);
   static void Reset();
-  static ConfigData config_;
   static ScreenGva* GetRendrer() { return screen_render_; }
   static ScreenType* GetScreen() { return &screen_; }
   static WidgetsType* GetWidgets() { return &widgets_; }

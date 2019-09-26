@@ -123,7 +123,7 @@ namespace gva
 		            row->highlighted = false;
 		            row_count_+=1; }
     void AddRow() { RowType *row = &rows_[row_count_]; 
-		            row->background_colour = Renderer::PackRgb(DARK_GREEN);
+		            row->background_colour = configuration.GetThemeLabelBackgroundActive();
 		            row->foreground_colour = Renderer::PackRgb(WHITE);
 		            row->outline_colour = Renderer::PackRgb(WHITE);
 		            row->highlight_colour = Renderer::PackRgb(YELLOW);

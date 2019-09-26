@@ -347,6 +347,10 @@ void RendererCairo::SetColour(int red, int green, int blue) {
   SetColourBackground(red, green, blue);
 }
 
+void RendererCairo::SetColour(unsigned int rgb) {
+  SetColour((rgb&0xff0000)>>16, (rgb&0xff00)>>8, rgb&0xff);
+}
+
 void RendererCairo::SetColourForground(int red, int green, int blue) {
   Draw_commands_[draw_tail_].command = COMMAND_COLOUR_FG;
   Draw_commands_[draw_tail_].arg1 = red;
@@ -354,11 +358,19 @@ void RendererCairo::SetColourForground(int red, int green, int blue) {
   Draw_commands_[draw_tail_++].arg3 = blue;
 }
 
+void RendererCairo::SetColourForground(unsigned int rgb) {
+  SetColourForground((rgb&0xff0000)>>16, (rgb&0xff00)>>8, rgb&0xff);
+}
+
 void RendererCairo::SetColourBackground(int red, int green, int blue) {
   Draw_commands_[draw_tail_].command = COMMAND_COLOUR_BG;
   Draw_commands_[draw_tail_].arg1 = red;
   Draw_commands_[draw_tail_].arg2 = green;
   Draw_commands_[draw_tail_++].arg3 = blue;
+}
+
+void RendererCairo::SetColourBackground(unsigned int rgb) {
+  SetColourBackground((rgb&0xff0000)>>16, (rgb&0xff00)>>8, rgb&0xff);
 }
 
 void RendererCairo::setLineType(int type) {
@@ -543,6 +555,10 @@ int RendererCairo::DrawColor(int r, int g, int b) {
   Draw_commands_[draw_tail_].colour.green = g;
   Draw_commands_[draw_tail_++].colour.blue = b;
   return 0;
+}
+
+int RendererCairo::DrawColor (unsigned int rgb) {
+  DrawColor((rgb&0xff0000)>>16, (rgb&0xff00)>>8, rgb&0xff);
 }
 
 void RendererCairo::SetTextFont(int slope, int weight, char *fontName) {

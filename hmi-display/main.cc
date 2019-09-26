@@ -77,7 +77,7 @@ int getopt(int argc, char *argv[]) {
         opt.videoEnabled = true;
         break;
       case 'f':
-        hmi::config_.SetFullscreen(true);
+        configuration.SetFullscreen(true);
         break;
       case 'h':
         cout << "  -c : XML config file" << endl;
@@ -108,7 +108,7 @@ void fullscreen(HandleType *render) {
     gtk_window_unfullscreen(GTK_WINDOW(render->win.win)) :
     gtk_window_fullscreen(GTK_WINDOW(render->win.win));
   render->fullscreen = render->fullscreen ? false : true;
-  hmi::config_.SetFullscreen(render->fullscreen);
+  configuration.SetFullscreen(render->fullscreen);
   logGva::log("Toggle fullscreen", LOG_INFO);
 }
 
@@ -410,7 +410,7 @@ int main(int argc, char *argv[]) {
   //
   // Start the render and event loop
   //
-  hmi::GetRendrer()->init(640, 480, hmi::config_.GetFullscreen(), Update, (void *) &io);
+  hmi::GetRendrer()->init(640, 480, configuration.GetFullscreen(), Update, (void *) &io);
 
   //
   // Clean up code goes here

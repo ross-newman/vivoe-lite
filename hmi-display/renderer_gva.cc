@@ -111,8 +111,8 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
   int i = 0;
   int offset = DEFAULT_HEIGHT - 88;
 
-  SetColourForground(DARK_GREEN2);
-  SetColourBackground(DARK_GREEN);
+  SetColourForground(gva::configuration.GetThemeLabelBorderActive());
+  SetColourBackground(gva::configuration.GetThemeLabelBackgroundActive());
   setLineType(CAIRO_LINE_JOIN_ROUND);
   SetLineThickness(2, LINE_SOLID);
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
@@ -123,10 +123,10 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
 
   for (i = 0; i < 6; i++) {
     SetLineThickness(2, LINE_SOLID);
-    SetColourBackground(DARK_GREEN);
+    SetColourBackground(gva::configuration.GetThemeLabelBackgroundActive());
     if ((1 << (5 - i) & hide)) {
-      (1 << (5 - i) & active) ? SetColourForground(YELLOW) :
-        SetColourForground(DARK_GREEN2);
+      (1 << (5 - i) & active) ? SetColourForground(gva::configuration.GetThemeLabelBorderSelected()) :
+        SetColourBackground(gva::configuration.GetThemeLabelBorderActive());
       FunctionKeyToggle *key = new FunctionKeyToggle();
 
       key->Draw(this, x, offset - (i * 72), 100, 50, labels[i]);
@@ -144,15 +144,15 @@ void RendererGva::DrawTopLabels(int y, int active, int hide) {
   int width = (DEFAULT_WIDTH - offset * 2) / 8;
   int spacing = width * 0.1;
 
-  SetColourForground(DARK_GREEN2);
-  SetColourBackground(DARK_GREEN);
+  SetColourForground(gva::configuration.GetThemeLabelBorderActive());
+  SetColourBackground(gva::configuration.GetThemeLabelBackgroundActive());
   setLineType(CAIRO_LINE_JOIN_ROUND);
   SetLineThickness(2, LINE_SOLID);
 
   for (i = 0; i < 8; i++) {
     if (!(1 << (7 - i) & hide)) {
-      (1 << (7 - i) & active) ? SetColourBackground(YELLOW) :
-        SetColourBackground(DARK_GREEN);
+      (1 << (7 - i) & active) ? SetColourForground(gva::configuration.GetThemeLabelBorderSelected()) :
+        SetColourForground(gva::configuration.GetThemeLabelBorderActive());
       DrawRectangle((i * width) + offset, y,
                     (i * width) + width - spacing + offset, y + 10, true);
       touch_.AddAbsolute(TOP, (int) (KEY_SA + i), (i * width) + offset, y,
@@ -169,8 +169,8 @@ void RendererGva::DrawControlLabels(int y, int active, int hide) {
   char labels[8][80] =
     { "Up", "Alarms", "Threats", "Ack", "", "", "Labels", "Enter" };
 
-  SetColourForground(DARK_GREEN2);
-  SetColourBackground(DARK_GREEN);
+  SetColourForground(gva::configuration.GetThemeLabelBorderActive());
+  SetColourBackground(gva::configuration.GetThemeLabelBackgroundActive());
   setLineType(CAIRO_LINE_JOIN_ROUND);
   SetLineThickness(2, LINE_SOLID);
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
@@ -179,16 +179,17 @@ void RendererGva::DrawControlLabels(int y, int active, int hide) {
   for (i = 0; i < 8; i++) {
     SetLineThickness(2, LINE_SOLID);
     if ((1 << (7 - i) & hide)) {
-      SetColourBackground(GREY);
-      SetColourForground(DARK_GREY);
+      SetColourBackground(gva::configuration.GetThemeLabelBackgroundInactive());
+      SetColourForground(gva::configuration.GetThemeLabelBorderInactive());
     } else {
-      SetColourBackground(DARK_GREEN);
-      (1 << (7 - i) & active) ? SetColourForground(YELLOW) :
-        SetColourForground(DARK_GREEN2);
+      SetColourBackground(gva::configuration.GetThemeLabelBackgroundActive());
+      (1 << (7 - i) & active) ? SetColourForground(gva::configuration.GetThemeLabelBorderSelected()) :
+        SetColourForground(gva::configuration.GetThemeLabelBorderActive());
     }
     DrawRectangle((i * w) + offset, y, (i * w) + w - 5 + offset, y + 20, true);
 
-    (1 << (7 - i) & hide) ? DrawColor(BLACK) : DrawColor(WHITE);
+    (1 << (7 - i) & hide) ? DrawColor(gva::configuration.GetThemeLabelTextInactive()) : 
+      gva::configuration.GetThemeLabelTextActive();
     touch_.AddAbsolute(BOTTOM, (int) (KEY_F13 + i), (i * w) + offset, y,
                        (i * w) + w - 5 + offset, y + 20);
     DrawText((i * w) + offset + 5, y + 6, labels[i], 12);

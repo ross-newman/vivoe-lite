@@ -440,33 +440,33 @@ Hmi::KeyBMS(int keypress) {
   bool update = true;
   screen_.functionLeft.active = 0;
   screen_.functionRight.active = 0;
-  int zoom_level = config_.GetZoom();
+  int zoom_level = configuration.GetZoom();
   KeySide(keypress);
   Key(keypress);
   switch (keypress){
   case KEY_F3 :
     // Shift UP
-    config_.SetTestLat(config_.GetTestLat() + conv(zoom_level));
+    configuration.SetTestLat(configuration.GetTestLat() + conv(zoom_level));
     break;
   case KEY_F4 :
     // Shift DOWN
-    config_.SetTestLat(config_.GetTestLat() - conv(zoom_level));
+    configuration.SetTestLat(configuration.GetTestLat() - conv(zoom_level));
     break;
   case KEY_F5 :
     // Zoom +
-    config_.SetZoom(zoom_level * 2);
+    configuration.SetZoom(zoom_level * 2);
     break;
   case KEY_F9 :
     // Shift LEFT
-    config_.SetTestLon(config_.GetTestLon() - conv(zoom_level));
+    configuration.SetTestLon(configuration.GetTestLon() - conv(zoom_level));
     break;
   case KEY_F10 :
     // Shift RIGHT
-    config_.SetTestLon(config_.GetTestLon() + conv(zoom_level));
+    configuration.SetTestLon(configuration.GetTestLon() + conv(zoom_level));
     break;
   case KEY_F11 :
     // Zoom -
-    config_.SetZoom(zoom_level / 2);
+    configuration.SetZoom(zoom_level / 2);
     break;
   case KEY_F1 :
   case KEY_F2 :
@@ -485,13 +485,13 @@ Hmi::KeyBMS(int keypress) {
   
   if (update) {
     char tmp[100];
-    sprintf(tmp, "[BMS] Zoom level %d lat %f, %f", config_.GetZoom(), config_.GetTestLat(), ((double)config_.GetZoom() / 10000000) * ((double)config_.GetZoom() / 10000));
+    sprintf(tmp, "[BMS] Zoom level %d lat %f, %f", configuration.GetZoom(), configuration.GetTestLat(), ((double)configuration.GetZoom() / 10000000) * ((double)configuration.GetZoom() / 10000));
     logGva::log(tmp, LOG_INFO);
     map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
     map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
     sprintf(tmp, "[BMS] res %d x %d", screen_render_->GetWidth(), screen_render_->GetHeight());
     logGva::log(tmp, LOG_INFO);
-    map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
+    map_->Project(configuration.GetZoom(), configuration.GetTestLon(), configuration.GetTestLat(), &screen_.canvas.surface);
     screen_.canvas.bufferType = SURFACE_CAIRO;  
   }
 }
@@ -694,7 +694,7 @@ struct StateBMS : Hmi
 
         map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
         map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
-        map_->Project(config_.GetZoom(), config_.GetTestLon(), config_.GetTestLat(), &screen_.canvas.surface);
+        map_->Project(configuration.GetZoom(), configuration.GetTestLon(), configuration.GetTestLat(), &screen_.canvas.surface);
         screen_.canvas.bufferType = SURFACE_CAIRO;
 
         screen_.functionTop->active = 0x1 << 0;
@@ -840,7 +840,6 @@ ScreenGva* Hmi::screen_render_;
 rendererMap* Hmi::map_;
 int  Hmi::lastState_;
 bool Hmi::alarmson_ = false;
-ConfigData Hmi::config_;
 
 // ----------------------------------------------------------------------------
 // Initial state definition

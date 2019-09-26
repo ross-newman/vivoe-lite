@@ -38,8 +38,21 @@ namespace gva {
     void SetTestLat(double lat);
     bool GetFullscreen();
     void SetFullscreen(bool fullscreen);
+    unsigned int GetThemeBackground();
+    unsigned int GetThemeLabelBackgroundActive();
+    unsigned int GetThemeLabelBackgroundInactive();
+    unsigned int GetThemeLabelTextActive();
+    unsigned int GetThemeLabelTextInactive();
+    unsigned int GetThemeLabelBorderSelected();
+    unsigned int GetThemeLabelBorderActive();
+    unsigned int GetThemeLabelBorderInactive();
+    unsigned int GetThemeAlert();
+    unsigned int GetThemeCritical();
   private:
     config::Gva * current_config_;
   };
+  
+  // Static configuration object
+  static ConfigData configuration;
 };
 #endif

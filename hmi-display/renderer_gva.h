@@ -29,6 +29,7 @@
 #include <vector> 
 #include "gva.h"
 #include "renderer_cairo.h"
+#include "config_reader.h"
 
 #define MAX_ROWS 50
 #define MAX_CELLS 10
@@ -78,7 +79,7 @@ typedef enum {
   ICON_CENTRE
 } IconType;
 
-struct GvaColourType_
+struct GvaColourType
 {
   int red;
   int green;
@@ -106,9 +107,9 @@ typedef struct GvaCellType  {
 public :
   char *text;
   cellAlignType align;
-  GvaColourType_ foreground;
-  GvaColourType_ background;
-  GvaColourType_ textcolour;
+  GvaColourType foreground;
+  GvaColourType background;
+  GvaColourType textcolour;
   WeightType weight;  
 } GvaCell;
 

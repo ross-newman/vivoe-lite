@@ -107,10 +107,50 @@ namespace gva {
   }
   
   bool ConfigData::GetFullscreen() {
-	return current_config_->fullscreen();	
+	  return current_config_->fullscreen();	
   }
 
   void ConfigData::SetFullscreen(bool fullscreen) {
-	current_config_->set_fullscreen(fullscreen);	
+	  current_config_->set_fullscreen(fullscreen);	
   }
+  
+  unsigned int ConfigData::GetThemeBackground(){
+	  current_config_->theme_background();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelBackgroundActive() {
+	  current_config_->theme_label_background_active();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelBackgroundInactive() {
+	  current_config_->theme_label_background_inactive();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelTextActive() {
+	  current_config_->theme_label_text_active();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelTextInactive() {
+	  current_config_->theme_label_text_inactive();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelBorderSelected() {
+	  current_config_->theme_label_border_selected();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelBorderActive() {
+	  current_config_->theme_label_border_active();	
+  }
+  
+  unsigned int ConfigData::GetThemeLabelBorderInactive() {
+	  current_config_->theme_label_border_inactive();	
+  }
+  
+  unsigned int ConfigData::GetThemeAlert() {
+	  current_config_->theme_alert();	
+  }
+  
+  unsigned int ConfigData::GetThemeCritical() {
+	  current_config_->theme_critical();	
+  } 
 }

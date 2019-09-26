@@ -132,8 +132,11 @@ public:
   // Pure Virtual functions
   void SetPixel (int x, int y);
   void SetColour (int red, int green, int blue);
+  void SetColour (unsigned int rgb);
   void SetColourForground (int red, int green, int blue);
+  void SetColourForground (unsigned int rgb);
   void SetColourBackground (int red, int green, int blue);
+  void SetColourBackground (unsigned int rgb);
   void setLineType (int type);
   void SetLineThickness (int thickness, LineType fill);
   void SetLineThickness (int thickness, LineType fill, LineCapEnd end);
@@ -155,6 +158,7 @@ public:
   void DrawRoundedRectangle (int x1, int y1, int x2, int y2, int courner, bool fill);
   void DrawTriangle (int x1, int y1, int x2, int y2, int x3, int y3, bool fill);
   int DrawColor (int r, int g, int b);
+  int DrawColor (unsigned int rgb);
   void SetTextFont (int slope, int weight, char* fontName);
   int GetTextWidth (char* str, int fontSize);
   int GetTextHeight (char* str, int fontSize);

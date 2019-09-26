@@ -30,8 +30,8 @@
 #include <time.h>
 #include <termios.h>
 #include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+//#include <X11/Xlib.h>
+//#include <X11/Xutil.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
