@@ -126,7 +126,7 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
     SetColourBackground(gva::configuration.GetThemeLabelBackgroundActive());
     if ((1 << (5 - i) & hide)) {
       (1 << (5 - i) & active) ? SetColourForground(gva::configuration.GetThemeLabelBorderSelected()) :
-        SetColourBackground(gva::configuration.GetThemeLabelBorderActive());
+        SetColourForground(gva::configuration.GetThemeLabelBorderActive());
       FunctionKeyToggle *key = new FunctionKeyToggle();
 
       key->Draw(this, x, offset - (i * 72), 100, 50, labels[i]);
@@ -189,7 +189,7 @@ void RendererGva::DrawControlLabels(int y, int active, int hide) {
     DrawRectangle((i * w) + offset, y, (i * w) + w - 5 + offset, y + 20, true);
 
     (1 << (7 - i) & hide) ? DrawColor(gva::configuration.GetThemeLabelTextInactive()) : 
-      gva::configuration.GetThemeLabelTextActive();
+      DrawColor(gva::configuration.GetThemeLabelTextActive());
     touch_.AddAbsolute(BOTTOM, (int) (KEY_F13 + i), (i * w) + offset, y,
                        (i * w) + w - 5 + offset, y + 20);
     DrawText((i * w) + offset + 5, y + 6, labels[i], 12);
