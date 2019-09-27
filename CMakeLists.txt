@@ -60,6 +60,9 @@ ExternalProject_Add(
     UPDATE_DISCONNECTED 1
 )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "MINGW64_NT-10.0-17763")
+message("libosnscout not currently supported under MSYS2...")
+else()
 # ------------------------------------------------------------------------------
 # libosmscout
 # ------------------------------------------------------------------------------
@@ -86,6 +89,7 @@ ExternalProject_Add(
     TEST_COMMAND        ""
     UPDATE_DISCONNECTED 1
 )
+endif()
 
 # ------------------------------------------------------------------------------
 # rtp-payloader
@@ -179,11 +183,14 @@ include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
 add_library(test_catch STATIC test/test.cc)
 add_dependencies(test_catch catch)
 
+if (MSYS)
+else()
 find_package(Protobuf REQUIRED)
 message(STATUS "Using Protocol Buffers ${Protobuf_VERSION}...")
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROJECT_SOURCE_DIR}/hmi-display/config.proto)
+endif()
 
 add_library(business_logic STATIC ${PROTO_SRCS} hmi-display/events_gva.cc hmi-display/hmi_gva.cc hmi-display/hmi_gva_helpers.cc hmi-display/screen_gva.cc hmi-display/renderer_gva.cc hmi-display/renderer.cc hmi-display/renderer_cairo.cc hmi-display/common/log_gva.cc hmi-display/view_gva.cc hmi-display/renderer_map.cc hmi-display/config_reader.cc )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -std=c++11")
