@@ -317,7 +317,7 @@ namespace gva
 
     // TODO : Draw the alarms if any (Mock up)
     if (widgets_->alarmIndicator.GetVisible()) {
-      GvaTable table(102, widgets_->alarmIndicator.GetY(), 436);
+      GvaTable table(104, widgets_->alarmIndicator.GetY(), 432);
       table.SetFontName(gva::configuration.GetThemeFont());
       GvaRow alarmrow;
       GvaCellType cell = {widgets_->alarmIndicator.text_, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
@@ -337,8 +337,8 @@ namespace gva
         GvaRow newrow;
         RgbUnpackedType f, b, o;
         for (int cell=0;cell<screen_->table.rows_[row].cell_count; cell++) {
-		  f = UnpackRgb(screen_->table.rows_[row].cells[cell].foreground_colour);
-	   	  b = UnpackRgb(screen_->table.rows_[row].cells[cell].background_colour);
+		      f = UnpackRgb(screen_->table.rows_[row].cells[cell].foreground_colour);
+	   	    b = UnpackRgb(screen_->table.rows_[row].cells[cell].background_colour);
 	   	  
 	   	  // Choose colour for cell border
 	   	  if (screen_->table.rows_[row].highlighted == false) {

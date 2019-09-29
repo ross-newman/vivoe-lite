@@ -451,7 +451,7 @@ void RendererGva::DrawMode() {
 }
 
 void RendererGva::DrawTable(GvaTable * table) {
-  int height = 20;
+  int height = 19;
   int row = 0;
   int column = 0;
   int columns;
@@ -502,7 +502,7 @@ void RendererGva::DrawTable(GvaTable * table) {
           pos = offset + 4;
           break;
       }
-      DrawText(pos, table->GetY() - (height * row) + 6,
+      DrawText(pos, table->GetY() - (height * row) + 5,
                table->row_[row].cell_[column].text, 12);
       offset += tmp;
     }

@@ -32,11 +32,11 @@ message ThemeDefault {
   optional Colour theme_label_border_active = 7 [default = COLOUR_DARK_GREEN2];
   optional Colour theme_label_border_inactive = 8 [default = COLOUR_DARK_GREY];
   optional Colour theme_status_background = 9 [default = COLOUR_DARK_GREEN];
-  optional Colour theme_status_border = 10 [default = COLOUR_WHITE];
+  optional Colour theme_status_border = 10 [default = COLOUR_DARK_GREEN];
   optional Colour theme_status_text = 11 [default = COLOUR_WHITE];
   optional Colour theme_alert = 12 [default = COLOUR_AMBER];
   optional Colour theme_critical = 13 [default = COLOUR_RED];
-  optional string theme_font = 14 [default = "Courier 10 Pitch"];
+  optional string theme_font = 14 [default = "DejaVu Sans Mono Book"];
 }
 
 message ThemeHighContrast {
@@ -53,7 +53,7 @@ message ThemeHighContrast {
   optional Colour theme_status_text = 11 [default = COLOUR_WHITE];
   optional Colour theme_alert = 12 [default = COLOUR_AMBER];
   optional Colour theme_critical = 13 [default = COLOUR_RED];
-  optional string theme_font = 14 [default = "DejaVu Sans Mono Book"];
+  optional string theme_font = 14 [default = "Courier 10 Pitch"];
 }
 
 message Gva {
@@ -84,7 +84,7 @@ message Gva {
   // ODB Options
   optional string odb_device = 14 [default = "/dev/ttyUSB1"];    
   
-  optional ThemeHighContrast theme = 15;
+  optional ThemeDefault theme = 15;
   
   message BezelKeyset {
     required int32 act = 1;
