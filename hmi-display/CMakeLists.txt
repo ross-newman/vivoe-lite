@@ -34,11 +34,16 @@ link_directories(${CMAKE_BINARY_DIR}/external/Fast-RTPS/build/src/cpp)
 link_directories(${CMAKE_BINARY_DIR}/external/rtp-payloader/build)
 link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src)
 
+
+message ("Platform " ${CMAKE_SYSTEM_NAME} " : " ${CMAKE_SYSTEM} ${MSYS} ${MSYS2}) 
+if (${CMAKE_SYSTEM_NAME} MATCHES "MINGW64_NT-10.0-17763")
+else()
 find_package(Protobuf REQUIRED)
 message(STATUS "Using Protocol Buffers ${Protobuf_VERSION}...")
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS config.proto)
+endif()
 
 add_executable(hmi-display ${PROTO_SRCS} main.cc renderer.cc renderer_cairo.cc renderer_gva.cc screen_gva.cc events_gva.cc ./common/debug.cc ./common/log_gva.cc hmi_gva.cc hmi_gva_helpers.cc view_gva.cc renderer_map.cc config_reader.cc)
 add_dependencies(hmi-display libosmscout hmi-video)
