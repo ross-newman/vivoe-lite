@@ -82,7 +82,7 @@ message Gva {
   // ODB Options
   optional string odb_device = 14 [default = "/dev/ttyUSB1"];    
   
-  optional ThemeHighContrast theme = 15;
+  optional ThemeDefault theme = 15;
   
   message BezelKeyset {
     required int32 act = 1;
