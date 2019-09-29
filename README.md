@@ -1,5 +1,5 @@
 ![VIVOE-LITE](images/Vivoe-lite-banner.png)
-![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
+![Travis](https://travis-ci.org/ross-newman/vivoe-lite.svg?branch=master)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2927/badge)](https://bestpractices.coreinfrastructure.org/projects/2927)
 [![codecov](https://codecov.io/gh/ross-newman/vivoe-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/ross-newman/vivoe-lite)
@@ -11,7 +11,7 @@ This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is cur
 sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-
 ```
 # HMI
-The project includes an referance implementation of a GVA like Human Machine Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with different video overlay options for sensing, monitoring and detection of systems events.
+The project includes an reference implementation of the GVA (Generic Vehicle Architecture) like Human Machine Interface (HMI). This is meant as a designed for testing different live video sources and working with streaming protocols and does not implement functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing. Its primary purpose is for research and development and experimentation with different HMI elements for human factors and sensor integration, test, monitoring and detection of system wide events.
 
 ![GVA HMI](images/Display_RD104_02_sm.jpg#left)<br>
 
