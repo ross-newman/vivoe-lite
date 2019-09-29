@@ -49,8 +49,8 @@ struct opts {
 };
 
 opts opt = { 0 };
-static gvaVideoRtpYuv *rtpStream1;
-char *rtpBuffer;
+static GvaVideoRtpYuv *rtp_stream1;
+char *rtp_buffer;
 
 void Dispatch(GvaKeyEnum key) {
   EventKeyFunction input;
@@ -59,7 +59,7 @@ void Dispatch(GvaKeyEnum key) {
   hmi::dispatch(input);
 };
 
-int getopt(int argc, char *argv[]) {
+int GetOpt(int argc, char *argv[]) {
   int c = 0;
 
   while ((c = getopt(argc, argv, "hvwxcl:f::")) != -1)
@@ -129,7 +129,7 @@ void Update(void *arg, gpointer user_data) {
                                                DEFAULT_WIDTH, DEFAULT_HEIGHT);
       char *test = (char*)cairo_image_surface_get_data 
         (hmi::GetScreen()->canvas.surface);
-      rtpStream1->gvaRecieveFrame(test, RGBA_COLOUR);
+      rtp_stream1->GvaRecieveFrame(test, RGBA_COLOUR);
       cairo_surface_mark_dirty(hmi::GetScreen()->canvas.surface);
 
       // @todo hmi_display: Add RTP HMI streaming output to display.
@@ -372,7 +372,7 @@ int main(int argc, char *argv[]) {
 
   cout << "hmi_display (author: ross@rossnewman.com)..." << endl;
 
-  int ret = getopt(argc, argv);
+  int ret = GetOpt(argc, argv);
 
   if (ret >= 0)
     return ret;
@@ -395,14 +395,14 @@ int main(int argc, char *argv[]) {
   // Setup video sources (default size will be 640 x 480 unless specified)
   // @todo hmi_display: Fix issue with stream blocking execution on RTP input
   // @body The RTP stream blocks for a whole frame slowing down the HMI. 
-  rtpStream1 = new gvaVideoRtpYuv(ipaddr, port);
+  rtp_stream1 = new GvaVideoRtpYuv(ipaddr, port);
 
   if (opt.videoEnabled) {
-	  sprintf(tmp, "Resolution %dx%d", rtpStream1->
-		getHeight(), rtpStream1->getWidth());
+	  sprintf(tmp, "Resolution %dx%d", rtp_stream1->
+		GetHeight(), rtp_stream1->GetWidth());
 	  logGva::log(tmp, LOG_INFO);
-	  rtpBuffer =
-		(char *) malloc(rtpStream1->getHeight() * rtpStream1->getWidth() * 4);
+	  rtp_buffer =
+		(char *) malloc(rtp_stream1->GetHeight() * rtp_stream1->GetWidth() * 4);
 	  sprintf(tmp, "GVA Incomming RTP stream initalised %s:%d", ipaddr, port);
 	  logGva::log(tmp, LOG_INFO);
   }
@@ -415,6 +415,6 @@ int main(int argc, char *argv[]) {
   //
   // Clean up code goes here
   //
-  free(rtpStream1);
+  free(rtp_stream1);
   logGva::log("Exiting hmi_display...\n", LOG_INFO);
 }

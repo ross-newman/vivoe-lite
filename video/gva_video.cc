@@ -1,7 +1,7 @@
 #include "gva_video.h"
 
-gvaVideoSource::gvaVideoSource(int height, int width) 
+GvaVideoSource::GvaVideoSource(int height, int width) 
 { 
-  m_height = height;
-  m_width = width;
+  height_ = height;
+  width_ = width;
 };

@@ -60,8 +60,8 @@ ExternalProject_Add(
     UPDATE_DISCONNECTED 1
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "MINGW64_NT-10.0-17763")
-message("libosnscout not currently supported under MSYS2...")
+if (${CMAKE_SYSTEM_NAME} MATCHES "MSYS")
+message("libosmscout not currently supported under MSYS2...")
 else()
 # ------------------------------------------------------------------------------
 # libosmscout
