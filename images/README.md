@@ -15,6 +15,10 @@
 
 ![Keyboard example](Screenshot-keyboard2.png)<br>
 **Keyboard / Alarms example**
+
+![High Contrast](Screenshot-High-Contrast.png)<br>
+**Theme high contrast (user defined)**
+
 ## Hardware
 ### RD-104 HD
 Leonardo rugged display with Core i7 CPU built in.

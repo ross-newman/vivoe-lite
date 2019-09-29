@@ -94,6 +94,9 @@ public:
   virtual int TextureRGB (int x, int y, void *buffer, char *file) = 0;
   static long PackRgb(int r, int g, int b) { long packed = (r<<16) | (g<<8) | b;  
 	                                  return packed; };
+  int UnpackRed(unsigned int rgb) { return (rgb & 0xff0000) >> 16; };
+  int UnpackGreen(unsigned int rgb) { return (rgb & 0xff00) >> 8; };
+  int UnpackBlue(unsigned int rgb) { return rgb & 0xff; };
   RgbUnpackedType UnpackRgb(long rgb) { RgbUnpackedType colour;
 	                                    colour.r = (rgb & 0x0000000000ff0000) >> 16;
 	                                    colour.g = (rgb & 0x000000000000ff00) >> 8;

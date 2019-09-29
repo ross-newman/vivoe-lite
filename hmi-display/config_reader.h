@@ -46,6 +46,9 @@ namespace gva {
     unsigned int GetThemeLabelBorderSelected();
     unsigned int GetThemeLabelBorderActive();
     unsigned int GetThemeLabelBorderInactive();
+    unsigned int GetStatusBackground();
+    unsigned int GetStatusBorder();
+    unsigned int GetStatusText();
     unsigned int GetThemeAlert();
     unsigned int GetThemeCritical();
   private:

@@ -223,8 +223,8 @@ namespace gva
       default:
       case SURFACE_NONE:
         // Set background green
-        SetColourForground (GREEN);
-        SetColourBackground (GREEN);
+        SetColourForground (gva::configuration.GetThemeBackground());
+        SetColourBackground (gva::configuration.GetThemeBackground());
         DrawRectangle (0, 0, width_, height_, true);
         break;
       case SURFACE_BLACKOUT:
@@ -293,10 +293,16 @@ namespace gva
       GvaTable table(1, screen_->StatusBar->y , 640);
       GvaRow newrow;
 
+      GvaColourType border = { UnpackRed(gva::configuration.GetStatusBorder()), 
+        UnpackGreen(gva::configuration.GetStatusBorder()),
+        UnpackBlue(gva::configuration.GetStatusBorder())};
+      GvaColourType background = { UnpackRed(gva::configuration.GetStatusBackground()), 
+        UnpackGreen(gva::configuration.GetStatusBackground()),
+        UnpackBlue(gva::configuration.GetStatusBackground())};
       for (i=0;i<7;i++) {
         cellAlignType align = ALIGN_LEFT;
         if (i==1) align = ALIGN_CENTRE;
-        GvaCellType cell = {screen_->StatusBar->labels[i], align, { WHITE }, { DARK_GREEN }, { WHITE }, WEIGHT_BOLD };
+        GvaCellType cell = {screen_->StatusBar->labels[i], align, border, background, { WHITE }, WEIGHT_BOLD };
         newrow.addCell(cell, widths[i]);
       }
       table.AddRow(newrow);
