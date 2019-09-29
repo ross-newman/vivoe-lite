@@ -206,11 +206,11 @@ namespace gva
     } info;
     GvaFunctionEnum currentFunction;
     CanvasType canvas;
-    FunctionSelectType *functionTop;
+    FunctionSelectType *function_top;
     CommonTaskKeysType *control;
-    StatusBarType *StatusBar;
-    FunctionKeysType functionLeft;
-    FunctionKeysType functionRight;
+    StatusBarType *status_bar;
+    FunctionKeysType function_left;
+    FunctionKeysType function_right;
     TableWidget table;
     LabelType label;
     MessaGetYpe message;

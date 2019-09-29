@@ -27,7 +27,7 @@
 
 namespace gva
 {
-  ViewGvaManager::ViewGvaManager(StatusBarType *StatusBar) : status_bar_(StatusBar) { 
+  ViewGvaManager::ViewGvaManager(StatusBarType *status_bar) : status_bar_(status_bar) { 
     idLast_ = 0; 
   }
 
@@ -44,11 +44,11 @@ namespace gva
     ScreenType screen = { 0 };
     for(i=0;i<idLast_;i++) {
       if (view_[i]->GetFunction() == function) {
-        screen.StatusBar = status_bar_;
-        screen.functionTop = view_[i]->GetTop();
+        screen.status_bar = status_bar_;
+        screen.function_top = view_[i]->GetTop();
         screen.control = view_[i]->GetBottom();
-        screen.functionLeft = *view_[i]->GetLeft();
-        screen.functionRight = *view_[i]->GetRight();
+        screen.function_left = *view_[i]->GetLeft();
+        screen.function_right = *view_[i]->GetRight();
         screen.currentFunction = function;
         return screen;
       }

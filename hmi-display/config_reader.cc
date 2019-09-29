@@ -146,19 +146,18 @@ namespace gva {
 	  return (unsigned int)current_config_->theme().theme_label_border_inactive();	
   }
 
-  unsigned int ConfigData::GetStatusBackground() {
+  unsigned int ConfigData::GetThemeStatusBackground() {
 	  return (unsigned int)current_config_->theme().theme_status_background();	
   }
 
-  unsigned int ConfigData::GetStatusBorder() {
+  unsigned int ConfigData::GetThemeStatusBorder() {
 	  return (unsigned int)current_config_->theme().theme_status_border();	
   }
 
-  unsigned int ConfigData::GetStatusText() {
+  unsigned int ConfigData::GetThemeStatusText() {
 	  return (unsigned int)current_config_->theme().theme_status_text();	
   }
  
-
   unsigned int ConfigData::GetThemeAlert() {
 	  return (unsigned int)current_config_->theme().theme_alert();	
   }
@@ -166,4 +165,8 @@ namespace gva {
   unsigned int ConfigData::GetThemeCritical() {
 	  return (unsigned int)current_config_->theme().theme_critical();	
   } 
+
+  char* ConfigData::GetThemeFont() {
+	  return (char*)current_config_->theme().theme_font().c_str();;	
+  }
 }

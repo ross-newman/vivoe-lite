@@ -46,11 +46,12 @@ namespace gva {
     unsigned int GetThemeLabelBorderSelected();
     unsigned int GetThemeLabelBorderActive();
     unsigned int GetThemeLabelBorderInactive();
-    unsigned int GetStatusBackground();
-    unsigned int GetStatusBorder();
-    unsigned int GetStatusText();
+    unsigned int GetThemeStatusBackground();
+    unsigned int GetThemeStatusBorder();
+    unsigned int GetThemeStatusText();
     unsigned int GetThemeAlert();
     unsigned int GetThemeCritical();
+    char* GetThemeFont();
   private:
     config::Gva * current_config_;
   };

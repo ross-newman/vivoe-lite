@@ -89,7 +89,7 @@ namespace gva
     //
     // Start the Real Time Clock
     // 
-    StartClock (screen_->StatusBar);
+    StartClock (screen_->status_bar);
   }
 
   ScreenGva::~ScreenGva ()
@@ -251,28 +251,28 @@ namespace gva
     }
 
     // Draw the LEFT bezel labels
-    if (screen_->functionLeft.visible) {
-      DrawFunctionLabels (1, screen_->functionLeft.active,
-                        screen_->functionLeft.hidden,
-                        screen_->functionLeft.toggleActive,
-                        screen_->functionLeft.toggleOn,
-                        screen_->functionLeft.labels);
+    if (screen_->function_left.visible) {
+      DrawFunctionLabels (1, screen_->function_left.active,
+                        screen_->function_left.hidden,
+                        screen_->function_left.toggleActive,
+                        screen_->function_left.toggleOn,
+                        screen_->function_left.labels);
     }
 
     // Draw the RIGHT bezel labels
-    if (screen_->functionRight.visible) {
+    if (screen_->function_right.visible) {
       DrawFunctionLabels (DEFAULT_WIDTH - 100 - 1,
-                        screen_->functionRight.active,
-                        screen_->functionRight.hidden,
-                        screen_->functionRight.toggleActive,
-                        screen_->functionRight.toggleOn,
-                        screen_->functionRight.labels);
+                        screen_->function_right.active,
+                        screen_->function_right.hidden,
+                        screen_->function_right.toggleActive,
+                        screen_->function_right.toggleOn,
+                        screen_->function_right.labels);
     }
 
     // Draw the TOP bezel labels     
-    if (screen_->functionTop->visible) {
-      DrawTopLabels (DEFAULT_HEIGHT-11, screen_->functionTop->active,
-                  screen_->functionTop->hidden);
+    if (screen_->function_top->visible) {
+      DrawTopLabels (DEFAULT_HEIGHT-11, screen_->function_top->active,
+                  screen_->function_top->hidden);
     }
 
     // Draw the maintinance mode indicator 
@@ -286,23 +286,29 @@ namespace gva
     }
     
     // Setup and Draw the status bar, one row table
-    if (screen_->StatusBar->visible) {
+    if (screen_->status_bar->visible) {
       int i = 0;
       // Setup and Draw the status bar, one row table
       int widths[7] = { 23, 8, 37, 8, 8, 8, 8 };
-      GvaTable table(1, screen_->StatusBar->y , 640);
+      GvaTable table(1, screen_->status_bar->y , 640);
+      table.SetFontName(gva::configuration.GetThemeFont());
       GvaRow newrow;
-
-      GvaColourType border = { UnpackRed(gva::configuration.GetStatusBorder()), 
-        UnpackGreen(gva::configuration.GetStatusBorder()),
-        UnpackBlue(gva::configuration.GetStatusBorder())};
-      GvaColourType background = { UnpackRed(gva::configuration.GetStatusBackground()), 
-        UnpackGreen(gva::configuration.GetStatusBackground()),
-        UnpackBlue(gva::configuration.GetStatusBackground())};
+      
+      // Use theme colours
+      GvaColourType border = { UnpackRed(gva::configuration.GetThemeStatusBorder()), 
+        UnpackGreen(gva::configuration.GetThemeStatusBorder()),
+        UnpackBlue(gva::configuration.GetThemeStatusBorder())};
+      GvaColourType background = { UnpackRed(gva::configuration.GetThemeStatusBackground()), 
+        UnpackGreen(gva::configuration.GetThemeStatusBackground()),
+        UnpackBlue(gva::configuration.GetThemeStatusBackground())};
+      GvaColourType text = { UnpackRed(gva::configuration.GetThemeStatusText()), 
+        UnpackGreen(gva::configuration.GetThemeStatusText()),
+        UnpackBlue(gva::configuration.GetThemeStatusText())};
+            
       for (i=0;i<7;i++) {
         cellAlignType align = ALIGN_LEFT;
         if (i==1) align = ALIGN_CENTRE;
-        GvaCellType cell = {screen_->StatusBar->labels[i], align, border, background, { WHITE }, WEIGHT_BOLD };
+        GvaCellType cell = {screen_->status_bar->labels[i], align, border, background, text, WEIGHT_BOLD };
         newrow.addCell(cell, widths[i]);
       }
       table.AddRow(newrow);
@@ -312,6 +318,7 @@ namespace gva
     // TODO : Draw the alarms if any (Mock up)
     if (widgets_->alarmIndicator.GetVisible()) {
       GvaTable table(102, widgets_->alarmIndicator.GetY(), 436);
+      table.SetFontName(gva::configuration.GetThemeFont());
       GvaRow alarmrow;
       GvaCellType cell = {widgets_->alarmIndicator.text_, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
       
@@ -324,6 +331,7 @@ namespace gva
     // Setup and Draw the alarms
     if (screen_->table.visible_) {
 	  GvaTable table(screen_->table.x_, screen_->table.y_, screen_->table.width_);
+    table.SetFontName(gva::configuration.GetThemeFont());
 	  table.border_ = 1;
 	  for (int row=0; row<screen_->table.row_count_; row++) {
         GvaRow newrow;
@@ -364,6 +372,7 @@ namespace gva
     if (screen_->message.visible) {
       char tmp[2][MAX_TEXT];
       GvaTable table(320-150, 260, 300);
+      table.SetFontName(gva::configuration.GetThemeFont());
       GvaRow newrow;
       GvaRow newrow1;
       

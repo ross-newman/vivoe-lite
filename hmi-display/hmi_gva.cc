@@ -38,7 +38,7 @@ using namespace std;
 void
 Hmi::Reset()
 {
-  screen_.StatusBar->visible = true;
+  screen_.status_bar->visible = true;
   Labels(screen_.labels);
   screen_.canvas.visible = false;
   screen_.canvas.bufferType = SURFACE_NONE;
@@ -56,32 +56,32 @@ void Hmi::Labels(LabelModeEnum labels) {
   case LABEL_ALL :
     if ( (screen_.currentFunction == SA) || (screen_.currentFunction == WPN) || (screen_.currentFunction == DRV) )
       widgets_.compass.SetVisible(true);
-    screen_.functionLeft.visible = true;
-    screen_.functionRight.visible = true;
+    screen_.function_left.visible = true;
+    screen_.function_right.visible = true;
     screen_.control->visible = true;
-    screen_.functionTop->visible = true;
-    screen_.StatusBar->visible = true;
-    screen_.StatusBar->y = 447;
+    screen_.function_top->visible = true;
+    screen_.status_bar->visible = true;
+    screen_.status_bar->y = 446;
     widgets_.alarmIndicator.SetVisible(true);
-    widgets_.alarmIndicator.SetY(426);
+    widgets_.alarmIndicator.SetY(423);
     break;
   case LABEL_STATUS_ONLY :
-    screen_.functionLeft.visible = false;
-    screen_.functionRight.visible = false;
+    screen_.function_left.visible = false;
+    screen_.function_right.visible = false;
     screen_.control->visible = false;
-    screen_.functionTop->visible = false;
-    screen_.StatusBar->visible = true;
-    screen_.StatusBar->y = 459;
+    screen_.function_top->visible = false;
+    screen_.status_bar->visible = true;
+    screen_.status_bar->y = 459;
     widgets_.alarmIndicator.SetVisible(true);
     widgets_.alarmIndicator.SetY(438);
     widgets_.compass.SetX(165-90);
     break;
   case LABEL_MINIMAL :
-    screen_.functionLeft.visible = false;
-    screen_.functionRight.visible = false;
+    screen_.function_left.visible = false;
+    screen_.function_right.visible = false;
     screen_.control->visible = false;
-    screen_.functionTop->visible = false;
-    screen_.StatusBar->visible = false;
+    screen_.function_top->visible = false;
+    screen_.status_bar->visible = false;
     widgets_.alarmIndicator.SetVisible(false);
     widgets_.compass.SetVisible(false);
     widgets_.compass.SetX(165);
@@ -94,48 +94,48 @@ Hmi::KeySide(int key) {
   screen_.message.visible=false;
   switch (key){
   case KEY_F1 :
-    screen_.functionLeft.active = 1 << 5;
+    screen_.function_left.active = 1 << 5;
     break;
   case KEY_F2 :
-    screen_.functionLeft.active = 1 << 4;
+    screen_.function_left.active = 1 << 4;
     break;
   case KEY_F3 :
-    screen_.functionLeft.active = 1 << 3;
+    screen_.function_left.active = 1 << 3;
     break;
   case KEY_F4 :
-    screen_.functionLeft.active = 1 << 2;
+    screen_.function_left.active = 1 << 2;
     break;
   case KEY_F5 :
-    screen_.functionLeft.active = 1 << 1;
+    screen_.function_left.active = 1 << 1;
     break;
   case KEY_F6 :
-    screen_.functionLeft.active = 1;
+    screen_.function_left.active = 1;
     break;
   case KEY_F7 :
-    screen_.functionRight.active = 1 << 5;
+    screen_.function_right.active = 1 << 5;
     break;
   case KEY_F8 :
-    screen_.functionRight.active = 1 << 4;
+    screen_.function_right.active = 1 << 4;
     break;
   case KEY_F9 :
-    screen_.functionRight.active = 1 << 3;
+    screen_.function_right.active = 1 << 3;
     break;
   case KEY_F10 :
-    screen_.functionRight.active = 1 << 2;
+    screen_.function_right.active = 1 << 2;
     break;
   case KEY_F11 :
-    screen_.functionRight.active = 1 << 1;
+    screen_.function_right.active = 1 << 1;
     break;
   case KEY_F12 :
-    screen_.functionRight.active = 1;
+    screen_.function_right.active = 1;
     break;
   }
 }  
 
 void
 Hmi::Key(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   screen_.control->active = 0;
   KeySide(keypress);
   switch (keypress){
@@ -184,8 +184,8 @@ Hmi::Key(int keypress) {
 
 void
 Hmi::KeySA(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   
   KeySide(keypress);
   Key(keypress);
@@ -227,8 +227,8 @@ Hmi::KeySA(int keypress) {
 
 void
 Hmi::KeyWPN(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   
   KeySide(keypress);
   Key(keypress);
@@ -256,8 +256,8 @@ Hmi::KeyWPN(int keypress) {
 
 void
 Hmi::KeyDEF(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   
   KeySide(keypress);
   Key(keypress);
@@ -285,8 +285,8 @@ Hmi::KeyDEF(int keypress) {
 
 void
 Hmi::KeySYS(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   
   KeySide(keypress);
   Key(keypress);
@@ -331,8 +331,8 @@ Hmi::KeySYS(int keypress) {
 
 void
 Hmi::KeyDRV(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   
   KeySide(keypress);
   Key(keypress);
@@ -360,8 +360,8 @@ Hmi::KeyDRV(int keypress) {
 
 void
 Hmi::KeySTR(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   
   KeySide(keypress);
   Key(keypress);
@@ -389,8 +389,8 @@ Hmi::KeySTR(int keypress) {
 
 void
 Hmi::KeyCOM(int keypress) {
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   screen_.message.visible = false;
   
   KeySide(keypress);
@@ -438,8 +438,8 @@ conv(int zoom) {
 void
 Hmi::KeyBMS(int keypress) {
   bool update = true;
-  screen_.functionLeft.active = 0;
-  screen_.functionRight.active = 0;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
   int zoom_level = configuration.GetZoom();
   KeySide(keypress);
   Key(keypress);
@@ -499,17 +499,17 @@ Hmi::KeyBMS(int keypress) {
 struct StateSA : Hmi
 {
   void entry() override {
-    if (!BIT (7, screen_.functionTop->hidden))
+    if (!BIT (7, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(SA);
         lastState_ = SA;
         Reset();
-        screen_.functionTop->visible = true;
+        screen_.function_top->visible = true;
                 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.canvas.visible = true;
         if (!screen_.canvas.surface) SET_CANVAS_PNG("FRONT_CENTRE.png");
-        screen_.functionTop->active = 0x1 << 7;
+        screen_.function_top->active = 0x1 << 7;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -527,7 +527,7 @@ struct StateSA : Hmi
 struct StateWPN : Hmi
 {
   void entry() override {
-    if (!BIT (6, screen_.functionTop->hidden))
+    if (!BIT (6, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(WPN);
         lastState_ = WPN;
@@ -536,7 +536,7 @@ struct StateWPN : Hmi
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("FRONT_CENTRE.png");
-        screen_.functionTop->active = 0x1 << 6;
+        screen_.function_top->active = 0x1 << 6;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -554,14 +554,14 @@ struct StateWPN : Hmi
 struct StateDEF : Hmi
 {
   void entry() override {
-    if (!BIT (5, screen_.functionTop->hidden))
+    if (!BIT (5, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(DEF);
         lastState_ = DEF;
         Reset();
 
-        screen_.StatusBar->visible = true;
-        screen_.functionTop->active = 0x1 << 5;
+        screen_.status_bar->visible = true;
+        screen_.function_top->active = 0x1 << 5;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -579,20 +579,20 @@ struct StateDEF : Hmi
 struct StateSYS : Hmi
 {
   void entry() override {
-    if (!BIT (4, screen_.functionTop->hidden))
+    if (!BIT (4, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(SYS);
         lastState_ = SYS;
         Reset();
         
-        screen_.StatusBar->visible = true;
-        screen_.functionTop->visible = true;
+        screen_.status_bar->visible = true;
+        screen_.function_top->visible = true;
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("FRONT_CENTRE.png");
 
         HmiHelper::TableSystem(&screen_.table);
 
-        screen_.functionTop->active = 0x1 << 4;
+        screen_.function_top->active = 0x1 << 4;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -610,15 +610,15 @@ struct StateSYS : Hmi
 struct StateDRV : Hmi
 {
   void entry() override {
-    if (!BIT (3, screen_.functionTop->hidden))
+    if (!BIT (3, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(DRV);
         lastState_ = DRV;
         Reset();
 
         if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
-        screen_.StatusBar->visible = true;
-        screen_.functionTop->active = 0x1 << 3;
+        screen_.status_bar->visible = true;
+        screen_.function_top->active = 0x1 << 3;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -636,13 +636,13 @@ struct StateDRV : Hmi
 struct StateSTR : Hmi
 {
   void entry() override {
-    if (!BIT (2, screen_.functionTop->hidden))
+    if (!BIT (2, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(STR);
         lastState_ = STR;
         Reset();
 
-        screen_.functionTop->active = 0x1 << 2;
+        screen_.function_top->active = 0x1 << 2;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -660,13 +660,13 @@ struct StateSTR : Hmi
 struct StateCOM : Hmi
 {
   void entry() override {
-    if (!BIT (1, screen_.functionTop->hidden))
+    if (!BIT (1, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(COM);
         lastState_ = COM;
         Reset();
 
-        screen_.functionTop->active = 0x1 << 1;
+        screen_.function_top->active = 0x1 << 1;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
@@ -684,7 +684,7 @@ struct StateCOM : Hmi
 struct StateBMS : Hmi
 {
   void entry() override {
-    if (!BIT (0, screen_.functionTop->hidden))
+    if (!BIT (0, screen_.function_top->hidden))
       {
         screen_ = manager_->GetScreen(BMS);
         lastState_ = BMS;
@@ -697,7 +697,7 @@ struct StateBMS : Hmi
         map_->Project(configuration.GetZoom(), configuration.GetTestLon(), configuration.GetTestLat(), &screen_.canvas.surface);
         screen_.canvas.bufferType = SURFACE_CAIRO;
 
-        screen_.functionTop->active = 0x1 << 0;
+        screen_.function_top->active = 0x1 << 0;
       }
   };
   void react(EventKeyPowerOn const &) override { transit<StateOff>(); };

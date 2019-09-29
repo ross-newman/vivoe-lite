@@ -116,7 +116,7 @@ void RendererGva::DrawFunctionLabels(int x, int active, int hide,
   setLineType(CAIRO_LINE_JOIN_ROUND);
   SetLineThickness(2, LINE_SOLID);
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_NORMAL, "Courier");
+              (int) CAIRO_FONT_WEIGHT_NORMAL, gva::configuration.GetThemeFont());
 
   int firstKey = (x < DEFAULT_WIDTH / 2) ? KEY_F1 : KEY_F7;
   int group = (x < DEFAULT_WIDTH / 2) ? LEFT : RIGHT;
@@ -174,7 +174,7 @@ void RendererGva::DrawControlLabels(int y, int active, int hide) {
   setLineType(CAIRO_LINE_JOIN_ROUND);
   SetLineThickness(2, LINE_SOLID);
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
+              (int) CAIRO_FONT_WEIGHT_BOLD, gva::configuration.GetThemeFont());
 
   for (i = 0; i < 8; i++) {
     SetLineThickness(2, LINE_SOLID);
@@ -374,7 +374,7 @@ void RendererGva::DrawPPI(int x, int y, int degrees, int sightAzimuth) {
 
   // Compass Markings
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
+              (int) CAIRO_FONT_WEIGHT_BOLD, gva::configuration.GetThemeFont());
   d = degreesToRadians(d);
   int pos = 6;
 
@@ -440,7 +440,7 @@ void RendererGva::DrawMode() {
   SetLineThickness(1, LINE_SOLID);
 
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_NORMAL, "Courier");
+              (int) CAIRO_FONT_WEIGHT_NORMAL, gva::configuration.GetThemeFont());
 
   int w = GetTextWidth("Maintinance Mode", 12);
   int h = GetTextHeight("Maintinance Mode", 12);
@@ -523,7 +523,7 @@ void
   DrawRoundedRectangle(x, y, width, height, 6, true);
   SetColourForground(WHITE);
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
+              (int) CAIRO_FONT_WEIGHT_BOLD, gva::configuration.GetThemeFont());
   int textHeight = GetTextHeight("qh", fontSize);
   int textWidth = GetTextWidth(keyText, fontSize);
 
@@ -565,7 +565,7 @@ void RendererGva::DrawKeyboard(KeyboardModeType mode) {
   SetColourBackground(DARK_GREY);
   SetLineThickness(1, LINE_SOLID);
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
+              (int) CAIRO_FONT_WEIGHT_BOLD, gva::configuration.GetThemeFont());
 
   // Draw keys
   SetColourForground(WHITE);
