@@ -29,3 +29,5 @@ test_log
 video/libhmi-video.a
 config.pb
 log.txt
+html
+latex
