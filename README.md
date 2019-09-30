@@ -117,8 +117,13 @@ This defence standard is currently split into the parts below:
 The HMI uses Cairo for rendering the GUI components.
 
 ##### Rendering
-![GVA HMI](images/GVA_HMI.png) <br>
-Basic HMI layout as illustrated in the GVA standard.
+
+| UK GVA  | AUS GVA |
+| ------------- | ------------- |
+| ![GVA HMI](images/GVA_HMI.png)  | ![Australian GVA HMI](images/AUS_GVA_HMI.png)   |
+| Basic HMI layout as illustrated.  | Basic HMI layout with additional button BLK.  |
+
+> NOTE: AUS-GVA mandates some changes to the physical HMI for use in the ADF which impacts on the bezel key arrangement and illumination.
 
 ### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
 NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
