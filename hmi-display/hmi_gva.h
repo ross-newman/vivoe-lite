@@ -139,10 +139,8 @@ protected:
   static FunctionSelectType top_;
   static CommonTaskKeysType bottom_;
   static CanvasType canvas_;
-  static KeyboardType keyboard_;
   static TableWidget alarms_;
   static ScreenType screen_;
-  static WidgetsType widgets_;
   static ScreenGva *screen_render_;
   static rendererMap *map_;
   static int lastState_;
@@ -161,7 +159,6 @@ public:
   static void Reset();
   static ScreenGva* GetRendrer() { return screen_render_; }
   static ScreenType* GetScreen() { return &screen_; }
-  static WidgetsType* GetWidgets() { return &widgets_; }
   static void Labels(LabelModeEnum labels);
 };
 

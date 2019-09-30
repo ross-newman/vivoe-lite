@@ -30,7 +30,7 @@ using namespace gva;
 using namespace std;
 
 #define CANVAS { true, SURFACE_NONE, "", 0 }
-#define SCREEN { "Situational Awareness", "/dev/ttyUSB0", SA, canvas_, &top_, &status_, SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard_, alarms_ }
+//#define SCREEN { "Situational Awareness", "/dev/ttyUSB0", SA, canvas_, &top_, &status_, SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, keyboard_, alarms_ }
 #define init(var, typ, data) {typ x = data; var = x; }
 #define BIT(b,x) (x & 0x1 << b)
 #define SET_CANVAS_PNG(file) strcpy (screen_.canvas.filename, file); screen_.canvas.bufferType = SURFACE_FILE; screen_.canvas.buffer = 0;
@@ -42,9 +42,10 @@ Hmi::Reset()
   Labels(screen_.labels);
   screen_.canvas.visible = false;
   screen_.canvas.bufferType = SURFACE_NONE;
-  widgets_.compass.SetVisible(false);
-  widgets_.compass.SetX(165);
-  widgets_.keyboard.SetVisible ( (widgets_.keyboard.GetVisible()) ? true : false );
+  screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(false);
+  screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165);
+  screen_render_->GetWidget(WIDGET_TYPE_KEYBOARD)->SetVisible 
+    ( (screen_render_->GetWidget(WIDGET_TYPE_KEYBOARD)->GetVisible()) ? true : false );
   screen_.table.visible_ = false;
   screen_.control->active = 0x0;
   screen_.message.visible = false;
@@ -55,15 +56,15 @@ void Hmi::Labels(LabelModeEnum labels) {
   switch(labels) {
   case LABEL_ALL :
     if ( (screen_.currentFunction == SA) || (screen_.currentFunction == WPN) || (screen_.currentFunction == DRV) )
-      widgets_.compass.SetVisible(true);
+      screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
     screen_.function_left.visible = true;
     screen_.function_right.visible = true;
     screen_.control->visible = true;
     screen_.function_top->visible = true;
     screen_.status_bar->visible = true;
     screen_.status_bar->y = 446;
-    widgets_.alarmIndicator.SetVisible(true);
-    widgets_.alarmIndicator.SetY(423);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(true);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetY(423);
     break;
   case LABEL_STATUS_ONLY :
     screen_.function_left.visible = false;
@@ -72,9 +73,9 @@ void Hmi::Labels(LabelModeEnum labels) {
     screen_.function_top->visible = false;
     screen_.status_bar->visible = true;
     screen_.status_bar->y = 459;
-    widgets_.alarmIndicator.SetVisible(true);
-    widgets_.alarmIndicator.SetY(438);
-    widgets_.compass.SetX(165-90);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(true);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetY(438);
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165-90);
     break;
   case LABEL_MINIMAL :
     screen_.function_left.visible = false;
@@ -82,9 +83,9 @@ void Hmi::Labels(LabelModeEnum labels) {
     screen_.control->visible = false;
     screen_.function_top->visible = false;
     screen_.status_bar->visible = false;
-    widgets_.alarmIndicator.SetVisible(false);
-    widgets_.compass.SetVisible(false);
-    widgets_.compass.SetX(165);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(false);
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(false);
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165);
     break;
   }
 };
@@ -506,8 +507,8 @@ struct StateSA : Hmi
         Reset();
         screen_.function_top->visible = true;
                 
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
-        screen_.canvas.visible = true;
+        if (screen_.labels != LABEL_MINIMAL) screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+        screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
         if (!screen_.canvas.surface) SET_CANVAS_PNG("FRONT_CENTRE.png");
         screen_.function_top->active = 0x1 << 7;
       }
@@ -533,7 +534,7 @@ struct StateWPN : Hmi
         lastState_ = WPN;
         Reset();
 
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
+        if (screen_.labels != LABEL_MINIMAL) screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
         screen_.canvas.visible = true;
         SET_CANVAS_PNG("FRONT_CENTRE.png");
         screen_.function_top->active = 0x1 << 6;
@@ -616,7 +617,7 @@ struct StateDRV : Hmi
         lastState_ = DRV;
         Reset();
 
-        if (screen_.labels != LABEL_MINIMAL) widgets_.compass.SetVisible(true);
+        if (screen_.labels != LABEL_MINIMAL) screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
         screen_.status_bar->visible = true;
         screen_.function_top->active = 0x1 << 3;
       }
@@ -793,13 +794,19 @@ struct StateOn : Hmi
     manager_->GetNewView(ALARMSX, &top_, &bottom_, (FunctionKeys)ALARM_KEYS_LEFT,        (FunctionKeys)ALARM_KEYS_RIGHT);
 
     screen_ = manager_->GetScreen(SYS);
-    widgets_.compass.bearingSight_ = 33;
-    widgets_.compass.SetX(165); 
-    widgets_.compass.SetY(370);
-    widgets_.compass.SetVisible(true);
-    widgets_.alarmIndicator.SetVisible(true);
-    widgets_.alarmIndicator.SetY(422);
-    strcpy(widgets_.alarmIndicator.text_,"Engine over tempreture");
+
+    // Create the screen render now 
+    screen_render_ = new ScreenGva (&screen_, view_.width, view_.height);
+    
+    // Configure the widgets
+    ((Compass*)screen_render_->GetWidget(WIDGET_TYPE_COMPASS))->bearingSight_ = 33;
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165); 
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetY(370);
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(true);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetY(422);
+    AlarmIndicator* ai = (AlarmIndicator*)screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR);
+    strcpy(ai->text_,"Engine over tempreture");
 
     screen_.canvas = canvas_;
     screen_.canvas.visible = true;
@@ -808,9 +815,6 @@ struct StateOn : Hmi
     screen_.labels = LABEL_ALL;
     SET_CANVAS_PNG("FRONT_CENTRE.png");
     
-    /* These are comon to all screens */
-    screen_render_ = new ScreenGva (&screen_, &widgets_, view_.width, view_.height);
-
     transit<StateSYS>(); 
   };
 };
@@ -832,10 +836,8 @@ StatusBarType Hmi::status_;
 FunctionSelectType Hmi::top_;
 CommonTaskKeysType Hmi::bottom_;
 CanvasType Hmi::canvas_;
-KeyboardType Hmi::keyboard_;
 TableWidget Hmi::alarms_;
 ScreenType Hmi::screen_;
-WidgetsType Hmi::widgets_;
 ScreenGva* Hmi::screen_render_;
 rendererMap* Hmi::map_;
 int  Hmi::lastState_;
