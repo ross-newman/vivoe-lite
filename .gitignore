@@ -31,3 +31,4 @@ config.pb
 log.txt
 html
 latex
+doxygen_sqlite3.db
