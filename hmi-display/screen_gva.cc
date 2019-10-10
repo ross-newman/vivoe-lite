@@ -53,11 +53,42 @@ float toDegrees(float lon) {
 
 namespace gva
 {
-  ScreenGva::ScreenGva (ScreenType * screen, WidgetsType * Widgets, int width, int height)
+  void Compass::Draw() {
+    if (GetVisible()) {
+      screen_->DrawPPI (GetX(), GetY(), bearing_, bearingSight_);
+    }
+  }
+  
+  Keyboard::Keyboard(ScreenGva* screen) : WidgetX(screen, WIDGET_TYPE_KEYBOARD) {  
+    // Initalise keyboard widget, hidden on creation
+    mode_ = KEYBOARD_UPPER;
+    SetVisible(false);
+  }
+
+  void Keyboard::Draw() {
+     if (GetVisible()) {
+       screen_->DrawKeyboard(mode_);
+    }
+  }
+  
+  void AlarmIndicator::Draw() {
+     if (GetVisible()) {
+      GvaTable table(104, GetY(), 432);
+      table.SetFontName(gva::configuration.GetThemeFont());
+      GvaRow alarmrow;
+      GvaCellType cell = { text_, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
+      
+      table.border_ = 0;
+      alarmrow.addCell(cell, 100);
+      table.AddRow(alarmrow);
+      screen_->DrawTable (&table);    
+    }
+  }
+  
+  ScreenGva::ScreenGva (ScreenType * screen, int width, int height)
   : RendererGva (width, height)
   {
     screen_ = screen;
-    widgets_ = Widgets;
 
     char tmp[100];
     struct termios settings;
@@ -90,6 +121,13 @@ namespace gva
     // Start the Real Time Clock
     // 
     StartClock (screen_->status_bar);
+    
+    //
+    // Setup the required widgets
+    //
+    widget_list_.push_back(new Compass(this));
+    widget_list_.push_back(new Keyboard(this));
+    widget_list_.push_back(new AlarmIndicator(this));
   }
 
   ScreenGva::~ScreenGva ()
@@ -281,9 +319,7 @@ namespace gva
     }
     
     // Draw the onscreen KEYBOARD
-    if (widgets_->keyboard.GetVisible()) {
-      DrawKeyboard(widgets_->keyboard.mode_);
-    }
+    widget_list_[1]->Draw();
     
     // Setup and Draw the status bar, one row table
     if (screen_->status_bar->visible) {
@@ -316,17 +352,7 @@ namespace gva
     }
 
     // TODO : Draw the alarms if any (Mock up)
-    if (widgets_->alarmIndicator.GetVisible()) {
-      GvaTable table(104, widgets_->alarmIndicator.GetY(), 432);
-      table.SetFontName(gva::configuration.GetThemeFont());
-      GvaRow alarmrow;
-      GvaCellType cell = {widgets_->alarmIndicator.text_, ALIGN_CENTRE, { WHITE }, { RED }, { WHITE }, WEIGHT_NORMAL };
-      
-      table.border_ = 0;
-      alarmrow.addCell(cell, 100);
-      table.AddRow(alarmrow);
-      DrawTable (&table);
-    }
+    widget_list_[2]->Draw();
 
     // Setup and Draw the alarms
     if (screen_->table.visible_) {
@@ -359,9 +385,8 @@ namespace gva
       DrawTable (&table);
     }
 
-    if (widgets_->compass.GetVisible()) {
-      DrawPPI (widgets_->compass.GetX(), widgets_->compass.GetY(), widgets_->compass.bearing_, widgets_->compass.bearingSight_);
-    }
+    // Draw PPI (Plan Position Indicator)
+    widget_list_[0]->Draw();
     
     if (screen_->control->visible) {
 		DrawControlLabels (0, screen_->control->active,
@@ -397,16 +422,18 @@ namespace gva
     last_screen_ = *screen_;
   }
   
+  WidgetX* ScreenGva::GetWidget(WidgetEnum widget) {
+    for (int i = 0; i < widget_list_.size(); ++i) {
+      // Try and match widget enum and return pointer to it
+      if ( widget_list_[i]->GetType() == widget) {
+        return widget_list_[i];
+      }    
+    }
+  }
+  
   char 
   *PosDegrees(float lon, float lat)
   {
     
-  }
-
-  Keyboard::Keyboard() {  
-    // Initalise keyboard widget, hidden on creation
-    mode_ = KEYBOARD_UPPER;
-    SetVisible(false);
-  }
-  
+  }  
 }

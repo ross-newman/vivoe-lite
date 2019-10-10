@@ -374,7 +374,7 @@ void RendererGva::DrawPPI(int x, int y, int degrees, int sightAzimuth) {
 
   // Compass Markings
   SetTextFont((int) CAIRO_FONT_SLANT_NORMAL,
-              (int) CAIRO_FONT_WEIGHT_BOLD, gva::configuration.GetThemeFont());
+              (int) CAIRO_FONT_WEIGHT_BOLD, "Courier");
   d = degreesToRadians(d);
   int pos = 6;
 

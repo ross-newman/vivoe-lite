@@ -86,12 +86,12 @@ struct GvaColourType
   int blue;
 };
 
-class Widget {
+class RenderBase {
 public:
-  Widget() { };
-  Widget(int x, int y) : m_x(x), m_y(y), m_width(0), m_height(0)  { };
-  Widget(int x, int y, int width) : m_x(x), m_y(y), m_width(width), m_height(0) { };
-  Widget(int x, int y, int width, int height) : m_x(x), m_y(y), m_width(width), m_height(height) { };
+  RenderBase() { };
+  RenderBase(int x, int y) : m_x(x), m_y(y), m_width(0), m_height(0)  { };
+  RenderBase(int x, int y, int width) : m_x(x), m_y(y), m_width(width), m_height(0) { };
+  RenderBase(int x, int y, int width, int height) : m_x(x), m_y(y), m_width(width), m_height(height) { };
   int GetX() { return m_x; };
   int GetY() { return m_y; };
   int GetWidth() { return m_width; };
@@ -113,19 +113,19 @@ public :
   WeightType weight;  
 } GvaCell;
 
-class GvaRow : public Widget {
+class GvaRow : public RenderBase {
 public :
   GvaRow() { };  
-  GvaRow(int x, int y) : Widget(x, y) {};  
+  GvaRow(int x, int y) : RenderBase(x, y) {};  
   int addCell(GvaCellType newcell, int width);
   GvaCellType cell_[MAX_CELLS];
   int widths_[MAX_CELLS];
   int cells_ = 0;
 };
 
-class GvaTable : public Widget {
+class GvaTable : public RenderBase {
 public :
-  GvaTable(int x, int y, int width) : Widget(x, y, width) {};  
+  GvaTable(int x, int y, int width) : RenderBase(x, y, width) {};  
   int AddRow(GvaRow newrow) { row_[rows_++] = newrow; return rows_; };
   void SetFontName(char *name) { strcpy(fontname_, name); };
   void SetBorderThickness(int thickness) { border_=thickness; };
@@ -135,10 +135,10 @@ public :
   char fontname_[100] = "Courier";
 };
 
-class Hotspot : public Widget {
+class Hotspot : public RenderBase {
 public :
-  Hotspot(int groupId, int x, int y) : group_id_(groupId), binding_(0), Widget(x, y) {};  
-  Hotspot(int groupId, int binding, int x, int y, int width, int height) : group_id_(groupId), binding_(binding), Widget(x, y, width, height) {};  
+  Hotspot(int groupId, int x, int y) : group_id_(groupId), binding_(0), RenderBase(x, y) {};  
+  Hotspot(int groupId, int binding, int x, int y, int width, int height) : group_id_(groupId), binding_(binding), RenderBase(x, y, width, height) {};  
   int GetGroupId() { return group_id_; };
   int GetBinding() { return binding_; };
 private:

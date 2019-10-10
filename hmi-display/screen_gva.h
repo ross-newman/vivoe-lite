@@ -33,6 +33,8 @@
 
 namespace gva
 {
+  class ScreenGva;
+
   enum LocationEnum {
     LOCATION_FORMAT_LONG_LAT = 0,
     LOCATION_FORMAT_MGRS
@@ -220,45 +222,55 @@ namespace gva
   //
   // Widgets
   //
-  typedef class Widget  {
+  enum WidgetEnum {
+    WIDGET_TYPE_COMPASS = 0,
+    WIDGET_TYPE_KEYBOARD = 1,
+    WIDGET_TYPE_ALARM_INDICATOR = 2
+  };
+  
+  class WidgetX {
   public:
+    WidgetX(ScreenGva* screen, WidgetEnum widget_type) { screen_ = screen; 
+      widget_type_ = widget_type; };
     void SetVisible(bool visible) { visible_ = visible; };
     bool GetVisible() { return visible_; };
     void SetX(int x) { x_ = x; };
     int GetX() { return x_; };
     void SetY(int y) { y_ = y; };
     int GetY() { return y_; };
+    virtual void Draw() = 0;
+    WidgetEnum GetType() { return widget_type_; };
+  protected:
+    ScreenGva* screen_;
   private:
+    WidgetEnum widget_type_;
     bool visible_ = true;
     int x_ = 0;
     int y_ = 0;
   };
 
-  typedef class Compass : public Widget {
+  class Compass : public WidgetX {
   public:
+    Compass(ScreenGva* screen) : WidgetX(screen, WIDGET_TYPE_COMPASS) {};  
+    void Draw();
     int bearing_;
     int bearingSight_;
-  } CompassType;
+  };
 
-  typedef class Keyboard : public Widget {
+  class Keyboard : public WidgetX {
   public:
-    Keyboard();
+    Keyboard(ScreenGva* screen);
+    void Draw();
     KeyboardModeType mode_;
-  } KeyboardType;
+  };
 
-  typedef class AlarmIndicator  : public Widget {
+  class AlarmIndicator : public WidgetX {
   public:
+    AlarmIndicator(ScreenGva* screen) : WidgetX(screen, WIDGET_TYPE_ALARM_INDICATOR) {};  
+    void Draw();
     char text_[256];
     GvaAlarmType type_;
-  } alarmIndicatorType;
-  
-  typedef struct {
-    CompassType compass;
-    KeyboardType keyboard;
-    alarmIndicatorType alarmIndicator;
-  } WidgetsType;
-
-  class ScreenGva;
+  };
 
   //
   // These are used by the clock thread to update the time and refresh the screen 
@@ -278,14 +290,15 @@ namespace gva
   class ScreenGva : public RendererGva
   {
   public:
-    ScreenGva(ScreenType *screen, WidgetsType *Widgets, int width, int height);
+    ScreenGva(ScreenType *screen, int width, int height);
     ~ScreenGva();
     int Update();
     void StartClock(StatusBarType *barData);
+    WidgetX* GetWidget(WidgetEnum widget);
   private:
     char *PosDegrees(float lon, float lat);
     ScreenType *screen_;
-    WidgetsType *widgets_;
+    std::vector<WidgetX*> widget_list_;
     args *args_;
     int gps_;
     int hndl_;
