@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=0.2
+Name=Vivoe Lite
+Name[en_GB]=Vivoe Lite
+Name[uk]=Vivoe Lite
+GenericName=Generic Vehicle HMI
+GenericName[en_GB]=Generic Vehicle Hmi
+Comment=A fast and lightweight IDE using GTK+
+Comment[en_GB]=A fast and lightweight IDE using GTK+
+Exec=hmi-display -f
+Icon=terminal
+Terminal=false
+Categories=
+StartupNotify=true
+Keywords=Video;

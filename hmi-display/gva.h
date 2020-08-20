@@ -1,17 +1,40 @@
+//
+// MIT License
+//
+// Copyright (c) 2020 Ross Newman (ross@rossnewman.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 #ifndef GVA_H
 #define GVA_H
-#include "log_gva.h"
 #include "debug.h"
-#include "gva_video_rtp_yuv.h"
+#include "log_gva.h"
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 333
+#define PATCH 2948
 
 #define MIN_HEIGHT 480
 #define MIN_WIDTH 640
 
-enum gvaFunctionEnum {
+enum GvaFunctionEnum {
   SA = 0,
   WPN,
   DEF,
@@ -23,25 +46,14 @@ enum gvaFunctionEnum {
   ALARMSX,
 };
 
-enum gvaAlarmType {
-  ALARM_WARNING,
-  ALARM_CRITICAL,
-  ALARM_ALERT
-};
+enum GvaAlarmType { ALARM_WARNING, ALARM_CRITICAL, ALARM_ALERT };
 
-enum gvaFunctionGroupEnum {
-  TOP,
-  BOTTOM,
-  LEFT,
-  RIGHT,
-  ALARM_TABLE,
-  KEYBOARD
-};
+enum GvaFunctionGroupEnum { TOP, BOTTOM, LEFT, RIGHT, ALARM_TABLE, KEYBOARD };
 
-enum gvaKeyEnum 
-{
+enum GvaKeyEnum {
   /* These are physical GVA keys around the display */
-  KEY_SA = 1,
+  KEY_NONE = 0,
+  KEY_SA,
   KEY_WPN,
   KEY_DEF,
   KEY_SYS,
@@ -85,7 +97,7 @@ enum gvaKeyEnum
   KEY_KEYBOARD
 };
 
-enum gvaStatusTypes {
+enum GvaStatusTypes {
   GVA_SUCCESS = 0,
   GVA_ERROR,
   GVA_NETWORK_ERROR,

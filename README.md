@@ -1,24 +1,25 @@
 ![VIVOE-LITE](images/Vivoe-lite-banner.png)
-![Travis](https://travis-ci.com/ross-newman/vivoe-lite.svg?token=3WE3zHMAGTzwqxs2yiqd&branch=master)
+![Travis](https://travis-ci.org/ross-newman/vivoe-lite.svg?branch=master)
 [![License](https://img.shields.io/badge/licence-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2927/badge)](https://bestpractices.coreinfrastructure.org/projects/2927)
 [![codecov](https://codecov.io/gh/ross-newman/vivoe-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/ross-newman/vivoe-lite)
-![Version](https://img.shields.io/badge/version-0.1.333-red.svg)
+![Version](https://img.shields.io/badge/version-0.2.29-red.svg)
+[![ZenHub](https://img.shields.io/badge/plan-ZenHub-%2349569D.svg)](https://www.zenhub.com/)
 # Dependancies
 This VIVOE (Vetronics Infrastructure for Video Over Ethernet) environment is currently tested on Ubuntu 18.04 LTS. Please ensure you have the following packages installed prior to building the application:
 ```
-sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-
+sudo apt install libcairo2-dev libxt-dev libsdl2-dev doxygen libxml2-dev ncurses-dev libxext-dev libswscale-dev libprotobuf-dev libgeographic-dev cmake g++ libgtk-3-dev --no-install-recommends
 ```
 # HMI
-The project includes an refferance implementation of the GVA Human Machin Interface (HMI). This is meant as a tool for testing different video cameras and streaming protocols and does not implement a lot of the functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing and experiment with HMI options.
+The project includes an reference implementation of the GVA (Generic Vehicle Architecture) like Human Machine Interface (HMI). This is meant as a designed for testing different live video sources and working with streaming protocols and does not implement functionality defined in the GVA Land Data Model (LDM). Its primerially used to demonstrate various video streaming pipelines and control mechanisms for real time video processing. Its primary purpose is for research and development and experimentation with different HMI elements for human factors and sensor integration, test, monitoring and detection of system wide events.
 
-![GVA HMI](images/GVA-HMI-Cairo.png)
+![GVA HMI](images/Display_RD104_02_sm.jpg#left)<br>
 
 > NOTE: Not all labels are currently implemented, project in heavy development! See [DEVELOPER.md](docs/DEVELOPER.md) for issues and features.
 
 Video can be streamed to an optional video processing unit (GPU/TPU for AI/ML and hemeshperical video processing) before being recieved by the HMI processor for video overlays and personalisation for gunner/commaner and driver displays. Multicast vdeo streams should be recieved by all consumers in realtime (networking not shown). There may be one or more users and displays on any given manned vehicle.
 
-![GVA Dataflow](images/GVA-DataFlow.PNG)
+![GVA Dataflow](images/GVA-DataFlow.PNG#left)
 
 Touch screen inputs and bezel key inputs are sent back to the HMI to update the overlays in the RTP stream. The display can be 'dumb' with HMI / Video processing being done on a seperate LRU. RTP streams being recieved by the display have the overlays already rendered in the video stream.
 
@@ -33,6 +34,7 @@ The following keys can be used to interact with the display:
 * < Rotate Sight anti-clockwise
 * [1-8] Function SA,WPN...
 * ESC Quit
+* L Toggle labels
 * A Alarms
 * K Keyboard
   * CAPS-LOCK toggle upper case
@@ -73,8 +75,14 @@ newmanr@dell-lnx:~/git/vivoe-lite$ cat /dev/ttyUSB0 | hexdump -C
 ```
 Internally [libnema](https://github.com/ross-newman/nmealib) is used aquire [NMEA](https://en.wikipedia.org/wiki/NMEA_0183) messages from the GPS source. Once aquired conversion from decimal long/lat to degrees minutes seconds is required for the internal representation. Conversions to many other formats are possible using [libGeographic](https://geographiclib.sourceforge.io), currently the only conversion implemented is [MGRS](https://en.wikipedia.org/wiki/Military_Grid_Reference_System).
 
+# ODB Source
+For CAN messages can be read via the ELM 327 compatible USB dongle such as this one on [Amazon](https://www.amazon.co.uk/Weddecor-Interface-Diagnostic-Scanner-Adapter/dp/B0798LK2C2/ref=asc_df_B0798LK2C2/?tag=googshopuk-21&linkCode=df0&hvadid=310513207083&hvpos=1o2&hvnetw=g&hvrand=13476710392809007404&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1007089&hvtargid=pla-765104732771&psc=1). This is primerially used to drive the screen widgets on the DRV (Drivers) display. Currently no support for MilCAN hardware is planned, automotive CAN only.
+![ODBII Reader](images/ODBII_Elm.png)<br>
 # Offline Maps
 If a valid GPS source is present then an offline map will be available rendered by [libosmscout](https://wiki.openstreetmap.org/wiki/Libosmscout). This feature is currently being developed. OpenStreetMap database is required plus some additional processing prior to use. An regularly updated collection of global maps can be downloaded from [Geofabrik](https://download.geofabrik.de/). Entire world comes in at 77Gb before processing.
+
+![GVA Dataflow](images/Screenshot-OSMScout-Map.png)<br>
+**Example of the Battle Management System (BMS) screen**
 
 You can render maps using servers provided by [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) using my [juypter notebook](https://gist.github.com/ross-newman/8634f69e98ac2aded46552e7b0768dbb) for processing the data and depositing the results on to a Google Drive account. 
 
@@ -91,7 +99,40 @@ See configuration setup in [CONFIG.md](docs/CONFIG.md)
 # AI and ML Pipelines
 See configuration setup in [PIPELINE.md](docs/PIPELINE.md)
 
-## DEF STAN 00-83 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
+# Standards and Referances
+## Land Open Systems Architecture (LOSA), Generic Vehicle Architecture (GVA)
+### DEF STAN 23-09 Generic Veichcal Architecture
+This defence standard is currently split into the parts below:
+
+* Generic Vehicle Architecture (GVA) Part 0 : - GVA Approach
+* Generic Vehicle Architecture (GVA) Part 1 : Infrastructure (Data and Power)
+* **Generic Vehicle Architecture (GVA) Part 2 : Human Machine Interface**
+* Generic Vehicle Architecture (GVA) Part 3 : Health and Usage Monitoring
+* Generic Vehicle Architecture (GVA) Part 4 : Physical Interfaces (withdrawn)
+* Generic Vehicle Architecture (GVA) Part 5 : GVA Data Model
+* Generic Vehicle Architecture (GVA) Part 6 : Security (TBD)
+* Generic Vehicle Architecture (GVA) Part 7 : Common Services (TBD)
+* Generic Vehicle Architecture (GVA) Part 8 : Safety (TBD)
+
+The HMI uses Cairo for rendering the GUI components.
+
+##### Rendering
+
+| UK GVA  | AUS GVA |
+| ------------- | ------------- |
+| ![GVA HMI](images/GVA_HMI.png)  | ![Australian GVA HMI](images/AUS_GVA_HMI.png)   |
+| Basic HMI layout as illustrated.  | Basic HMI layout with additional button BLK.  |
+
+> NOTE: AUS-GVA mandates some changes to the physical HMI for use in the ADF which impacts on the bezel key arrangement and illumination.
+
+### STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
+NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
+
+### DEF(AUST)11316 AS GVA
+Email asgva.office@defence.gov.au requesting access to the DEF(AUST) and AS GVA GovDex community
+
+## Video
+### DEF STAN 00-083 - Vetronics Infrastructure for Video Over Ethernet (VIVOE)
 For the video streaming element of the sample HMI the RTP raw video streams conform to Defence Standard 00-83 Vetronics Infrastructure
 for Video Over Ethernet Part 1: Standards and Protocols, Issue 2. Specifically Appendix B2 YCbCr 4:2:2 Encoded Uncompressed Video.
 
@@ -103,20 +144,27 @@ Defence Standard 00-083 is currently split into the parts below.
 
 This standard is also mandated in the NATO version of GVA (NGVA). 
 
-## STANAG 4754 - NATO Generic Vehicle Architecture (NGVA)
-NGVA is a NATO Standardisation Agreement (STANAG 4754) based on open standards to design and integrate multiple electronic sub-systems onto military vehicles which are controllable from a multifunction crew display and control unit. 
+### STANAG 4697 - Platform Extended Video Standard (PLEVID)
+AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for [GigE Vision](https://www.visiononline.org/vision-standards-details.cfm?type=5).
 
-## STANAG 4697 - Platform Extended Video Standard (PLEVID)
-AIM The aim of this NATO standardization agreement (STANAG) is to respond to the following interoperability requirements. Adopts DEF STAN 00-083 and allows for GigE.
+### RFC
+* [RFC 4175](https://tools.ietf.org/html/rfc4175) RTP Payload Format for Uncompressed Video
+* [RFC 4566](https://tools.ietf.org/html/rfc4566) SDP: Session Description Protocol
+* [RFC 4856](https://tools.ietf.org/html/rfc4856) Media Type Registration of Payload Formats in the RTP Profile for Audio and Video Conferences
+* [RFC 6340](https://tools.ietf.org/html/rfc6340) Textual Conventions for the Representation of Floating-Point Numbers
+## Licensing
 
-# Rendering
-The HMI uses Cairo for rendering the GUI components.
+open-vivoe is released under the MIT license. Some parts of the software are released under other licenses as specified.
 
-![GVA HMI](images/GVA_HMI.png)
+**THIS IS ALPHA QUALITY SOFTWARE FOR RESEARCH PURPOSES ONLY. THIS IS NOT A PRODUCT.
+YOU ARE RESPONSIBLE FOR COMPLYING WITH LOCAL LAWS AND REGULATIONS.
+NO WARRANTY EXPRESSED OR IMPLIED.**
+---
 
-**GVA HMI Example layout**
-
+<img src="https://cdn-images-1.medium.com/max/1600/1*C87EjxGeMPrkTuVRVWVg4w.png" width="225"></img>
 # Links
+* http://landopensystems.mod.uk/ UK MoD LOSA
+* https://www.natogva.org/ NATO GVA
 * https://www.vetronics.org/
 * https://en.wikipedia.org/wiki/Generic_Vehicle_Architecture
 * https://www.cairographics.org/
@@ -124,3 +172,4 @@ The HMI uses Cairo for rendering the GUI components.
 * https://download.geofabrik.de/
 * https://geographiclib.sourceforge.io/
 * https://index.ros.org/doc/ros2/
+* https://www.visiononline.org/vision-standards-details.cfm?type=5

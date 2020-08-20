@@ -1,3 +1,27 @@
+//
+// MIT License
+//
+// Copyright (c) 2020 Ross Newman (ross@rossnewman.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 #include "hmi_gva.h"
 
 #include <iostream>
@@ -9,175 +33,216 @@ using namespace std;
 
 #define CANVAS \
   { true, SURFACE_NONE, "", 0 }
-#define KEYBOARD \
-  { false, KEYBOARD_UPPER }
-#define ALARMS \
-  { false }
-#define SCREEN                                                                 \
-  {                                                                            \
-    "Situational Awareness", "/dev/ttyUSB0", SA, m_canvas, &m_top, &m_status,  \
-        SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS, COMPASS, \
-        m_keyboard, m_alarms                                                   \
-  }
+//#define SCREEN { "Situational Awareness", "/dev/ttyUSB0", SA, canvas_, &top_,
+//&status_, SYS_FUNCTION_KEYS_LEFT, SYS_FUNCTION_KEYS_RIGHT, COMMON_KEYS,
+// COMPASS, keyboard_, alarms_ }
 #define init(var, typ, data) \
   {                          \
     typ x = data;            \
     var = x;                 \
   }
 #define BIT(b, x) (x & 0x1 << b)
-#define SET_CANVAS_PNG(file)                 \
-  strcpy(m_screen.canvas.filename, file);    \
-  m_screen.canvas.bufferType = SURFACE_FILE; \
-  m_screen.canvas.buffer = 0;
+#define SET_CANVAS_PNG(file)                \
+  strcpy(screen_.canvas.filename, file);    \
+  screen_.canvas.bufferType = SURFACE_FILE; \
+  screen_.canvas.buffer = 0;
 
-void Hmi::reset() {
-  m_screen.canvas.visible = false;
-  m_screen.statusBar->visible = true;
-  labels(m_screen.labels);
-  m_screen.canvas.visible = false;
-  m_screen.canvas.bufferType = SURFACE_NONE;
-  m_widgets.compass.visible = false;
-  m_widgets.compass.x = 165;
-  m_widgets.keyboard.visible = (m_widgets.keyboard.visible) ? true : false;
-  m_screen.alarms.visible = false;
-  m_screen.control->active = 0;
-  m_alarmsOn = false;
+void Hmi::Reset() {
+  screen_.status_bar->visible = true;
+  Labels(screen_.labels);
+  screen_.canvas.visible = false;
+  screen_.canvas.bufferType = SURFACE_NONE;
+  screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(false);
+  screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165);
+  screen_render_->GetWidget(WIDGET_TYPE_KEYBOARD)
+      ->SetVisible(
+          (screen_render_->GetWidget(WIDGET_TYPE_KEYBOARD)->GetVisible())
+              ? true
+              : false);
+  screen_.table.visible_ = false;
+  screen_.control->active = 0x0;
+  screen_.message.visible = false;
+  alarmson_ = false;
 }
 
-void Hmi::labels(labelModeEnum labels) {
+void Hmi::Labels(LabelModeEnum labels) {
   switch (labels) {
     case LABEL_ALL:
-      if ((m_screen.currentFunction == SA) ||
-          (m_screen.currentFunction == WPN) ||
-          (m_screen.currentFunction == SYS) ||
-          (m_screen.currentFunction == DRV))
-        m_widgets.compass.visible = true;
-      m_screen.functionLeft.visible = true;
-      m_screen.functionRight.visible = true;
-      m_screen.control->visible = true;
-      m_screen.functionTop->visible = true;
-      m_screen.statusBar->visible = true;
-      m_screen.statusBar->y = 443;
-      m_widgets.alarmIndicator.visible = true;
-      m_widgets.alarmIndicator.y = 422;
+      if ((screen_.currentFunction == SA) || (screen_.currentFunction == WPN) ||
+          (screen_.currentFunction == DRV))
+        screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+      screen_.function_left.visible = true;
+      screen_.function_right.visible = true;
+      screen_.control->visible = true;
+      screen_.function_top->visible = true;
+      screen_.status_bar->visible = true;
+      screen_.status_bar->y = 446;
+      screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(true);
+      screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetY(423);
       break;
     case LABEL_STATUS_ONLY:
-      m_screen.functionLeft.visible = false;
-      m_screen.functionRight.visible = false;
-      m_screen.control->visible = false;
-      m_screen.functionTop->visible = false;
-      m_screen.statusBar->visible = true;
-      m_screen.statusBar->y = 459;
-      m_widgets.alarmIndicator.visible = true;
-      m_widgets.alarmIndicator.y = 438;
-      m_widgets.compass.x = 165 - 90;
+      screen_.function_left.visible = false;
+      screen_.function_right.visible = false;
+      screen_.control->visible = false;
+      screen_.function_top->visible = false;
+      screen_.status_bar->visible = true;
+      screen_.status_bar->y = 459;
+      screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(true);
+      screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetY(438);
+      screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165 - 90);
       break;
     case LABEL_MINIMAL:
-      m_screen.functionLeft.visible = false;
-      m_screen.functionRight.visible = false;
-      m_screen.control->visible = false;
-      m_screen.functionTop->visible = false;
-      m_screen.statusBar->visible = false;
-      m_widgets.alarmIndicator.visible = false;
-      m_widgets.compass.visible = false;
-      m_widgets.compass.x = 165;
+      screen_.function_left.visible = false;
+      screen_.function_right.visible = false;
+      screen_.control->visible = false;
+      screen_.function_top->visible = false;
+      screen_.status_bar->visible = false;
+      screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(false);
+      screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(false);
+      screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165);
       break;
   }
 };
 
-void Hmi::keySide(int key) {
+void Hmi::KeySide(int key) {
+  screen_.message.visible = false;
   switch (key) {
     case KEY_F1:
-      m_screen.functionLeft.active = 1 << 5;
+      screen_.function_left.active = 1 << 5;
       break;
     case KEY_F2:
-      m_screen.functionLeft.active = 1 << 4;
+      screen_.function_left.active = 1 << 4;
       break;
     case KEY_F3:
-      m_screen.functionLeft.active = 1 << 3;
+      screen_.function_left.active = 1 << 3;
       break;
     case KEY_F4:
-      m_screen.functionLeft.active = 1 << 2;
+      screen_.function_left.active = 1 << 2;
       break;
     case KEY_F5:
-      m_screen.functionLeft.active = 1 << 1;
+      screen_.function_left.active = 1 << 1;
       break;
     case KEY_F6:
-      m_screen.functionLeft.active = 1;
+      screen_.function_left.active = 1;
       break;
     case KEY_F7:
-      m_screen.functionRight.active = 1 << 5;
+      screen_.function_right.active = 1 << 5;
       break;
     case KEY_F8:
-      m_screen.functionRight.active = 1 << 4;
+      screen_.function_right.active = 1 << 4;
       break;
     case KEY_F9:
-      m_screen.functionRight.active = 1 << 3;
+      screen_.function_right.active = 1 << 3;
       break;
     case KEY_F10:
-      m_screen.functionRight.active = 1 << 2;
+      screen_.function_right.active = 1 << 2;
       break;
     case KEY_F11:
-      m_screen.functionRight.active = 1 << 1;
+      screen_.function_right.active = 1 << 1;
       break;
     case KEY_F12:
-      m_screen.functionRight.active = 1;
+      screen_.function_right.active = 1;
       break;
   }
 }
 
-void Hmi::key(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
-  m_screen.control->active = 0;
-  keySide(keypress);
+void Hmi::Key(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
+  screen_.control->active = 0;
+  KeySide(keypress);
   switch (keypress) {
     case KEY_F13:
-      m_screen.control->active = 1 << 7;
+      screen_.control->active = 1 << 7;
       break;
     case KEY_F14:
-      m_screen.control->active = 1 << 6;
+      if (screen_.currentFunction == ALARMSX) screen_.control->active = 1 << 6;
       break;
     case KEY_F15:
-      m_screen.control->active = 1 << 5;
+      screen_.control->active = 1 << 5;
       break;
     case KEY_F16:
-      m_screen.control->active = 1 << 4;
+      screen_.control->active = 1 << 4;
       break;
     case KEY_F17:
-      m_screen.control->active = 1 << 3;
+      screen_.control->active = 1 << 3;
       break;
     case KEY_F18:
-      m_screen.control->active = 1 << 2;
+      screen_.control->active = 1 << 2;
       break;
     case KEY_F19:
-      m_screen.control->active = 1 << 1;
-      switch (m_screen.labels) {
+      screen_.control->active = 1 << 1;
+      switch (screen_.labels) {
         case LABEL_ALL:
-          m_screen.labels = LABEL_STATUS_ONLY;
+          screen_.labels = LABEL_STATUS_ONLY;
           break;
         case LABEL_STATUS_ONLY:
-          m_screen.labels = LABEL_MINIMAL;
+          screen_.labels = LABEL_MINIMAL;
           break;
         case LABEL_MINIMAL:
-          m_screen.labels = LABEL_ALL;
+          screen_.labels = LABEL_ALL;
           break;
       }
-      labels(m_screen.labels);
+      Labels(screen_.labels);
       break;
     case KEY_F20:
-      m_screen.control->active = 1;
-      m_screen.message.visible = false;
+      screen_.control->active = 1;
+      screen_.message.visible = false;
+      break;
+    default:
+      screen_.control->active = 0;
       break;
   }
 }
 
-void Hmi::keySA(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
+void Hmi::KeySA(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
 
-  keySide(keypress);
-  key(keypress);
+  KeySide(keypress);
+  Key(keypress);
+
+  switch (keypress) {
+    case KEY_F2:
+      SET_CANVAS_PNG("QUAD.png");
+      break;
+    case KEY_F4:
+      SET_CANVAS_PNG("FRONT_RIGHT.png");
+      break;
+    case KEY_F5:
+      SET_CANVAS_PNG("FRONT_CENTRE.png");
+      break;
+    case KEY_F6:
+      SET_CANVAS_PNG("FRONT_LEFT.png");
+      break;
+    case KEY_F10:
+      SET_CANVAS_PNG("RIGHT.png");
+      break;
+    case KEY_F11:
+      SET_CANVAS_PNG("REAR.png");
+      break;
+    case KEY_F12:
+      SET_CANVAS_PNG("LEFT.png");
+      break;
+    case KEY_F1:
+    case KEY_F3:
+    case KEY_F7:
+    case KEY_F8:
+    case KEY_F9:
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
+      break;
+  }
+}
+
+void Hmi::KeyWPN(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
+
+  KeySide(keypress);
+  Key(keypress);
 
   switch (keypress) {
     case KEY_F1:
@@ -192,20 +257,20 @@ void Hmi::keySA(int keypress) {
     case KEY_F10:
     case KEY_F11:
     case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
       break;
   }
 }
 
-void Hmi::keyWPN(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
+void Hmi::KeyDEF(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
 
-  keySide(keypress);
-  key(keypress);
+  KeySide(keypress);
+  Key(keypress);
 
   switch (keypress) {
     case KEY_F1:
@@ -220,20 +285,67 @@ void Hmi::keyWPN(int keypress) {
     case KEY_F10:
     case KEY_F11:
     case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_ERROR;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
       break;
   }
 }
 
-void Hmi::keyDEF(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
+void Hmi::KeySYS(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
 
-  keySide(keypress);
-  key(keypress);
+  KeySide(keypress);
+  Key(keypress);
+
+  switch (keypress) {
+    case KEY_F1:
+      HmiHelper::TableSystem(&screen_.table);
+      break;
+    case KEY_F5:
+      HmiHelper::TableLicences(&screen_.table);
+      break;
+    case KEY_F2:
+    case KEY_F3:
+    case KEY_F4:
+    case KEY_F6:
+    case KEY_F7:
+    case KEY_F8:
+    case KEY_F9:
+    case KEY_F10:
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
+      break;
+    case KEY_F11:
+      // Blackout
+      screen_.info.mode = (screen_.info.mode == MODE_BLACKOUT)
+                              ? MODE_MAINTINENCE
+                              : MODE_BLACKOUT;
+      screen_.canvas.visible = true;
+      if (screen_.info.mode == MODE_BLACKOUT)
+        screen_.canvas.bufferType = SURFACE_BLACKOUT;
+      else
+        screen_.canvas.bufferType = SURFACE_FILE;
+      break;
+    case KEY_F12:
+      // Exit
+      if (RendererCairo::render_.surface)
+        cairo_surface_destroy(RendererCairo::render_.surface);
+      g_application_quit(G_APPLICATION(RendererCairo::render_.win.app));
+      break;
+  }
+}
+
+void Hmi::KeyDRV(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
+
+  KeySide(keypress);
+  Key(keypress);
 
   switch (keypress) {
     case KEY_F1:
@@ -248,20 +360,20 @@ void Hmi::keyDEF(int keypress) {
     case KEY_F10:
     case KEY_F11:
     case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
       break;
   }
 }
 
-void Hmi::keySYS(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
+void Hmi::KeySTR(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
 
-  keySide(keypress);
-  key(keypress);
+  KeySide(keypress);
+  Key(keypress);
 
   switch (keypress) {
     case KEY_F1:
@@ -276,20 +388,21 @@ void Hmi::keySYS(int keypress) {
     case KEY_F10:
     case KEY_F11:
     case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
       break;
   }
 }
 
-void Hmi::keyDRV(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
+void Hmi::KeyCOM(int keypress) {
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
+  screen_.message.visible = false;
 
-  keySide(keypress);
-  key(keypress);
+  KeySide(keypress);
+  Key(keypress);
 
   switch (keypress) {
     case KEY_F1:
@@ -304,71 +417,15 @@ void Hmi::keyDRV(int keypress) {
     case KEY_F10:
     case KEY_F11:
     case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
       break;
   }
 }
 
-void Hmi::keySTR(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
-
-  keySide(keypress);
-  key(keypress);
-
-  switch (keypress) {
-    case KEY_F1:
-    case KEY_F2:
-    case KEY_F3:
-    case KEY_F4:
-    case KEY_F5:
-    case KEY_F6:
-    case KEY_F7:
-    case KEY_F8:
-    case KEY_F9:
-    case KEY_F10:
-    case KEY_F11:
-    case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
-      break;
-  }
-}
-
-void Hmi::keyCOM(int keypress) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
-
-  keySide(keypress);
-  key(keypress);
-
-  switch (keypress) {
-    case KEY_F1:
-    case KEY_F2:
-    case KEY_F3:
-    case KEY_F4:
-    case KEY_F5:
-    case KEY_F6:
-    case KEY_F7:
-    case KEY_F8:
-    case KEY_F9:
-    case KEY_F10:
-    case KEY_F11:
-    case KEY_F12:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
-      break;
-  }
-}
-
-float conv(int zoom) {
+double conv(int zoom) {
   switch (zoom) {
     case 1620000:
       return 0.00006;
@@ -397,401 +454,423 @@ float conv(int zoom) {
   }
 }
 
-void Hmi::keyBMS(int key) {
-  m_screen.functionLeft.active = 0;
-  m_screen.functionRight.active = 0;
-  keySide(key);
-  switch (key) {
+void Hmi::KeyBMS(int keypress) {
+  bool update = true;
+  screen_.function_left.active = 0;
+  screen_.function_right.active = 0;
+  int zoom_level = configuration.GetZoom();
+  KeySide(keypress);
+  Key(keypress);
+  switch (keypress) {
     case KEY_F3:
       // Shift UP
-      xml.lat += conv(xml.zoom);
+      configuration.SetTestLat(configuration.GetTestLat() + conv(zoom_level));
       break;
     case KEY_F4:
       // Shift DOWN
-      xml.lat -= conv(xml.zoom);
+      configuration.SetTestLat(configuration.GetTestLat() - conv(zoom_level));
       break;
     case KEY_F5:
       // Zoom +
-      xml.zoom += xml.zoom;
+      configuration.SetZoom(zoom_level * 2);
       break;
     case KEY_F9:
       // Shift LEFT
-      xml.lon -= conv(xml.zoom);
+      configuration.SetTestLon(configuration.GetTestLon() - conv(zoom_level));
       break;
     case KEY_F10:
       // Shift RIGHT
-      xml.lon += conv(xml.zoom);
+      configuration.SetTestLon(configuration.GetTestLon() + conv(zoom_level));
       break;
     case KEY_F11:
       // Zoom -
-      xml.zoom -= xml.zoom / 2;
+      configuration.SetZoom(zoom_level / 2);
       break;
+    case KEY_F1:
+    case KEY_F2:
+    case KEY_F6:
+    case KEY_F7:
+    case KEY_F8:
+    case KEY_F12:
+      screen_.message.visible = true;
+      screen_.message.icon = ICON_INFO;
+      strcpy(screen_.message.brief.text, "Function key");
+      strcpy(screen_.message.detail.text, "Operation not implemented!");
     default:
-      m_screen.message.visible = true;
-      m_screen.message.icon = ICON_NONE;
-      strcpy(m_screen.message.brief.text, "Function key");
-      strcpy(m_screen.message.detail.text, "Operation not implemented!");
+      update = false;
       break;
   }
-  printf("Zoom level %d lat %f, %f\n", xml.zoom, xml.lat,
-         ((double)xml.zoom / 10000000) * ((double)xml.zoom / 10000));
-  //  cairo_surface_destroy(m_screen.canvas.surface);
-  m_map->project(xml.zoom, xml.lon, xml.lat, &m_screen.canvas.surface);
-  m_screen.canvas.bufferType = SURFACE_CAIRO;
+
+  if (update) {
+    char tmp[100];
+    sprintf(tmp, "[BMS] Zoom level %d lat %f, %f", configuration.GetZoom(),
+            configuration.GetTestLat(),
+            ((double)configuration.GetZoom() / 10000000) *
+                ((double)configuration.GetZoom() / 10000));
+    logGva::log(tmp, LOG_INFO);
+    map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
+    map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
+    sprintf(tmp, "[BMS] res %d x %d", screen_render_->GetWidth(),
+            screen_render_->GetHeight());
+    logGva::log(tmp, LOG_INFO);
+    map_->Project(configuration.GetZoom(), configuration.GetTestLon(),
+                  configuration.GetTestLat(), &screen_.canvas.surface);
+    screen_.canvas.bufferType = SURFACE_CAIRO;
+  }
 }
 
-struct stateSA : Hmi {
+struct StateSA : Hmi {
   void entry() override {
-    if (!BIT(7, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(SA);
-      m_lastState = SA;
-      reset();
-      m_screen.functionTop->visible = true;
+    if (!BIT(7, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(SA);
+      lastState_ = SA;
+      Reset();
+      screen_.function_top->visible = true;
 
-      if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
-      m_screen.canvas.visible = true;
-      if (!m_screen.canvas.surface) SET_CANVAS_PNG("test2.png");
-      m_screen.functionTop->active = 0x1 << 7;
+      if (screen_.labels != LABEL_MINIMAL)
+        screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+      screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+      if (!screen_.canvas.surface) SET_CANVAS_PNG("FRONT_CENTRE.png");
+      screen_.function_top->active = 0x1 << 7;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keySA(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeySA(e.key); };
 };
 
-struct stateWPN : Hmi {
+struct StateWPN : Hmi {
   void entry() override {
-    if (!BIT(6, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(WPN);
-      m_lastState = WPN;
-      reset();
+    if (!BIT(6, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(WPN);
+      lastState_ = WPN;
+      Reset();
 
-      if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
-      m_screen.canvas.visible = true;
-      SET_CANVAS_PNG("test2.png");
-      m_screen.functionTop->active = 0x1 << 6;
+      if (screen_.labels != LABEL_MINIMAL)
+        screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+      screen_.canvas.visible = true;
+      SET_CANVAS_PNG("FRONT_CENTRE.png");
+      screen_.function_top->active = 0x1 << 6;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keyWPN(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeyWPN(e.key); };
 };
 
-struct stateDEF : Hmi {
+struct StateDEF : Hmi {
   void entry() override {
-    if (!BIT(5, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(DEF);
-      m_lastState = DEF;
-      reset();
+    if (!BIT(5, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(DEF);
+      lastState_ = DEF;
+      Reset();
 
-      m_screen.statusBar->visible = true;
-      m_screen.functionTop->active = 0x1 << 5;
+      screen_.status_bar->visible = true;
+      screen_.function_top->active = 0x1 << 5;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keyDEF(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeyDEF(e.key); };
 };
 
-struct stateSYS : Hmi {
+struct StateSYS : Hmi {
   void entry() override {
-    if (!BIT(4, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(SYS);
-      m_lastState = SYS;
-      reset();
+    if (!BIT(4, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(SYS);
+      lastState_ = SYS;
+      Reset();
 
-      if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
-      m_screen.canvas.visible = true;
-      SET_CANVAS_PNG("test2.png");
+      screen_.status_bar->visible = true;
+      screen_.function_top->visible = true;
+      screen_.canvas.visible = true;
+      SET_CANVAS_PNG("FRONT_CENTRE.png");
 
-      m_screen.functionTop->active = 0x1 << 4;
+      HmiHelper::TableSystem(&screen_.table);
+
+      screen_.function_top->active = 0x1 << 4;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keySYS(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeySYS(e.key); };
 };
 
-struct stateDRV : Hmi {
+struct StateDRV : Hmi {
   void entry() override {
-    if (!BIT(3, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(DRV);
-      m_lastState = DRV;
-      reset();
+    if (!BIT(3, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(DRV);
+      lastState_ = DRV;
+      Reset();
 
-      if (m_screen.labels != LABEL_MINIMAL) m_widgets.compass.visible = true;
-      m_screen.statusBar->visible = true;
-      m_screen.functionTop->active = 0x1 << 3;
+      if (screen_.labels != LABEL_MINIMAL)
+        screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+      screen_.status_bar->visible = true;
+      screen_.function_top->active = 0x1 << 3;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keyDRV(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeyDRV(e.key); };
 };
 
-struct stateSTR : Hmi {
+struct StateSTR : Hmi {
   void entry() override {
-    if (!BIT(2, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(STR);
-      m_lastState = STR;
-      reset();
+    if (!BIT(2, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(STR);
+      lastState_ = STR;
+      Reset();
 
-      m_screen.functionTop->active = 0x1 << 2;
+      screen_.function_top->active = 0x1 << 2;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keySTR(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeySTR(e.key); };
 };
 
-struct stateCOM : Hmi {
+struct StateCOM : Hmi {
   void entry() override {
-    if (!BIT(1, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(COM);
-      m_lastState = COM;
-      reset();
+    if (!BIT(1, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(COM);
+      lastState_ = COM;
+      Reset();
 
-      m_screen.functionTop->active = 0x1 << 1;
+      screen_.function_top->active = 0x1 << 1;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keyCOM(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeyCOM(e.key); };
 };
 
-struct stateBMS : Hmi {
+struct StateBMS : Hmi {
   void entry() override {
-    if (!BIT(0, m_screen.functionTop->hidden)) {
-      m_screen = m_manager->getScreen(BMS);
-      m_lastState = BMS;
-      reset();
+    if (!BIT(0, screen_.function_top->hidden)) {
+      screen_ = manager_->GetScreen(BMS);
+      lastState_ = BMS;
+      Reset();
 
-      m_screen.canvas.visible = true;
+      screen_.canvas.visible = true;
 
-      m_map->project(xml.zoom, xml.lon, xml.lat, &m_screen.canvas.surface);
-      m_screen.canvas.bufferType = SURFACE_CAIRO;
+      map_->SetWidth((double)screen_render_->GetWidth() / DEFAULT_WIDTH);
+      map_->SetHeight((double)screen_render_->GetHeight() / DEFAULT_HEIGHT);
+      map_->Project(configuration.GetZoom(), configuration.GetTestLon(),
+                    configuration.GetTestLat(), &screen_.canvas.surface);
+      screen_.canvas.bufferType = SURFACE_CAIRO;
 
-      m_screen.functionTop->active = 0x1 << 0;
+      screen_.function_top->active = 0x1 << 0;
     }
   };
-  void react(KeyPowerOn const &) override { transit<stateOff>(); };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { keyBMS(e.key); };
+  void react(EventKeyPowerOn const &) override { transit<StateOff>(); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { KeyBMS(e.key); };
 };
 
-struct stateAlarms : Hmi {
+struct StateAlarms : Hmi {
   void entry() override {
-    if (!BIT(1, m_screen.control->hidden)) {
-      if (m_alarmsOn) {
-        m_alarmsOn = false;
-        switch (m_lastState) {
+    if (!BIT(1, screen_.control->hidden)) {
+      if (alarmson_) {
+        alarmson_ = false;
+        switch (lastState_) {
           case SA:
-            transit<stateSA>();
+            transit<StateSA>();
             return;
           case WPN:
-            transit<stateWPN>();
+            transit<StateWPN>();
             return;
           case DEF:
-            transit<stateDEF>();
+            transit<StateDEF>();
             return;
           case SYS:
-            transit<stateSYS>();
+            transit<StateSYS>();
             return;
           case DRV:
-            transit<stateDRV>();
+            transit<StateDRV>();
             return;
           case STR:
-            transit<stateSTR>();
+            transit<StateSTR>();
             return;
           case COM:
-            transit<stateCOM>();
+            transit<StateCOM>();
             return;
           case BMS:
-            transit<stateBMS>();
+            transit<StateBMS>();
             return;
         }
       }
-      reset();
-      m_alarmsOn = true;
-      m_screen = m_manager->getScreen(ALARMSX);
-
-      m_screen.alarms.visible = true;
-      m_screen.control->active = 0x1 << 6;
+      Reset();
+      alarmson_ = true;
+      screen_ = manager_->GetScreen(ALARMSX);
+      HmiHelper::TableAlarms(&screen_.table);
     }
   };
-  void react(KeySA const &) override { transit<stateSA>(); };
-  void react(KeyWPN const &) override { transit<stateWPN>(); };
-  void react(KeyDEF const &) override { transit<stateDEF>(); };
-  void react(KeySYS const &) override { transit<stateSYS>(); };
-  void react(KeyDRV const &) override { transit<stateDRV>(); };
-  void react(KeySTR const &) override { transit<stateSTR>(); };
-  void react(KeyCOM const &) override { transit<stateCOM>(); };
-  void react(KeyBMS const &) override { transit<stateBMS>(); };
-  void react(KeyAlarms const &) override { transit<stateAlarms>(); };
-  void react(KeyFunction const &e) { key(e.key); };
+  void react(EventKeySA const &) override { transit<StateSA>(); };
+  void react(EventKeyWPN const &) override { transit<StateWPN>(); };
+  void react(EventKeyDEF const &) override { transit<StateDEF>(); };
+  void react(EventKeySYS const &) override { transit<StateSYS>(); };
+  void react(EventKeyDRV const &) override { transit<StateDRV>(); };
+  void react(EventKeySTR const &) override { transit<StateSTR>(); };
+  void react(EventKeyCOM const &) override { transit<StateCOM>(); };
+  void react(EventKeyBMS const &) override { transit<StateBMS>(); };
+  void react(EventKeyAlarms const &) override { transit<StateAlarms>(); };
+  void react(EventKeyFunction const &e) { Key(e.key); };
 };
 
-struct stateOn : Hmi {
+struct StateOn : Hmi {
   void entry() override {
     /* 4:3 aspect ratio @ lowest resolution */
-    m_view = {MIN_WIDTH, MIN_HEIGHT, 24};
+    view_ = {MIN_WIDTH, MIN_HEIGHT, 24};
 
-    if (!m_manager) m_manager = new viewGvaManager(&m_status);
+    if (!manager_) manager_ = new ViewGvaManager(&status_);
 
     // Render a map for BMS
-    m_map = new rendererMap("/opt/osmscout/maps/australia-latest/",
-                            "/opt/osmscout/stylesheets/standard.oss", MIN_WIDTH,
-                            MIN_HEIGHT);
+    map_ = new rendererMap("/opt/osmscout/maps/england-latest/",
+                           "/opt/osmscout/stylesheets/standard.oss", MIN_WIDTH,
+                           MIN_HEIGHT);
 
-    init(m_top, functionSelectType, COMMON_FUNCTION_KEYS_TOP);
-    init(m_bottom, commonTaskKeysType, COMMON_KEYS);
-    init(m_status, statusBarType, COMMON_STATUS_BAR);
-    init(m_canvas, canvasType, CANVAS);
-    init(m_keyboard, keyboardType, KEYBOARD);
-    init(m_alarms, alarmsType, ALARMS);
+    init(top_, FunctionSelectType, COMMON_FUNCTION_KEYS_TOP);
+    init(bottom_, CommonTaskKeysType, COMMON_KEYS);
+    init(status_, StatusBarType, COMMON_STATUS_BAR);
+    init(canvas_, CanvasType, CANVAS);
 
     // Setup the main screens
-    m_manager->getNewView(SA, &m_top, &m_bottom,
-                          (functionKeys)SA_FUNCTION_KEYS_LEFT,
-                          (functionKeys)SA_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(WPN, &m_top, &m_bottom,
-                          (functionKeys)WPN_FUNCTION_KEYS_LEFT,
-                          (functionKeys)WPN_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(DEF, &m_top, &m_bottom,
-                          (functionKeys)DEF_FUNCTION_KEYS_LEFT,
-                          (functionKeys)DEF_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(SYS, &m_top, &m_bottom,
-                          (functionKeys)SYS_FUNCTION_KEYS_LEFT,
-                          (functionKeys)SYS_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(DRV, &m_top, &m_bottom,
-                          (functionKeys)DRV_FUNCTION_KEYS_LEFT,
-                          (functionKeys)DRV_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(STR, &m_top, &m_bottom,
-                          (functionKeys)STR_FUNCTION_KEYS_LEFT,
-                          (functionKeys)STR_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(COM, &m_top, &m_bottom,
-                          (functionKeys)COM_FUNCTION_KEYS_LEFT,
-                          (functionKeys)COM_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(BMS, &m_top, &m_bottom,
-                          (functionKeys)BMS_FUNCTION_KEYS_LEFT,
-                          (functionKeys)BMS_FUNCTION_KEYS_RIGHT);
-    m_manager->getNewView(ALARMSX, &m_top, &m_bottom,
-                          (functionKeys)ALARM_KEYS_LEFT,
-                          (functionKeys)ALARM_KEYS_RIGHT);
+    manager_->GetNewView(SA, &top_, &bottom_,
+                         (FunctionKeys)SA_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)SA_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(WPN, &top_, &bottom_,
+                         (FunctionKeys)WPN_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)WPN_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(DEF, &top_, &bottom_,
+                         (FunctionKeys)DEF_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)DEF_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(SYS, &top_, &bottom_,
+                         (FunctionKeys)SYS_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)SYS_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(DRV, &top_, &bottom_,
+                         (FunctionKeys)DRV_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)DRV_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(STR, &top_, &bottom_,
+                         (FunctionKeys)STR_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)STR_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(COM, &top_, &bottom_,
+                         (FunctionKeys)COM_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)COM_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(BMS, &top_, &bottom_,
+                         (FunctionKeys)BMS_FUNCTION_KEYS_LEFT,
+                         (FunctionKeys)BMS_FUNCTION_KEYS_RIGHT);
+    manager_->GetNewView(ALARMSX, &top_, &bottom_,
+                         (FunctionKeys)ALARM_KEYS_LEFT,
+                         (FunctionKeys)ALARM_KEYS_RIGHT);
 
-    m_screen = m_manager->getScreen(SYS);
-    m_widgets.compass.bearingSight = 33;
-    m_widgets.compass.x = 165;
-    m_widgets.compass.y = 370;
-    m_widgets.compass.visible = true;
-    m_widgets.alarmIndicator.visible = true;
-    m_widgets.alarmIndicator.y = 422;
-    strcpy(m_widgets.alarmIndicator.text, "Engine over tempreture");
+    screen_ = manager_->GetScreen(SYS);
 
-    m_screen.canvas = m_canvas;
-    m_screen.canvas.visible = true;
-    m_screen.alarms = m_alarms;
-    m_screen.alarms.visible = false;
-    m_screen.labels = LABEL_ALL;
-    SET_CANVAS_PNG("test2.png");
+    // Create the screen render now
+    screen_render_ = new ScreenGva(&screen_, view_.width, view_.height);
 
-    /* These are comon to all screens */
-    m_render =
-        new screenGva(&m_screen, &m_widgets, m_view.width, m_view.height);
+    // Configure the widgets
+    ((Compass *)screen_render_->GetWidget(WIDGET_TYPE_COMPASS))->bearingSight_ =
+        33;
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetX(165);
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetY(370);
+    screen_render_->GetWidget(WIDGET_TYPE_COMPASS)->SetVisible(true);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetVisible(true);
+    screen_render_->GetWidget(WIDGET_TYPE_ALARM_INDICATOR)->SetY(422);
+    AlarmIndicator *ai = (AlarmIndicator *)screen_render_->GetWidget(
+        WIDGET_TYPE_ALARM_INDICATOR);
+    strcpy(ai->text_, "Engine over tempreture");
 
-    /*
-     * Draw the inital screen and start the Real Time Clock
-     */
-    m_render->update();
-    m_render->startClock(&m_status);
+    screen_.canvas = canvas_;
+    screen_.canvas.visible = true;
+    screen_.table = alarms_;
+    screen_.table.visible_ = false;
+    screen_.labels = LABEL_ALL;
+    SET_CANVAS_PNG("FRONT_CENTRE.png");
 
-    transit<stateSA>();
+    transit<StateSYS>();
   };
 };
 
-struct stateOff : Hmi {
+struct StateOff : Hmi {
   void entry() override {
-    free(m_render);
-    free(m_manager);
-    m_render = 0;
-    m_manager = 0;
+    free(screen_render_);
+    free(manager_);
+    screen_render_ = 0;
+    manager_ = 0;
   };
-  void react(KeyPowerOn const &) override { transit<stateOn>(); };
+  void react(EventKeyPowerOn const &) override { transit<StateOn>(); };
 };
 
-viewGvaManager *Hmi::m_manager;
-resolution_type Hmi::m_view;
-statusBarType Hmi::m_status;
-functionSelectType Hmi::m_top;
-commonTaskKeysType Hmi::m_bottom;
-canvasType Hmi::m_canvas;
-keyboardType Hmi::m_keyboard;
-alarmsType Hmi::m_alarms;
-screenType Hmi::m_screen;
-widgetsType Hmi::m_widgets;
-screenGva *Hmi::m_render;
-rendererMap *Hmi::m_map;
-int Hmi::m_lastState;
-bool Hmi::m_alarmsOn = false;
-xmlData Hmi::xml;
+ViewGvaManager *Hmi::manager_;
+ResolutionType Hmi::view_;
+StatusBarType Hmi::status_;
+FunctionSelectType Hmi::top_;
+CommonTaskKeysType Hmi::bottom_;
+CanvasType Hmi::canvas_;
+TableWidget Hmi::alarms_;
+ScreenType Hmi::screen_;
+ScreenGva *Hmi::screen_render_;
+rendererMap *Hmi::map_;
+int Hmi::lastState_;
+bool Hmi::alarmson_ = false;
 
 // ----------------------------------------------------------------------------
 // Initial state definition
 //
-FSM_INITIAL_STATE(Hmi, stateOff)
+FSM_INITIAL_STATE(Hmi, StateOff)

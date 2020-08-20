@@ -4,6 +4,7 @@
 *.so
 *.cmake
 *.tcl
+*.swp
 external
 *~
 build
@@ -26,4 +27,8 @@ libtest_catch.a
 test_events
 test_log
 video/libhmi-video.a
-
+config.pb
+log.txt
+html
+latex
+doxygen_sqlite3.db

@@ -1,0 +1,101 @@
+syntax = "proto2";
+
+package config;
+
+// Theme RGB colours
+enum Colour {
+  COLOUR_AMBER = 0xFF9900;
+  COLOUR_WHITE = 0xFFFFFF;
+  COLOUR_RED = 0xFF0000;
+  COLOUR_GREY = 0x7F7F7F;
+  COLOUR_MEDIUM_GREY = 0x606060;
+  COLOUR_DARK_GREY = 0x404040;
+  COLOUR_GREEN = 0x00FF00;
+  COLOUR_DARK_GREEN = 0x007F00;
+  COLOUR_DARK_GREEN2 = 0x004B00;
+  COLOUR_BLUE = 0x0000FF;
+  COLOUR_CYAN = 0x00FFFF;
+  COLOUR_DARK_BLUE = 0x336699;
+  COLOUR_LIGHT_BLUE = 0x3232FF;
+  COLOUR_BLACK = 0x000000;
+  COLOUR_YELLOW = 0xFFFF00;
+  COLOUR_ORANGE = 0xFFA500;
+}
+
+message ThemeDefault {
+  optional Colour theme_background = 1 [default = COLOUR_GREEN];
+  optional Colour theme_label_background_active = 2 [default = COLOUR_DARK_GREEN];
+  optional Colour theme_label_background_inactive = 3 [default = COLOUR_GREY];
+  optional Colour theme_label_text_active = 4 [default = COLOUR_WHITE];
+  optional Colour theme_label_text_inactive = 5 [default = COLOUR_BLACK];
+  optional Colour theme_label_border_selected = 6 [default = COLOUR_YELLOW];
+  optional Colour theme_label_border_active = 7 [default = COLOUR_DARK_GREEN2];
+  optional Colour theme_label_border_inactive = 8 [default = COLOUR_DARK_GREY];
+  optional Colour theme_status_background = 9 [default = COLOUR_DARK_GREEN];
+  optional Colour theme_status_border = 10 [default = COLOUR_DARK_GREEN];
+  optional Colour theme_status_text = 11 [default = COLOUR_WHITE];
+  optional Colour theme_alert = 12 [default = COLOUR_AMBER];
+  optional Colour theme_critical = 13 [default = COLOUR_RED];
+  optional string theme_font = 14 [default = "DejaVu Sans Mono Book"];
+}
+
+message ThemeHighContrast {
+  optional Colour theme_background = 1 [default = COLOUR_BLACK];
+  optional Colour theme_label_background_active = 2 [default = COLOUR_BLACK];
+  optional Colour theme_label_background_inactive = 3 [default = COLOUR_GREY];
+  optional Colour theme_label_text_active = 4 [default = COLOUR_WHITE];
+  optional Colour theme_label_text_inactive = 5 [default = COLOUR_BLACK];
+  optional Colour theme_label_border_selected = 6 [default = COLOUR_GREY];
+  optional Colour theme_label_border_active = 7 [default = COLOUR_WHITE];
+  optional Colour theme_label_border_inactive = 8 [default = COLOUR_DARK_GREY];
+  optional Colour theme_status_background = 9 [default = COLOUR_BLACK];
+  optional Colour theme_status_border = 10 [default = COLOUR_BLACK];
+  optional Colour theme_status_text = 11 [default = COLOUR_WHITE];
+  optional Colour theme_alert = 12 [default = COLOUR_AMBER];
+  optional Colour theme_critical = 13 [default = COLOUR_RED];
+  optional string theme_font = 14 [default = "Courier 10 Pitch"];
+}
+
+message Gva {
+  required string name = 1;
+  optional int32 height = 3 [default = 480];
+  optional int32 width = 4 [default = 640];
+  optional bool fullscreen = 5 [default = false];
+
+  // Map Options England
+  //optional string map_path = 6 [default = "/opt/osmscout/maps/england-latest/"];
+  //optional string map_stylesheet_path = 7 [default = "/opt/osmscout/stylesheets/standard.oss"];
+  // Map Options Austrlia
+  optional string map_path = 6 [default = "/opt/osmscout/maps/austrlia-latest/"];
+  optional string map_stylesheet_path = 7 [default = "/opt/osmscout/stylesheets/standard.oss"];
+  
+  // GPS options
+  optional bool live = 8;
+  optional int32 zoom = 9 [default = 20000];
+  optional string device = 10;
+    
+// Big Ben    
+//    optional double test_lon = 11 [default = -0.124240];
+//    optional double test_lat = 12 [default = 51.500655];
+
+// London Excel (DSEI)
+//  optional double test_lon = 11 [default = 0.029900];
+//  optional double test_lat = 12 [default = 51.508684];
+
+// Brisbane Convention Centre
+  optional double test_lon = 11 [default = 23.476567];
+  optional double test_lat = 12 [default = 103.018401];
+
+  optional string gps_device = 13 [default = "/dev/ttyUSB0"];
+
+  // ODB Options
+  optional string odb_device = 14 [default = "/dev/ttyUSB1"];    
+  
+  optional ThemeDefault theme = 15;
+  
+  message BezelKeyset {
+    required int32 act = 1;
+    required int32 hidden = 2;
+  }
+}
+
