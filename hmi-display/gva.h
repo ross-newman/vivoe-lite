@@ -1,7 +1,7 @@
 // 
 // MIT License
 // 
-// Copyright (c) 2019 Ross Newman (ross@rossnewman.com)
+// Copyright (c) 2020 Ross Newman (ross@rossnewman.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 
 #define MAJOR 0
 #define MINOR 1
-#define PATCH 2248
+#define PATCH 2948
 
 #define MIN_HEIGHT 480
 #define MIN_WIDTH 640
