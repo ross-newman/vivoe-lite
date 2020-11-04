@@ -63,7 +63,8 @@ message Gva {
   optional bool fullscreen = 5 [default = false];
 
   // Map Options
-  optional string map_path = 6 [default = "/opt/osmscout/maps/england-latest/"];
+//  optional string map_path = 6 [default = "/opt/osmscout/maps/england-latest/"];
+  optional string map_path = 6 [default = "/opt/osmscout/maps/australia-latest/"];
   optional string map_stylesheet_path = 7 [default = "/opt/osmscout/stylesheets/standard.oss"];
   
   // GPS options
@@ -76,8 +77,12 @@ message Gva {
 //    optional double test_lat = 12 [default = 51.500655];
 
 // London Excel (DSEI)
-  optional double test_lon = 11 [default = 0.029900];
-  optional double test_lat = 12 [default = 51.508684];
+//  optional double test_lon = 11 [default = 0.029900];
+//  optional double test_lat = 12 [default = 51.508684];
+
+// Redbank, QLD
+  optional double test_lon = 11 [default = -27.581882];
+  optional double test_lat = 12 [default = 152.875558];
 
   optional string gps_device = 13 [default = "/dev/ttyUSB0"];
 

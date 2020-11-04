@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2019 Ross Newman (ross@rossnewman.com)
+// Copyright (c) 2020 Ross Newman (ross@rossnewman.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -10,8 +10,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,8 +29,10 @@
 //
 #include <gtk/gtk.h>
 #include <unistd.h>
+
 #include <iostream>
 #include <string>
+
 #include "events_gva.h"
 #include "gva.h"
 #include "gva_video_rtp_yuv.h"
@@ -126,7 +128,8 @@ void Update(void *arg, gpointer user_data) {
       cairo_surface_mark_dirty(hmi::GetScreen()->canvas.surface);
 
       // @todo hmi_display: Add RTP HMI streaming output to display.
-      // @body The HMI window is only a preview. Add RTP output and headless mode.
+      // @body The HMI window is only a preview. Add RTP output and headless
+      // mode.
     }
   }
 
@@ -369,7 +372,7 @@ int main(int argc, char *argv[]) {
     sprintf(tmp, "Resolution %dx%d", rtp_stream1->GetHeight(), rtp_stream1->GetWidth());
     logGva::log(tmp, LOG_INFO);
     rtp_buffer = (char *)malloc(rtp_stream1->GetHeight() * rtp_stream1->GetWidth() * 4);
-    sprintf(tmp, "GVA Incomming RTP stream initalised %s:%d", ipaddr, port);
+    sprintf(tmp, "GVA Incoming RTP stream initalized %s:%d", ipaddr, port);
     logGva::log(tmp, LOG_INFO);
   }
 

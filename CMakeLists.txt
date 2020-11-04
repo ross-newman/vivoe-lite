@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 project(hmi-display)
 message(STATUS "PROJECT_NAME = ${PROJECT_NAME}")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(ENABLE_COVERAGE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")

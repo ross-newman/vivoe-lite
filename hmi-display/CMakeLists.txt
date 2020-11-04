@@ -1,6 +1,6 @@
 include(FindPkgConfig)
 project(hmi-display)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 if(ENABLE_COVERAGE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
@@ -33,7 +33,6 @@ link_directories(${CMAKE_BINARY_DIR}/external/Fast-RTPS/build/thirdparty/fastcdr
 link_directories(${CMAKE_BINARY_DIR}/external/Fast-RTPS/build/src/cpp)
 link_directories(${CMAKE_BINARY_DIR}/external/rtp-payloader/build)
 link_directories(${CMAKE_BINARY_DIR}/external/libnmea/build/src)
-
 
 message ("Platform " ${CMAKE_SYSTEM_NAME} " : " ${CMAKE_SYSTEM} ${MSYS} ${MSYS2}) 
 if (${CMAKE_SYSTEM_NAME} MATCHES "MINGW64_NT-10.0-17763")
